@@ -1,13 +1,26 @@
+import * as dotenv from 'dotenv';
+import { resolve } from 'path';
+
+// Support running from root or apps/service
+dotenv.config();
+dotenv.config({ path: resolve(process.cwd(), '.env') });
+dotenv.config({ path: resolve(process.cwd(), '../../.env') });
+dotenv.config({ path: resolve(__dirname, '../../../.env') });
+dotenv.config({ path: resolve(__dirname, '../../.env') });
+
+
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
+
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
   app.use(cookieParser());
 
   const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:4200';

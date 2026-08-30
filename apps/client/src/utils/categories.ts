@@ -1,0 +1,66 @@
+import { ICategory } from '../types/transaction.types';
+
+export const DEFAULT_CATEGORIES: ICategory[] = [
+  {
+    id: 'food',
+    name: 'Food & Dining',
+    type: 'expense',
+    icon: 'Utensils',
+    color: '#f59e0b',
+    budgetLimit: 600,
+  },
+  {
+    id: 'housing',
+    name: 'Housing & Utilities',
+    type: 'expense',
+    icon: 'Home',
+    color: '#3b82f6',
+    budgetLimit: 1200,
+  },
+  {
+    id: 'transport',
+    name: 'Transportation',
+    type: 'expense',
+    icon: 'Car',
+    color: '#8b5cf6',
+    budgetLimit: 300,
+  },
+  {
+    id: 'shopping',
+    name: 'Shopping & Essentials',
+    type: 'expense',
+    icon: 'ShoppingBag',
+    color: '#ec4899',
+    budgetLimit: 400,
+  },
+  {
+    id: 'entertainment',
+    name: 'Entertainment & Subs',
+    type: 'expense',
+    icon: 'Tv',
+    color: '#10b981',
+    budgetLimit: 200,
+  },
+  {
+    id: 'health',
+    name: 'Health & Medical',
+    type: 'expense',
+    icon: 'HeartPulse',
+    color: '#ef4444',
+    budgetLimit: 200,
+  },
+  {
+    id: 'salary',
+    name: 'Salary & Wages',
+    type: 'income',
+    icon: 'DollarSign',
+    color: '#059669',
+  },
+  {
+    id: 'freelance',
+    name: 'Freelance & Side Income',
+    type: 'income',
+    icon: 'TrendingUp',
+    color: '#0d9488',
+  },
+];

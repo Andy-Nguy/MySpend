@@ -1,9 +1,12 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 import configuration from './config/configuration';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -11,20 +14,36 @@ import { AppService } from './app.service';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env', '../../.env'],
       load: [configuration],
       cache: true,
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60 * 1000,
+        limit: 60,
+      },
+    ]),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        url: config.get<string>('databaseUrl'),
-        autoLoadEntities: true,
-        synchronize: false,
-        ssl: false,
-      }),
+      useFactory: (config: ConfigService) => {
+        const url = config.get<string>('databaseUrl');
+        const isSsl = config.get<boolean>('databaseSsl');
+        const isLogging = config.get<boolean>('databaseLogging') ?? true;
+
+        return {
+          type: 'postgres',
+          url,
+          autoLoadEntities: true,
+          synchronize: false,
+          logging: isLogging ? ['query', 'error', 'schema', 'warn', 'info', 'log'] : ['error'],
+          ssl: isSsl ? { rejectUnauthorized: false } : false,
+          extra: isSsl ? { ssl: { rejectUnauthorized: false } } : undefined,
+        };
+      },
       inject: [ConfigService],
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
@@ -37,6 +56,10 @@ import { AppService } from './app.service';
           forbidNonWhitelisted: true,
           transform: true,
         }),
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
   ],
 })

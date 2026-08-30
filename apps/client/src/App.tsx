@@ -1,39 +1,36 @@
 import React from 'react';
-import { ConfigProvider, Card, Typography, Space } from 'antd';
+import { ConfigProvider } from 'antd';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-const { Title, Paragraph } = Typography;
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
+import { AppRoutes } from './consts/routes';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import { Dashboard } from './pages/Dashboard';
 
 export const App: React.FC = () => {
   return (
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#1677ff',
-          borderRadius: 6,
+          colorPrimary: '#047857',
+          borderRadius: 8,
+          fontFamily:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
         },
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          backgroundColor: '#f5f7fa',
-          padding: 24,
-        }}
-      >
-        <Card style={{ maxWidth: 500, width: '100%', textAlign: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            <Title level={2} style={{ margin: 0 }}>
-              🏗️ MySpend Base Monorepo
-            </Title>
-            <Paragraph type="secondary">
-              Nx Monorepo base structure initialized (NestJS 11 + React 19 + Ant Design v5 + TypeORM).
-            </Paragraph>
-          </Space>
-        </Card>
-      </div>
+      <AuthProvider>
+        <Routes>
+          <Route path={AppRoutes.LOGIN} element={<Login />} />
+          <Route path={AppRoutes.REGISTER} element={<Register />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path={AppRoutes.HOME} element={<Dashboard />} />
+          </Route>
+          <Route path="*" element={<Navigate to={AppRoutes.HOME} replace />} />
+        </Routes>
+      </AuthProvider>
     </ConfigProvider>
   );
 };

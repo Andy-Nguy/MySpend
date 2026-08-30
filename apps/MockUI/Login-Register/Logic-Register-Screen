@@ -1,0 +1,1381 @@
+<!-- MoBlile View -->
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      name="viewport"
+    />
+    <title>WealthFlow - Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'surface-bright': '#f4fbf4',
+              'on-primary-fixed': '#002113',
+              'surface-container-low': '#eef6ee',
+              'surface-variant': '#dde4dd',
+              'on-surface': '#161d19',
+              outline: '#6c7a71',
+              secondary: '#4b41e1',
+              'on-error': '#ffffff',
+              'on-error-container': '#93000a',
+              'on-primary': '#ffffff',
+              primary: '#006c49',
+              'surface-dim': '#d4dcd5',
+              'surface-tint': '#006c49',
+              'on-surface-variant': '#3c4a42',
+              surface: '#f4fbf4',
+              'on-tertiary-fixed-variant': '#842225',
+              'inverse-surface': '#2b322d',
+              'on-tertiary-container': '#711419',
+              'surface-container-lowest': '#ffffff',
+              'secondary-container': '#645efb',
+              'error-container': '#ffdad6',
+              'on-secondary-fixed-variant': '#3323cc',
+              'tertiary-fixed': '#ffdad7',
+              'on-tertiary-fixed': '#410005',
+              'on-background': '#161d19',
+              'surface-container': '#e8f0e9',
+              'primary-fixed-dim': '#4edea3',
+              'on-primary-fixed-variant': '#005236',
+              'surface-container-highest': '#dde4dd',
+              'primary-fixed': '#6ffbbe',
+              tertiary: '#a43a3a',
+              'outline-variant': '#bbcabf',
+              'surface-container-high': '#e3eae3',
+              'on-tertiary': '#ffffff',
+              'tertiary-container': '#fc7c78',
+              'on-secondary': '#ffffff',
+              'on-primary-container': '#00422b',
+              background: '#f4fbf4',
+              'tertiary-fixed-dim': '#ffb3af',
+              'inverse-on-surface': '#ebf3eb',
+              'on-secondary-fixed': '#0f0069',
+              error: '#ba1a1a',
+              'secondary-fixed': '#e2dfff',
+              'primary-container': '#10b981',
+              'secondary-fixed-dim': '#c3c0ff',
+              'on-secondary-container': '#fffbff',
+              'inverse-primary': '#4edea3',
+            },
+            borderRadius: {
+              DEFAULT: '1rem',
+              lg: '2rem',
+              xl: '3rem',
+              full: '9999px',
+            },
+            spacing: {
+              base: '4px',
+              gutter: '20px',
+              'container-max': '1200px',
+              md: '16px',
+              lg: '24px',
+              '2xl': '64px',
+              sm: '8px',
+              xl: '40px',
+              xs: '4px',
+            },
+            fontFamily: {
+              'headline-lg': ['Hanken Grotesk'],
+              'headline-md': ['Hanken Grotesk'],
+              'body-md': ['Plus Jakarta Sans'],
+              'stat-lg': ['Hanken Grotesk'],
+              'body-lg': ['Plus Jakarta Sans'],
+              'label-caps': ['Plus Jakarta Sans'],
+              'display-lg': ['Hanken Grotesk'],
+            },
+            fontSize: {
+              'headline-lg': [
+                '32px',
+                {
+                  lineHeight: '1.2',
+                  letterSpacing: '-0.01em',
+                  fontWeight: '600',
+                },
+              ],
+              'headline-md': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
+              'body-md': ['16px', { lineHeight: '1.5', fontWeight: '400' }],
+              'stat-lg': [
+                '28px',
+                {
+                  lineHeight: '1',
+                  letterSpacing: '-0.01em',
+                  fontWeight: '500',
+                },
+              ],
+              'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
+              'label-caps': [
+                '12px',
+                { lineHeight: '1', letterSpacing: '0.05em', fontWeight: '700' },
+              ],
+              'display-lg': [
+                '48px',
+                {
+                  lineHeight: '1.1',
+                  letterSpacing: '-0.02em',
+                  fontWeight: '700',
+                },
+              ],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 1,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+
+      .input-ghost {
+        background-color: #f1f5f9; /* Slate-100 equivalent for ghost style */
+        border-color: transparent;
+      }
+      .input-ghost:focus {
+        border-color: #4b41e1; /* Secondary color Indigo-600 */
+        box-shadow: 0 0 0 4px rgba(75, 65, 225, 0.1);
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background text-on-background font-body-md min-h-screen flex flex-col justify-center items-center p-gutter"
+  >
+    <!-- Transactional Screen - No Nav Shells -->
+    <main
+      class="w-full max-w-md w-full bg-surface-container-lowest rounded-lg shadow-sm p-lg relative overflow-hidden"
+    >
+      <!-- Subtle Background Deco -->
+      <div
+        class="absolute -top-24 -right-24 w-64 h-64 bg-primary-container opacity-20 rounded-full blur-3xl pointer-events-none"
+      ></div>
+      <div
+        class="absolute -bottom-24 -left-24 w-48 h-48 bg-secondary-container opacity-10 rounded-full blur-2xl pointer-events-none"
+      ></div>
+      <!-- Header -->
+      <div class="text-center mb-xl relative z-10">
+        <div
+          class="w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center mx-auto mb-md shadow-sm"
+        >
+          <span class="material-symbols-outlined text-primary font-headline-lg"
+            >account_balance_wallet</span
+          >
+        </div>
+        <h1 class="font-display-lg text-display-lg text-on-surface mb-sm">
+          Welcome Back
+        </h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant">
+          Log in to manage your finances.
+        </p>
+      </div>
+      <!-- Login Form -->
+      <form class="space-y-lg relative z-10">
+        <!-- Email Input -->
+        <div class="space-y-sm relative">
+          <label
+            class="font-label-caps text-label-caps text-on-surface-variant block ml-sm uppercase tracking-wider"
+            for="email"
+            >Email Address</label
+          >
+          <div class="relative flex items-center">
+            <span
+              class="material-symbols-outlined absolute left-md text-outline-variant pointer-events-none"
+              >mail</span
+            >
+            <input
+              class="input-ghost w-full h-[60px] pl-[52px] pr-md rounded-xl font-body-lg text-body-lg text-on-surface placeholder:text-outline-variant transition-all duration-200 outline-none"
+              id="email"
+              name="email"
+              placeholder="hello@example.com"
+              type="email"
+            />
+          </div>
+        </div>
+        <!-- Password Input -->
+        <div class="space-y-sm relative">
+          <div class="flex justify-between items-center ml-sm mr-sm">
+            <label
+              class="font-label-caps text-label-caps text-on-surface-variant block uppercase tracking-wider"
+              for="password"
+              >Password</label
+            >
+            <a
+              class="font-label-caps text-label-caps text-secondary hover:text-secondary-container transition-colors"
+              href="#"
+              >Forgot Password?</a
+            >
+          </div>
+          <div class="relative flex items-center">
+            <span
+              class="material-symbols-outlined absolute left-md text-outline-variant pointer-events-none"
+              >lock</span
+            >
+            <input
+              class="input-ghost w-full h-[60px] pl-[52px] pr-md rounded-xl font-body-lg text-body-lg text-on-surface placeholder:text-outline-variant transition-all duration-200 outline-none"
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              type="password"
+            />
+            <button
+              aria-label="Toggle password visibility"
+              class="absolute right-md text-outline-variant hover:text-on-surface transition-colors cursor-pointer"
+              type="button"
+            >
+              <span class="material-symbols-outlined">visibility_off</span>
+            </button>
+          </div>
+        </div>
+        <!-- Primary Action -->
+        <button
+          class="w-full h-[56px] md:h-[48px] bg-primary text-on-primary rounded-xl font-headline-md text-body-lg shadow-[0_12px_32px_rgba(0,108,73,0.2)] hover:bg-on-primary-fixed-variant hover:shadow-[0_16px_40px_rgba(0,108,73,0.3)] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-sm"
+          type="submit"
+        >
+          Login
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </form>
+      <!-- Divider -->
+      <div class="flex items-center my-lg relative z-10">
+        <div class="flex-grow border-t border-surface-variant"></div>
+        <span
+          class="px-md font-label-caps text-label-caps text-outline-variant uppercase"
+          >Or continue with</span
+        >
+        <div class="flex-grow border-t border-surface-variant"></div>
+      </div>
+      <!-- Social Logins -->
+      <div class="grid grid-cols-2 gap-md relative z-10">
+        <button
+          class="h-[56px] md:h-[48px] flex items-center justify-center gap-sm bg-transparent border border-outline-variant rounded-xl text-on-surface font-body-md hover:bg-surface-container-low transition-colors"
+        >
+          <!-- SVG Icon for Google -->
+          <svg
+            fill="none"
+            height="24"
+            viewbox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              fill="#4285F4"
+            ></path>
+            <path
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              fill="#34A853"
+            ></path>
+            <path
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              fill="#FBBC05"
+            ></path>
+            <path
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              fill="#EA4335"
+            ></path>
+          </svg>
+          Google
+        </button>
+        <button
+          class="h-[56px] md:h-[48px] flex items-center justify-center gap-sm bg-transparent border border-outline-variant rounded-xl text-on-surface font-body-md hover:bg-surface-container-low transition-colors"
+        >
+          <!-- Simple abstract apple shape using standard paths for demo -->
+          <span class="material-symbols-outlined text-[24px]"
+            >account_circle</span
+          >
+          Apple
+        </button>
+      </div>
+      <!-- Footer Link -->
+      <p
+        class="text-center mt-xl font-body-md text-on-surface-variant relative z-10"
+      >
+        Don't have an account?
+        <a
+          class="text-primary font-bold hover:text-on-primary-fixed-variant hover:underline transition-all"
+          href="#"
+          >Sign Up</a
+        >
+      </p>
+    </main>
+    <script>
+      // Simple script to toggle password visibility
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.querySelector(
+          'button[aria-label="Toggle password visibility"]',
+        );
+        const passwordInput = document.getElementById('password');
+        const icon = toggleBtn.querySelector('.material-symbols-outlined');
+
+        if (toggleBtn && passwordInput && icon) {
+          toggleBtn.addEventListener('click', () => {
+            const type =
+              passwordInput.getAttribute('type') === 'password'
+                ? 'text'
+                : 'password';
+            passwordInput.setAttribute('type', type);
+            icon.textContent =
+              type === 'password' ? 'visibility_off' : 'visibility';
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>WealthFlow - Create Account</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'surface-bright': '#f4fbf4',
+              'on-primary-fixed': '#002113',
+              'surface-container-low': '#eef6ee',
+              'surface-variant': '#dde4dd',
+              'on-surface': '#161d19',
+              outline: '#6c7a71',
+              secondary: '#4b41e1',
+              'on-error': '#ffffff',
+              'on-error-container': '#93000a',
+              'on-primary': '#ffffff',
+              primary: '#006c49',
+              'surface-dim': '#d4dcd5',
+              'surface-tint': '#006c49',
+              'on-surface-variant': '#3c4a42',
+              surface: '#f4fbf4',
+              'on-tertiary-fixed-variant': '#842225',
+              'inverse-surface': '#2b322d',
+              'on-tertiary-container': '#711419',
+              'surface-container-lowest': '#ffffff',
+              'secondary-container': '#645efb',
+              'error-container': '#ffdad6',
+              'on-secondary-fixed-variant': '#3323cc',
+              'tertiary-fixed': '#ffdad7',
+              'on-tertiary-fixed': '#410005',
+              'on-background': '#161d19',
+              'surface-container': '#e8f0e9',
+              'primary-fixed-dim': '#4edea3',
+              'on-primary-fixed-variant': '#005236',
+              'surface-container-highest': '#dde4dd',
+              'primary-fixed': '#6ffbbe',
+              tertiary: '#a43a3a',
+              'outline-variant': '#bbcabf',
+              'surface-container-high': '#e3eae3',
+              'on-tertiary': '#ffffff',
+              'tertiary-container': '#fc7c78',
+              'on-secondary': '#ffffff',
+              'on-primary-container': '#00422b',
+              background: '#f4fbf4',
+              'tertiary-fixed-dim': '#ffb3af',
+              'inverse-on-surface': '#ebf3eb',
+              'on-secondary-fixed': '#0f0069',
+              error: '#ba1a1a',
+              'secondary-fixed': '#e2dfff',
+              'primary-container': '#10b981',
+              'secondary-fixed-dim': '#c3c0ff',
+              'on-secondary-container': '#fffbff',
+              'inverse-primary': '#4edea3',
+            },
+            borderRadius: {
+              DEFAULT: '1rem',
+              lg: '2rem',
+              xl: '3rem',
+              full: '9999px',
+            },
+            spacing: {
+              base: '4px',
+              gutter: '20px',
+              'container-max': '1200px',
+              md: '16px',
+              lg: '24px',
+              '2xl': '64px',
+              sm: '8px',
+              xl: '40px',
+              xs: '4px',
+            },
+            fontFamily: {
+              'headline-lg': ['Hanken Grotesk'],
+              'headline-md': ['Hanken Grotesk'],
+              'body-md': ['Plus Jakarta Sans'],
+              'stat-lg': ['Hanken Grotesk'],
+              'body-lg': ['Plus Jakarta Sans'],
+              'label-caps': ['Plus Jakarta Sans'],
+              'display-lg': ['Hanken Grotesk'],
+            },
+            fontSize: {
+              'headline-lg': [
+                '32px',
+                {
+                  lineHeight: '1.2',
+                  letterSpacing: '-0.01em',
+                  fontWeight: '600',
+                },
+              ],
+              'headline-md': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
+              'body-md': ['16px', { lineHeight: '1.5', fontWeight: '400' }],
+              'stat-lg': [
+                '28px',
+                {
+                  lineHeight: '1',
+                  letterSpacing: '-0.01em',
+                  fontWeight: '500',
+                },
+              ],
+              'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
+              'label-caps': [
+                '12px',
+                { lineHeight: '1', letterSpacing: '0.05em', fontWeight: '700' },
+              ],
+              'display-lg': [
+                '48px',
+                {
+                  lineHeight: '1.1',
+                  letterSpacing: '-0.02em',
+                  fontWeight: '700',
+                },
+              ],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+
+      /* Custom Checkbox Style */
+      .custom-checkbox:checked {
+        background-color: #006c49; /* primary */
+        border-color: #006c49;
+      }
+
+      /* Input Autofill override to match design */
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus,
+      input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px #eef6ee inset !important;
+      }
+    </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-surface-bright text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container"
+  >
+    <main
+      class="flex-1 w-full max-w-md mx-auto px-gutter py-xl flex flex-col justify-center"
+    >
+      <div class="mb-2xl flex items-center gap-sm">
+        <span
+          class="material-symbols-outlined text-primary"
+          style="font-variation-settings: 'FILL' 1; font-size: 32px"
+          >account_balance_wallet</span
+        >
+        <span class="font-headline-md text-headline-md text-on-surface"
+          >WealthFlow</span
+        >
+      </div>
+      <header class="mb-xl">
+        <h1 class="font-headline-lg text-headline-lg mb-sm">Create Account</h1>
+        <p class="font-body-md text-body-md text-on-surface-variant">
+          Start your journey to financial freedom.
+        </p>
+      </header>
+      <form
+        action="#"
+        class="flex flex-col gap-lg"
+        method="POST"
+        onsubmit="event.preventDefault();"
+      >
+        <div class="flex flex-col gap-xs relative">
+          <label
+            class="font-body-md text-body-md text-on-surface-variant ml-sm"
+            for="fullName"
+            >Full Name</label
+          >
+          <div class="relative group">
+            <input
+              class="w-full h-[60px] bg-surface-container-low text-on-surface font-body-lg text-body-lg rounded-DEFAULT px-md border border-transparent focus:bg-surface-container-lowest focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-all duration-300 outline-none"
+              id="fullName"
+              placeholder="Jane Doe"
+              type="text"
+            />
+          </div>
+        </div>
+        <div class="flex flex-col gap-xs relative">
+          <label
+            class="font-body-md text-body-md text-on-surface-variant ml-sm"
+            for="email"
+            >Email Address</label
+          >
+          <div class="relative group">
+            <input
+              class="w-full h-[60px] bg-surface-container-low text-on-surface font-body-lg text-body-lg rounded-DEFAULT px-md border border-transparent focus:bg-surface-container-lowest focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-all duration-300 outline-none"
+              id="email"
+              placeholder="jane@example.com"
+              type="email"
+            />
+          </div>
+        </div>
+        <div class="flex flex-col gap-xs relative">
+          <label
+            class="font-body-md text-body-md text-on-surface-variant ml-sm"
+            for="password"
+            >Password</label
+          >
+          <div class="relative group">
+            <input
+              class="w-full h-[60px] bg-surface-container-low text-on-surface font-body-lg text-body-lg rounded-DEFAULT px-md pr-12 border border-transparent focus:bg-surface-container-lowest focus:border-secondary focus:ring-4 focus:ring-secondary/10 transition-all duration-300 outline-none"
+              id="password"
+              placeholder="••••••••"
+              type="password"
+            />
+            <button
+              class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
+              type="button"
+            >
+              <span class="material-symbols-outlined">visibility_off</span>
+            </button>
+          </div>
+          <div class="mt-sm px-sm">
+            <div class="flex gap-sm h-1.5 w-full">
+              <div class="h-full flex-1 bg-primary rounded-full"></div>
+              <div class="h-full flex-1 bg-primary rounded-full"></div>
+              <div
+                class="h-full flex-1 bg-primary rounded-full opacity-30"
+              ></div>
+              <div class="h-full flex-1 bg-surface-variant rounded-full"></div>
+            </div>
+            <p
+              class="font-label-caps text-label-caps text-primary mt-sm uppercase tracking-wider"
+            >
+              Good Strength
+            </p>
+          </div>
+        </div>
+        <div class="flex items-start gap-sm mt-sm">
+          <div class="flex items-center h-6">
+            <input
+              class="custom-checkbox w-5 h-5 bg-surface-container-low border-outline-variant rounded focus:ring-secondary focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-bright appearance-none flex items-center justify-center cursor-pointer transition-colors relative after:content-[''] after:absolute after:w-1.5 after:h-2.5 after:border-r-2 after:border-b-2 after:border-white after:rotate-45 after:hidden checked:after:block after:-mt-0.5"
+              id="terms"
+              type="checkbox"
+            />
+          </div>
+          <label
+            class="font-body-md text-body-md text-on-surface-variant cursor-pointer"
+            for="terms"
+          >
+            I agree to the
+            <a
+              class="text-secondary hover:underline underline-offset-4 decoration-secondary/50 font-medium"
+              href="#"
+              >Terms of Service</a
+            >
+            and
+            <a
+              class="text-secondary hover:underline underline-offset-4 decoration-secondary/50 font-medium"
+              href="#"
+              >Privacy Policy</a
+            >.
+          </label>
+        </div>
+        <button
+          class="w-full h-[56px] mt-md bg-primary text-on-primary font-body-lg text-body-lg font-semibold rounded-[20px] shadow-[0_12px_32px_rgba(0,108,73,0.15)] hover:bg-on-primary-fixed-variant hover:shadow-[0_16px_40px_rgba(0,108,73,0.2)] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-sm"
+          type="submit"
+        >
+          Create Account
+          <span class="material-symbols-outlined" style="font-size: 20px"
+            >arrow_forward</span
+          >
+        </button>
+      </form>
+      <div class="mt-2xl text-center">
+        <p class="font-body-md text-body-md text-on-surface-variant">
+          Already have an account?
+          <a
+            class="text-secondary font-semibold hover:underline underline-offset-4 decoration-secondary/50 ml-xs transition-all"
+            href="#"
+            >Log In</a
+          >
+        </p>
+      </div>
+    </main>
+  </body>
+</html>
+
+<!-- Destop view -->
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>WealthFlow - Sign Up</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'surface-bright': '#f4fbf4',
+              'on-primary-fixed': '#002113',
+              'surface-container-low': '#eef6ee',
+              'surface-variant': '#dde4dd',
+              'on-surface': '#161d19',
+              outline: '#6c7a71',
+              secondary: '#4b41e1',
+              'on-error': '#ffffff',
+              'on-error-container': '#93000a',
+              'on-primary': '#ffffff',
+              primary: '#006c49',
+              'surface-dim': '#d4dcd5',
+              'surface-tint': '#006c49',
+              'on-surface-variant': '#3c4a42',
+              surface: '#f4fbf4',
+              'on-tertiary-fixed-variant': '#842225',
+              'inverse-surface': '#2b322d',
+              'on-tertiary-container': '#711419',
+              'surface-container-lowest': '#ffffff',
+              'secondary-container': '#645efb',
+              'error-container': '#ffdad6',
+              'on-secondary-fixed-variant': '#3323cc',
+              'tertiary-fixed': '#ffdad7',
+              'on-tertiary-fixed': '#410005',
+              'on-background': '#161d19',
+              'surface-container': '#e8f0e9',
+              'primary-fixed-dim': '#4edea3',
+              'on-primary-fixed-variant': '#005236',
+              'surface-container-highest': '#dde4dd',
+              'primary-fixed': '#6ffbbe',
+              tertiary: '#a43a3a',
+              'outline-variant': '#bbcabf',
+              'surface-container-high': '#e3eae3',
+              'on-tertiary': '#ffffff',
+              'tertiary-container': '#fc7c78',
+              'on-secondary': '#ffffff',
+              'on-primary-container': '#00422b',
+              background: '#f4fbf4',
+              'tertiary-fixed-dim': '#ffb3af',
+              'inverse-on-surface': '#ebf3eb',
+              'on-secondary-fixed': '#0f0069',
+              error: '#ba1a1a',
+              'secondary-fixed': '#e2dfff',
+              'primary-container': '#10b981',
+              'secondary-fixed-dim': '#c3c0ff',
+              'on-secondary-container': '#fffbff',
+              'inverse-primary': '#4edea3',
+            },
+            borderRadius: {
+              DEFAULT: '1rem',
+              lg: '2rem',
+              xl: '3rem',
+              full: '9999px',
+            },
+            spacing: {
+              base: '4px',
+              gutter: '20px',
+              'container-max': '1200px',
+              md: '16px',
+              lg: '24px',
+              '2xl': '64px',
+              sm: '8px',
+              xl: '40px',
+              xs: '4px',
+            },
+            fontFamily: {
+              'headline-lg': ['Hanken Grotesk'],
+              'headline-md': ['Hanken Grotesk'],
+              'body-md': ['Plus Jakarta Sans'],
+              'stat-lg': ['Hanken Grotesk'],
+              'body-lg': ['Plus Jakarta Sans'],
+              'label-caps': ['Plus Jakarta Sans'],
+              'display-lg': ['Hanken Grotesk'],
+            },
+            fontSize: {
+              'headline-lg': [
+                '32px',
+                {
+                  lineHeight: '1.2',
+                  letterSpacing: '-0.01em',
+                  fontWeight: '600',
+                },
+              ],
+              'headline-md': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
+              'body-md': ['16px', { lineHeight: '1.5', fontWeight: '400' }],
+              'stat-lg': [
+                '28px',
+                {
+                  lineHeight: '1',
+                  letterSpacing: '-0.01em',
+                  fontWeight: '500',
+                },
+              ],
+              'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
+              'label-caps': [
+                '12px',
+                { lineHeight: '1', letterSpacing: '0.05em', fontWeight: '700' },
+              ],
+              'display-lg': [
+                '48px',
+                {
+                  lineHeight: '1.1',
+                  letterSpacing: '-0.02em',
+                  fontWeight: '700',
+                },
+              ],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* Custom styles for the ghost input focus effect as requested in style guidance */
+      .ghost-input:focus {
+        box-shadow:
+          0 0 0 2px theme('colors.secondary'),
+          0 4px 20px rgba(75, 65, 225, 0.15);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-surface font-body-md text-on-surface antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container"
+  >
+    <!-- Split Screen Layout -->
+    <div class="flex w-full min-h-screen">
+      <!-- Left Side: Branding / Visual (Hidden on mobile) -->
+      <div
+        class="hidden md:flex w-1/2 relative bg-surface-variant overflow-hidden flex-col justify-between p-2xl"
+      >
+        <!-- Background Image with data-alt -->
+        <div
+          class="absolute inset-0 z-0 bg-cover bg-center"
+          data-alt="A serene, abstract architectural interior with soft, diffused daylight streaming through large windows onto smooth, minimalist surfaces. The space features subtle geometric shapes and organic curves, creating a bright, modern light-mode aesthetic. The color palette relies on pristine whites, soft slate grays, and hints of deep emerald green to evoke a sense of calm, effortless financial control and premium fintech sophistication."
+          style="
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuATjNKwSMVFGIAysgiftjByD9aIy2F2a14B6RTK79l0cLnseeJvakAin8J9ExE4ytloZYnfdw9FUmfv6ZwkL3Jc7XrmXeF8kBACZNZIGLzV5uAOktqy797rsFZdXIV8Gf7an949VRhhkVv5KQUG8mtj84LOwPOrRb4D8KdDMun-CbQSywxBgJB78E3bGyBP6g8qMjA7N6RXX_Gb2NAUerfe-_3_drxiQ6_M_sal-sPEexdz5qmRaGDJ');
+          "
+        ></div>
+        <!-- Overlay to ensure text readability if image is too bright/busy -->
+        <div
+          class="absolute inset-0 z-10 bg-gradient-to-b from-surface/80 via-surface/40 to-surface/90"
+        ></div>
+        <div class="relative z-20 flex items-center gap-sm">
+          <span class="material-symbols-outlined text-primary text-[32px]"
+            >account_balance_wallet</span
+          >
+          <span class="font-headline-md text-headline-md font-bold text-primary"
+            >WealthFlow</span
+          >
+        </div>
+        <div class="relative z-20 max-w-md">
+          <h1 class="font-display-lg text-display-lg text-on-surface mb-md">
+            Effortless control over your wealth.
+          </h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant">
+            Join professionals who value precision and aesthetic restraint in
+            managing their personal finances.
+          </p>
+        </div>
+      </div>
+      <!-- Right Side: Registration Form -->
+      <div
+        class="w-full md:w-1/2 flex items-center justify-center p-gutter md:p-2xl bg-surface-container-lowest relative z-10 shadow-[-20px_0_40px_rgba(0,0,0,0.02)]"
+      >
+        <div class="w-full max-w-[440px]">
+          <!-- Mobile Logo (Visible only on mobile) -->
+          <div class="flex md:hidden items-center gap-sm mb-xl justify-center">
+            <span class="material-symbols-outlined text-primary text-[28px]"
+              >account_balance_wallet</span
+            >
+            <span
+              class="font-headline-md text-headline-md font-bold text-primary"
+              >WealthFlow</span
+            >
+          </div>
+          <!-- Header -->
+          <div class="mb-xl text-center md:text-left">
+            <h2 class="font-headline-lg text-headline-lg text-on-surface mb-sm">
+              Create an account
+            </h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              Start managing your wealth with clarity.
+            </p>
+          </div>
+          <!-- Form -->
+          <form action="#" class="space-y-lg" method="POST">
+            <div class="space-y-sm">
+              <label
+                class="font-label-caps text-label-caps text-on-surface uppercase tracking-wider ml-sm"
+                for="fullName"
+                >Full Name</label
+              >
+              <div class="relative">
+                <span
+                  class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant"
+                  >person</span
+                >
+                <input
+                  class="ghost-input w-full h-[60px] pl-[52px] pr-md bg-surface-variant border-transparent text-on-surface rounded-DEFAULT focus:outline-none focus:border-transparent transition-all font-body-md text-body-md placeholder:text-on-surface-variant/50"
+                  id="fullName"
+                  name="fullName"
+                  placeholder="Jane Doe"
+                  required=""
+                  type="text"
+                />
+              </div>
+            </div>
+            <div class="space-y-sm">
+              <label
+                class="font-label-caps text-label-caps text-on-surface uppercase tracking-wider ml-sm"
+                for="email"
+                >Email Address</label
+              >
+              <div class="relative">
+                <span
+                  class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant"
+                  >mail</span
+                >
+                <input
+                  class="ghost-input w-full h-[60px] pl-[52px] pr-md bg-surface-variant border-transparent text-on-surface rounded-DEFAULT focus:outline-none focus:border-transparent transition-all font-body-md text-body-md placeholder:text-on-surface-variant/50"
+                  id="email"
+                  name="email"
+                  placeholder="name@company.com"
+                  required=""
+                  type="email"
+                />
+              </div>
+            </div>
+            <div class="space-y-sm">
+              <label
+                class="font-label-caps text-label-caps text-on-surface uppercase tracking-wider ml-sm"
+                for="password"
+                >Password</label
+              >
+              <div class="relative">
+                <span
+                  class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant"
+                  >lock</span
+                >
+                <input
+                  class="ghost-input w-full h-[60px] pl-[52px] pr-md bg-surface-variant border-transparent text-on-surface rounded-DEFAULT focus:outline-none focus:border-transparent transition-all font-body-md text-body-md placeholder:text-on-surface-variant/50"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required=""
+                  type="password"
+                />
+              </div>
+              <p
+                class="font-label-caps text-[10px] text-on-surface-variant ml-sm mt-xs"
+              >
+                Must be at least 8 characters.
+              </p>
+            </div>
+            <div class="space-y-sm">
+              <label
+                class="font-label-caps text-label-caps text-on-surface uppercase tracking-wider ml-sm"
+                for="confirmPassword"
+                >Confirm Password</label
+              >
+              <div class="relative">
+                <span
+                  class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant"
+                  >lock_reset</span
+                >
+                <input
+                  class="ghost-input w-full h-[60px] pl-[52px] pr-md bg-surface-variant border-transparent text-on-surface rounded-DEFAULT focus:outline-none focus:border-transparent transition-all font-body-md text-body-md placeholder:text-on-surface-variant/50"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="••••••••"
+                  required=""
+                  type="password"
+                />
+              </div>
+            </div>
+            <div class="pt-sm">
+              <button
+                class="w-full h-[56px] md:h-[48px] bg-primary text-on-primary font-body-md text-body-md font-bold rounded-DEFAULT hover:bg-primary-fixed-dim transition-colors flex items-center justify-center gap-sm active:scale-[0.98]"
+                type="submit"
+              >
+                Create Account
+                <span class="material-symbols-outlined text-[20px]"
+                  >arrow_forward</span
+                >
+              </button>
+            </div>
+          </form>
+          <!-- Footer Links -->
+          <div class="mt-xl text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              Already have an account?
+              <a
+                class="text-secondary font-bold hover:text-on-secondary-fixed-variant transition-colors ml-xs"
+                href="#"
+                >Log in</a
+              >
+            </p>
+          </div>
+          <div class="mt-lg text-center">
+            <p
+              class="font-label-caps text-label-caps text-on-surface-variant/60"
+            >
+              By creating an account, you agree to our
+              <a class="underline hover:text-on-surface" href="#"
+                >Terms of Service</a
+              >
+              &amp;
+              <a class="underline hover:text-on-surface" href="#"
+                >Privacy Policy</a
+              >.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>WealthFlow - Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'surface-bright': '#f4fbf4',
+              'on-primary-fixed': '#002113',
+              'surface-container-low': '#eef6ee',
+              'surface-variant': '#dde4dd',
+              'on-surface': '#161d19',
+              outline: '#6c7a71',
+              secondary: '#4b41e1',
+              'on-error': '#ffffff',
+              'on-error-container': '#93000a',
+              'on-primary': '#ffffff',
+              primary: '#006c49',
+              'surface-dim': '#d4dcd5',
+              'surface-tint': '#006c49',
+              'on-surface-variant': '#3c4a42',
+              surface: '#f4fbf4',
+              'on-tertiary-fixed-variant': '#842225',
+              'inverse-surface': '#2b322d',
+              'on-tertiary-container': '#711419',
+              'surface-container-lowest': '#ffffff',
+              'secondary-container': '#645efb',
+              'error-container': '#ffdad6',
+              'on-secondary-fixed-variant': '#3323cc',
+              'tertiary-fixed': '#ffdad7',
+              'on-tertiary-fixed': '#410005',
+              'on-background': '#161d19',
+              'surface-container': '#e8f0e9',
+              'primary-fixed-dim': '#4edea3',
+              'on-primary-fixed-variant': '#005236',
+              'surface-container-highest': '#dde4dd',
+              'primary-fixed': '#6ffbbe',
+              tertiary: '#a43a3a',
+              'outline-variant': '#bbcabf',
+              'surface-container-high': '#e3eae3',
+              'on-tertiary': '#ffffff',
+              'tertiary-container': '#fc7c78',
+              'on-secondary': '#ffffff',
+              'on-primary-container': '#00422b',
+              background: '#f4fbf4',
+              'tertiary-fixed-dim': '#ffb3af',
+              'inverse-on-surface': '#ebf3eb',
+              'on-secondary-fixed': '#0f0069',
+              error: '#ba1a1a',
+              'secondary-fixed': '#e2dfff',
+              'primary-container': '#10b981',
+              'secondary-fixed-dim': '#c3c0ff',
+              'on-secondary-container': '#fffbff',
+              'inverse-primary': '#4edea3',
+            },
+            borderRadius: {
+              DEFAULT: '1rem',
+              lg: '2rem',
+              xl: '3rem',
+              full: '9999px',
+            },
+            spacing: {
+              base: '4px',
+              gutter: '20px',
+              'container-max': '1200px',
+              md: '16px',
+              lg: '24px',
+              '2xl': '64px',
+              sm: '8px',
+              xl: '40px',
+              xs: '4px',
+            },
+            fontFamily: {
+              'headline-lg': ['Hanken Grotesk'],
+              'headline-md': ['Hanken Grotesk'],
+              'body-md': ['Plus Jakarta Sans'],
+              'stat-lg': ['Hanken Grotesk'],
+              'body-lg': ['Plus Jakarta Sans'],
+              'label-caps': ['Plus Jakarta Sans'],
+              'display-lg': ['Hanken Grotesk'],
+            },
+            fontSize: {
+              'headline-lg': [
+                '32px',
+                {
+                  lineHeight: '1.2',
+                  letterSpacing: '-0.01em',
+                  fontWeight: '600',
+                },
+              ],
+              'headline-md': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
+              'body-md': ['16px', { lineHeight: '1.5', fontWeight: '400' }],
+              'stat-lg': [
+                '28px',
+                {
+                  lineHeight: '1',
+                  letterSpacing: '-0.01em',
+                  fontWeight: '500',
+                },
+              ],
+              'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
+              'label-caps': [
+                '12px',
+                { lineHeight: '1', letterSpacing: '0.05em', fontWeight: '700' },
+              ],
+              'display-lg': [
+                '48px',
+                {
+                  lineHeight: '1.1',
+                  letterSpacing: '-0.02em',
+                  fontWeight: '700',
+                },
+              ],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24;
+      }
+      .input-ghost {
+        background-color: #f1f5f9; /* Slate-100 equivalent */
+        border: 1px solid transparent;
+        transition: all 0.2s ease-in-out;
+      }
+      .input-ghost:focus {
+        background-color: #ffffff;
+        border-color: #4b41e1; /* secondary color */
+        box-shadow: 0 0 0 4px rgba(75, 65, 225, 0.1);
+        outline: none;
+      }
+    </style>
+  </head>
+  <body class="bg-background min-h-screen flex text-on-surface antialiased">
+    <!-- Split Screen Layout -->
+    <div class="flex w-full min-h-screen">
+      <!-- Left Side: Branding / Image (Hidden on Mobile) -->
+      <div
+        class="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-2xl overflow-hidden bg-surface-container-low"
+      >
+        <div
+          class="absolute inset-0 z-0"
+          data-alt="A sophisticated, high-end abstract architectural interior shot featuring soft, diffused natural lighting. The scene uses premium minimalism with a light mode aesthetic, incorporating smooth curves, subtle shadows, and a calm, confident atmosphere fitting for a boutique fintech brand. Deep blacks, pristine whites, and a touch of lush emerald green create a sense of effortless control and calm."
+          style="
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDyLLkwWswKAMxW4wEzMjoXENiPsROGeokY01Miuc6OBGSxPPb4MUt0rDJUvnjTO3ppsiJ41TFErUcJCejbOBJtGRPymRAZzhTyN284omQtdLSZzX2_bFxZUdn8UQ0-Btg4qnOPrqTHmAPXpuFjgHxlmaC0edyAfqhRfzA9WKMRBSKTrXL294Zn8o6ST675NeOitjuE9gdUoLqKC2EkV30O2aIqqtjdu2s1W8SnRB2CBYb9g5JsJh9G');
+          "
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-b from-surface-container-low/80 to-surface-container-low/30 backdrop-blur-sm"
+          ></div>
+        </div>
+        <div class="relative z-10">
+          <div class="flex items-center gap-sm">
+            <span
+              class="material-symbols-outlined text-primary text-[32px]"
+              style="font-variation-settings: 'FILL' 1"
+              >account_balance_wallet</span
+            >
+            <span class="font-headline-lg text-headline-lg text-primary"
+              >WealthFlow</span
+            >
+          </div>
+        </div>
+        <div class="relative z-10 max-w-md">
+          <h1 class="font-display-lg text-display-lg text-on-surface mb-lg">
+            Master your money with ease.
+          </h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant">
+            Experience premium wealth management tailored for clarity, calm, and
+            confidence.
+          </p>
+        </div>
+      </div>
+      <!-- Right Side: Login Form -->
+      <div
+        class="w-full lg:w-1/2 flex items-center justify-center p-gutter md:p-2xl bg-surface-container-lowest"
+      >
+        <div class="w-full max-w-[440px] flex flex-col">
+          <!-- Mobile Brand Header (Visible only on mobile/tablet) -->
+          <div class="lg:hidden flex items-center justify-center gap-sm mb-2xl">
+            <span
+              class="material-symbols-outlined text-primary text-[32px]"
+              style="font-variation-settings: 'FILL' 1"
+              >account_balance_wallet</span
+            >
+            <span class="font-headline-lg text-headline-lg text-primary"
+              >WealthFlow</span
+            >
+          </div>
+          <div class="mb-xl text-center lg:text-left">
+            <h2 class="font-headline-lg text-headline-lg text-on-surface mb-sm">
+              Welcome back
+            </h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              Please enter your details to access your account.
+            </p>
+          </div>
+          <form action="#" class="flex flex-col gap-lg" method="POST">
+            <!-- Email Input -->
+            <div class="flex flex-col gap-sm">
+              <label
+                class="font-label-caps text-label-caps text-on-surface-variant"
+                for="email"
+                >Email Address</label
+              >
+              <input
+                class="input-ghost rounded-lg h-[60px] px-md font-body-md text-body-md text-on-surface w-full"
+                id="email"
+                name="email"
+                placeholder="name@company.com"
+                required=""
+                type="email"
+              />
+            </div>
+            <!-- Password Input -->
+            <div class="flex flex-col gap-sm">
+              <label
+                class="font-label-caps text-label-caps text-on-surface-variant"
+                for="password"
+                >Password</label
+              >
+              <div class="relative">
+                <input
+                  class="input-ghost rounded-lg h-[60px] px-md w-full font-body-md text-body-md text-on-surface pr-[50px]"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required=""
+                  type="password"
+                />
+                <button
+                  class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors"
+                  type="button"
+                >
+                  <span class="material-symbols-outlined">visibility_off</span>
+                </button>
+              </div>
+            </div>
+            <!-- Remember & Forgot -->
+            <div class="flex items-center justify-between mt-sm">
+              <label class="flex items-center gap-sm cursor-pointer group">
+                <div class="relative flex items-center">
+                  <input
+                    class="peer h-5 w-5 cursor-pointer appearance-none rounded-[6px] border border-outline-variant bg-surface transition-all checked:border-primary checked:bg-primary hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    type="checkbox"
+                  />
+                  <span
+                    class="material-symbols-outlined absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-on-primary text-[16px] opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                    style="font-variation-settings: 'FILL' 1"
+                    >check</span
+                  >
+                </div>
+                <span
+                  class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors"
+                  >Remember me</span
+                >
+              </label>
+              <a
+                class="font-body-md text-body-md text-secondary hover:text-secondary-container transition-colors font-semibold"
+                href="#"
+                >Forgot password?</a
+              >
+            </div>
+            <!-- Login Action -->
+            <button
+              class="w-full h-[56px] md:h-[48px] bg-primary text-on-primary rounded-lg font-body-md text-body-md font-semibold mt-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex items-center justify-center gap-sm"
+              type="submit"
+            >
+              Sign In
+              <span class="material-symbols-outlined text-[20px]"
+                >arrow_forward</span
+              >
+            </button>
+          </form>
+          <!-- Divider -->
+          <div class="relative flex items-center py-xl">
+            <div class="flex-grow border-t border-outline-variant"></div>
+            <span
+              class="flex-shrink-0 mx-md font-label-caps text-label-caps text-on-surface-variant"
+              >OR CONTINUE WITH</span
+            >
+            <div class="flex-grow border-t border-outline-variant"></div>
+          </div>
+          <!-- Social Logins -->
+          <div class="flex flex-col gap-md">
+            <button
+              class="w-full h-[56px] md:h-[48px] bg-transparent border border-outline-variant text-on-surface rounded-lg font-body-md text-body-md font-medium hover:bg-surface-container-low transition-colors flex items-center justify-center gap-md"
+              type="button"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                viewbox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                ></path>
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                ></path>
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  fill="#FBBC05"
+                ></path>
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  fill="#EA4335"
+                ></path>
+              </svg>
+              Google
+            </button>
+            <button
+              class="w-full h-[56px] md:h-[48px] bg-transparent border border-outline-variant text-on-surface rounded-lg font-body-md text-body-md font-medium hover:bg-surface-container-low transition-colors flex items-center justify-center gap-md"
+              type="button"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="currentColor"
+                viewbox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M16.6 9.49991C16.5 6.79991 18.9 5.39991 19 5.29991C17.7 3.39991 15.6 3.09991 14.9 3.09991C13.2 2.89991 11.5 4.09991 10.6 4.09991C9.7 4.09991 8.3 3.09991 6.9 3.09991C5.1 3.09991 3.5 4.19991 2.6 5.79991C0.7 8.99991 2.1 13.6999 3.9 16.3999C4.8 17.6999 5.8 19.1999 7.2 19.0999C8.5 18.9999 9.1 18.1999 10.7 18.1999C12.3 18.1999 12.7 19.0999 14.1 19.0999C15.6 19.0999 16.4 17.7999 17.3 16.4999C18.4 14.8999 18.9 13.3999 18.9 13.2999C18.8 13.1999 16.7 12.3999 16.6 9.49991Z"
+                ></path>
+                <path
+                  d="M14.2 1.8999C15 0.999902 15.5 0.0999023 15.3 -0.699951C14.6 -0.599951 13.3 -0.0999512 12.5 0.799902C11.8 1.4999 11.2 2.4999 11.4 3.4999C12.3 3.5999 13.4 2.9999 14.2 1.8999Z"
+                ></path>
+              </svg>
+              Apple
+            </button>
+          </div>
+          <!-- Sign Up Link -->
+          <div class="mt-xl text-center">
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              Don't have an account?
+              <a
+                class="text-primary hover:text-primary-container font-semibold transition-colors"
+                href="#"
+                >Sign up</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
