@@ -7,6 +7,9 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import configuration from './config/configuration';
 import { AuthModule } from './auth/auth.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { CategoriesModule } from './categories/categories.module';
+import { TransactionsModule } from './transactions/transactions.module';
+import { ReportsModule } from './reports/reports.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -46,6 +49,9 @@ import { AppService } from './app.service';
     }),
     AuthModule,
     ProfilesModule,
+    CategoriesModule,
+    TransactionsModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [

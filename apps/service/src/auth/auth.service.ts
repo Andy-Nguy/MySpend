@@ -11,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 
 import { ProfileEntity } from '../entities/profile/profile.entity';
 import { ProfilesRepository } from '../profiles/repository/profiles.repository';
+import { CategoriesService } from '../categories/categories.service';
 
 interface IRefreshPayload {
   sub: string;
@@ -24,7 +25,8 @@ export class AuthService {
   constructor(
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
-    private readonly profilesRepository: ProfilesRepository
+    private readonly profilesRepository: ProfilesRepository,
+    private readonly categoriesService: CategoriesService
   ) { }
 
   private createAuthClient() {
@@ -101,6 +103,10 @@ export class AuthService {
 
     const profile = await this.profilesRepository.upsertFromSupabaseUser(user);
     this.logger.log(`✅ [Auth] User registered successfully: ${profile.email} (${profile.id})`);
+
+    // Seed default categories for new user (BR-006)
+    await this.categoriesService.seedDefaultCategories(profile.id);
+
     return this.createSession(profile);
   }
 
