@@ -19,10 +19,10 @@
     "skipDefaultLibCheck": true,
     "strict": false,
     "paths": {
-      "@hr-systems/libs": [
+      "@myspend/libs": [
         "libs/src/index.ts"
       ],
-      "@hr-systems/libs/*": [
+      "@myspend/libs/*": [
         "libs/src/lib/*"
       ]
     },

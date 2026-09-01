@@ -1,4 +1,4 @@
-import { IProfile } from '@hr-systems/libs';
+import { IProfile } from '@myspend/libs';
 import {
   Column,
   CreateDateColumn,

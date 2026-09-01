@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 
-import { IProfile } from '@hr-systems/libs';
+import { IProfile } from '@myspend/libs';
 import { AUTH_UNAUTHORIZED_EVENT, apiClient } from '../services/api.service';
 import { tokenStore } from '../services/tokenStore';
 

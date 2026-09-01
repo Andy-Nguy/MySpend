@@ -47,7 +47,7 @@
 │           └── consts/         # Shared constants
 ├── database/
 │   └── migration/              # Raw SQL migration scripts (lịch sử)
-├── tsconfig.base.json          # Path alias @hr-systems/libs → libs/src/index.ts
+├── tsconfig.base.json          # Path alias @myspend/libs → libs/src/index.ts
 ├── nx.json                     # Nx workspace config
 ├── package.json                # Root package.json (single node_modules)
 └── docker-compose.yml
@@ -55,20 +55,20 @@
 
 ---
 
-## 3. Shared Library (`@hr-systems/libs`)
+## 3. Shared Library (`@myspend/libs`)
 
 ### 3.1 Path Alias (tsconfig.base.json)
 
 ```json
 {
   "paths": {
-    "@hr-systems/libs": ["libs/src/index.ts"],
-    "@hr-systems/libs/*": ["libs/src/lib/*"]
+    "@myspend/libs": ["libs/src/index.ts"],
+    "@myspend/libs/*": ["libs/src/lib/*"]
   }
 }
 ```
 
-Cả BE và FE đều import từ `@hr-systems/libs` — **không bao giờ import cross-app**.
+Cả BE và FE đều import từ `@myspend/libs` — **không bao giờ import cross-app**.
 
 ### 3.2 Cấu trúc `libs/src/lib/`
 
@@ -739,7 +739,7 @@ Khi setup project mới, `main.ts` phải có:
 ### Backend
 
 - [ ] Tạo Entity trong `apps/service/src/entities/<feature>/`
-- [ ] Entity `implements` shared interface từ `@hr-systems/libs`
+- [ ] Entity `implements` shared interface từ `@myspend/libs`
 - [ ] Tạo migration: `npm run migration:generate`
 - [ ] Đăng ký Entity trong `app.module.ts` (entities array)
 - [ ] Tạo Module, Controller, Service, Repository trong `apps/service/src/<feature>/`

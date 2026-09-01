@@ -1,8 +1,8 @@
-# AGENTS.md — HR Systems Rules & Conventions
+# AGENTS.md — MySpend Rules & Conventions
 
 ## 1. Stack & Shared Library Architecture
 - **Tech Stack**: Monorepo (Nx 21) | NestJS 11 (`apps/service`) | React 19 + Vite 7 (`apps/client`) | PostgreSQL + TypeORM 0.3.x
-- **Shared Lib**: `@hr-systems/libs` (`libs/src/lib/{enums,types,utils,consts}`). **MUST** re-export all files in `libs/src/lib/libs.ts`.
+- **Shared Lib**: `@myspend/libs` (`libs/src/lib/{enums,types,utils,consts}`). **MUST** re-export all files in `libs/src/lib/libs.ts`.
 - **UI Library**: **Ant Design (antd) v5 ONLY**. Do not import other UI libraries. Use `styled-components` v5 only for dynamic layout styling.
 
 ## 2. Naming Conventions & Enum Rules
@@ -13,7 +13,7 @@
 
 ## 3. Backend Conventions (NestJS)
 - **Module Structure**: `apps/service/src/<feature>/` containing `<feature>.{module,controller,service}.ts`, `repository/`, and `dto/`.
-- **Entities**: Located in `apps/service/src/entities/<feature>/`. Class MUST `implements` shared interface from `@hr-systems/libs`. PK: `@PrimaryGeneratedColumn('identity')` (int) or `@PrimaryColumn({ type: 'uuid' })`. Column names mapped explicitly (`@Column({ name: 'snake_case' })`). Register in `app.module.ts`.
+- **Entities**: Located in `apps/service/src/entities/<feature>/`. Class MUST `implements` shared interface from `@myspend/libs`. PK: `@PrimaryGeneratedColumn('identity')` (int) or `@PrimaryColumn({ type: 'uuid' })`. Column names mapped explicitly (`@Column({ name: 'snake_case' })`). Register in `app.module.ts`.
 - **Repository Pattern**: `@Injectable()` custom repository classes injecting TypeORM repository (`@InjectRepository(Entity)`). Do NOT extend `Repository<T>`.
 - **Controllers & Auth**: `@UseGuards(JwtAuthGuard, PermissionsGuard)`. Apply `@CheckPermissions([PermissionNameEnum.XXX])` on endpoints.
 - **Services**: Use NestJS `Logger` (no `console.log`). Throw standard NestJS HTTP exceptions. Emit events via `EventEmitterModule` for side effects.
