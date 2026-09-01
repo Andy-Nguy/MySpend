@@ -53,7 +53,7 @@ export const WelcomeBanner: React.FC<WelcomeBannerProps> = ({
 
         {/* Welcome Greeting */}
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2 text-white">
-          Welcome to MySpend, <span className="capitalize">{username}</span>! 👋
+          Welcome to MySpend, <span className="capitalize">{user?.displayName || user?.email?.split('@')[0]}</span>! 👋
         </h2>
         <p className="text-sm sm:text-base text-emerald-100/80 max-w-2xl leading-relaxed mb-6">
           Your personal financial journey begins here. Complete these 3 quick steps to organize your budget and start tracking daily expenses effortlessly.

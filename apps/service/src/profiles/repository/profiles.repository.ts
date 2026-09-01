@@ -46,4 +46,10 @@ export class ProfilesRepository {
   findByEmail(email: string) {
     return this.repository.findOne({ where: { email: email.toLowerCase() } });
   }
+
+  async updateProfile(id: string, updates: Partial<ProfileEntity>) {
+    await this.repository.update({ id }, updates);
+    return this.findById(id);
+  }
 }
+

@@ -38,6 +38,12 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Environment variables
+.env
+.env.*
+!.env.example
+*.env
+
 .nx/cache
 .nx/workspace-data
 .nx/migrate-runs

@@ -6,6 +6,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 
 import configuration from './config/configuration';
 import { AuthModule } from './auth/auth.module';
+import { ProfilesModule } from './profiles/profiles.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -44,6 +45,7 @@ import { AppService } from './app.service';
       inject: [ConfigService],
     }),
     AuthModule,
+    ProfilesModule,
   ],
   controllers: [AppController],
   providers: [

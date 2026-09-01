@@ -7,14 +7,21 @@ import React, {
   useState,
 } from 'react';
 
-import { apiClient } from '../services/api.service';
+import { IProfile } from '@hr-systems/libs';
+import { AUTH_UNAUTHORIZED_EVENT, apiClient } from '../services/api.service';
 import { tokenStore } from '../services/tokenStore';
 
-export interface IAuthUser {
+export interface IAuthUser extends IProfile {
   id: string;
   email: string;
-  createdAt: string;
-  updatedAt: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  displayName?: string | null;
+  mobileNumber?: string | null;
+  dateOfBirth?: Date | string | null;
+  avatarUrl?: string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 
 interface IAuthContextValue {
@@ -24,6 +31,7 @@ interface IAuthContextValue {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateUserProfile: (updatedUser: Partial<IAuthUser>) => void;
 }
 
 interface IAuthResponse {
@@ -40,6 +48,22 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
   const applySession = useCallback((session: IAuthResponse) => {
     tokenStore.setAccessToken(session.accessToken);
     setUser(session.user);
+  }, []);
+
+  const updateUserProfile = useCallback((updatedUser: Partial<IAuthUser>) => {
+    setUser((prev) => (prev ? { ...prev, ...updatedUser } : null));
+  }, []);
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      tokenStore.clearAccessToken();
+      setUser(null);
+    };
+
+    window.addEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+    return () => {
+      window.removeEventListener(AUTH_UNAUTHORIZED_EVENT, handleUnauthorized);
+    };
   }, []);
 
   useEffect(() => {
@@ -113,9 +137,12 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
       login,
       register,
       logout,
+      updateUserProfile,
     }),
-    [loading, login, logout, register, user]
+    [loading, login, logout, register, updateUserProfile, user]
   );
+
+
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -25,7 +25,7 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
     private readonly profilesRepository: ProfilesRepository
-  ) {}
+  ) { }
 
   private createAuthClient() {
     const supabaseUrl = this.config.get<string>('supabase.url');

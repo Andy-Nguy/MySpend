@@ -8,6 +8,7 @@ import { AppRoutes } from './consts/routes';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
+import { Profile } from './pages/Profile';
 
 export const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ export const App: React.FC = () => {
           <Route path={AppRoutes.REGISTER} element={<Register />} />
           <Route element={<ProtectedRoute />}>
             <Route path={AppRoutes.HOME} element={<Dashboard />} />
+            <Route path={AppRoutes.PROFILE} element={<Profile />} />
           </Route>
           <Route path="*" element={<Navigate to={AppRoutes.HOME} replace />} />
         </Routes>
@@ -34,5 +36,6 @@ export const App: React.FC = () => {
     </ConfigProvider>
   );
 };
+
 
 export default App;

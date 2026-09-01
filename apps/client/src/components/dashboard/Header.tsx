@@ -1,6 +1,8 @@
 import React from 'react';
 import { Calendar, ChevronDown, LogOut, Plus, User, Wallet } from 'lucide-react';
-import { Button, Dropdown, MenuProps } from 'antd';
+import { Dropdown, MenuProps } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../../consts/routes';
 import { useAuth } from '../../context/AuthContext';
 
 interface HeaderProps {
@@ -9,6 +11,13 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const displayName =
+    user?.displayName ||
+    (user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : null) ||
+    user?.email?.split('@')[0] ||
+    'User';
 
   const userMenuItems: MenuProps['items'] = [
     {
@@ -22,6 +31,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
           </p>
         </div>
       ),
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'profile',
+      icon: <User className="w-4 h-4 text-emerald-600" />,
+      label: 'My Profile',
+      onClick: () => navigate(AppRoutes.PROFILE),
     },
     {
       type: 'divider',
@@ -83,16 +101,29 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
             </button>
 
             {/* User Profile Dropdown */}
-            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
+            <Dropdown
+              menu={{ items: userMenuItems }}
+              placement="bottomRight"
+              trigger={['click']}
+              getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
+            >
               <button
                 type="button"
                 className="flex items-center space-x-2 p-1.5 sm:px-3 sm:py-1.5 rounded-xl hover:bg-gray-100/80 border border-transparent hover:border-gray-200 transition-colors focus:outline-none"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center font-bold text-xs shadow-sm">
-                  {user?.email?.charAt(0).toUpperCase() || <User className="w-4 h-4" />}
-                </div>
+                {user?.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={displayName}
+                    className="w-8 h-8 rounded-lg object-cover border border-emerald-500/20 shadow-sm"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                    {displayName.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <span className="hidden lg:block text-sm font-medium text-gray-700 max-w-[120px] truncate">
-                  {user?.email?.split('@')[0]}
+                  {displayName}
                 </span>
                 <ChevronDown className="hidden sm:block w-3.5 h-3.5 text-gray-400" />
               </button>
@@ -103,3 +134,4 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
     </header>
   );
 };
+

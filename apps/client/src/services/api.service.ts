@@ -38,6 +38,8 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+export const AUTH_UNAUTHORIZED_EVENT = 'auth:unauthorized';
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -87,6 +89,7 @@ apiClient.interceptors.response.use(
     } catch (refreshError) {
       tokenStore.clearAccessToken();
       processQueue(refreshError);
+      window.dispatchEvent(new Event(AUTH_UNAUTHORIZED_EVENT));
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;
