@@ -14,13 +14,16 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   const location = useLocation();
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-4 py-2 shadow-lg">
-      <div className="flex items-center justify-around">
+    <div
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200/80 shadow-lg"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 8px)' }}
+    >
+      <div className="flex items-center justify-around px-2 py-2">
         {/* Home */}
         <button
           type="button"
           onClick={() => navigate(AppRoutes.HOME)}
-          className={`flex flex-col items-center gap-1 p-1 text-[10px] font-semibold transition-colors ${
+          className={`flex flex-col items-center gap-1 p-1.5 text-[10px] font-semibold transition-colors ${
             location.pathname === AppRoutes.HOME ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -32,7 +35,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         <button
           type="button"
           onClick={() => navigate(AppRoutes.CATEGORIES)}
-          className={`flex flex-col items-center gap-1 p-1 text-[10px] font-semibold transition-colors ${
+          className={`flex flex-col items-center gap-1 p-1.5 text-[10px] font-semibold transition-colors ${
             location.pathname === AppRoutes.CATEGORIES ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -41,7 +44,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         </button>
 
         {/* Center Quick Add FAB */}
-        <div className="-mt-6">
+        <div className="-mt-5">
           <button
             type="button"
             onClick={onOpenAddTransaction}
@@ -56,7 +59,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         <button
           type="button"
           onClick={() => navigate(AppRoutes.TRANSACTIONS)}
-          className={`flex flex-col items-center gap-1 p-1 text-[10px] font-semibold transition-colors ${
+          className={`flex flex-col items-center gap-1 p-1.5 text-[10px] font-semibold transition-colors ${
             location.pathname === AppRoutes.TRANSACTIONS ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
           }`}
         >
@@ -68,7 +71,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         <button
           type="button"
           onClick={() => navigate(AppRoutes.REPORTS)}
-          className={`flex flex-col items-center gap-1 p-1 text-[10px] font-semibold transition-colors ${
+          className={`flex flex-col items-center gap-1 p-1.5 text-[10px] font-semibold transition-colors ${
             location.pathname === AppRoutes.REPORTS ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
           }`}
         >

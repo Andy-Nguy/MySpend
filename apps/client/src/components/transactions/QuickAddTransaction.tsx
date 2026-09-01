@@ -80,13 +80,36 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
       open={open}
       destroyOnClose
       className="!rounded-t-3xl"
+      // Fix: force the drawer mask + wrapper to cover exactly the viewport width
+      // This prevents the horizontal shift that occurs when the iOS keyboard appears
+      rootStyle={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        maxWidth: '100vw',
+        overflow: 'hidden',
+      }}
+      styles={{
+        wrapper: {
+          left: 0,
+          right: 0,
+          maxWidth: '100vw',
+        },
+        body: {
+          overflowX: 'hidden',
+          paddingBottom: 'env(safe-area-inset-bottom, 16px)',
+        },
+      }}
     >
       <Form
         form={form}
         layout="vertical"
         onFinish={handleSubmit}
         requiredMark={false}
-        className="max-w-xl mx-auto pb-6 space-y-4"
+        className="max-w-xl mx-auto pb-4 space-y-4"
       >
         {/* Type Toggle */}
         <Form.Item name="type" className="!mb-2">
@@ -163,28 +186,27 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
           )}
         </Form.Item>
 
-        {/* Date & Note Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Form.Item
-            name="transactionDate"
-            label={<span className="font-semibold text-gray-700">Ngày giao dịch</span>}
-            rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
-          >
-            <DatePicker
-              className="w-full !rounded-xl"
-              size="large"
-              format="DD/MM/YYYY"
-              disabledDate={(current) => current && current > dayjs().endOf('day')}
-            />
-          </Form.Item>
+        {/* Date Field */}
+        <Form.Item
+          name="transactionDate"
+          label={<span className="font-semibold text-gray-700">Ngày giao dịch</span>}
+          rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
+        >
+          <DatePicker
+            className="w-full !rounded-xl"
+            size="large"
+            format="DD/MM/YYYY"
+            disabledDate={(current) => current && current > dayjs().endOf('day')}
+          />
+        </Form.Item>
 
-          <Form.Item
-            name="note"
-            label={<span className="font-semibold text-gray-700">Ghi chú</span>}
-          >
-            <Input placeholder="Ví dụ: Ăn trưa cùng đồng nghiệp..." size="large" className="!rounded-xl" maxLength={200} />
-          </Form.Item>
-        </div>
+        {/* Note Field */}
+        <Form.Item
+          name="note"
+          label={<span className="font-semibold text-gray-700">Ghi chú</span>}
+        >
+          <Input placeholder="Ví dụ: Ăn trưa cùng đồng nghiệp..." size="large" className="!rounded-xl" maxLength={200} />
+        </Form.Item>
 
         {/* Action Button */}
         <button
@@ -198,3 +220,4 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
     </Drawer>
   );
 };
+
