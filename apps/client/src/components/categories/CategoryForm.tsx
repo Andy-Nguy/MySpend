@@ -20,6 +20,7 @@ export const CategoryFormModal: React.FC<ICategoryFormProps> = ({
 }) => {
   const [form] = Form.useForm();
   const isEdit = Boolean(editingCategory);
+  const isTypeDisabled = isEdit && Boolean(editingCategory?.hasTransactions);
 
   useEffect(() => {
     if (visible) {
@@ -75,7 +76,12 @@ export const CategoryFormModal: React.FC<ICategoryFormProps> = ({
           label={<span className="font-semibold text-gray-700">Loại danh mục</span>}
           rules={[{ required: true }]}
         >
-          <Radio.Group disabled={isEdit} buttonStyle="solid" size="large" className="w-full grid grid-cols-2 gap-2">
+          <Radio.Group
+            disabled={isTypeDisabled}
+            buttonStyle="solid"
+            size="large"
+            className="w-full grid grid-cols-2 gap-2"
+          >
             <Radio.Button value={CategoryTypeEnum.EXPENSE} className="!text-center !rounded-xl">
               Chi tiêu (Expense)
             </Radio.Button>
@@ -84,9 +90,9 @@ export const CategoryFormModal: React.FC<ICategoryFormProps> = ({
             </Radio.Button>
           </Radio.Group>
         </Form.Item>
-        {isEdit && (
+        {isTypeDisabled && (
           <p className="text-xs text-amber-600 mb-4 -mt-2">
-            * Loại danh mục không thể sửa sau khi đã tạo (BR-013).
+            * Không thể đổi loại vì danh mục này đã phát sinh giao dịch.
           </p>
         )}
 

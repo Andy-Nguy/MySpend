@@ -25,11 +25,40 @@ export class CategoriesRepository {
     return this.repository.save(entity);
   }
 
-  findAllActive(userId: string): Promise<CategoryEntity[]> {
-    return this.repository.find({
-      where: { userId },
-      withDeleted: false,
-      order: { type: 'ASC', name: 'ASC' },
+  async findAllActive(userId: string): Promise<any[]> {
+    const rows = await this.repository
+      .createQueryBuilder('c')
+      .leftJoin('transactions', 't', 't.category_id = c.id AND t.deleted_at IS NULL')
+      .select([
+        'c.id AS id',
+        'c.user_id AS "userId"',
+        'c.name AS name',
+        'c.type AS type',
+        'c.icon AS icon',
+        'c.created_at AS "createdAt"',
+        'c.updated_at AS "updatedAt"',
+        'COUNT(t.id) AS "transactionCount"',
+      ])
+      .where('c.user_id = :userId', { userId })
+      .andWhere('c.deleted_at IS NULL')
+      .groupBy('c.id')
+      .orderBy('c.type', 'ASC')
+      .addOrderBy('c.name', 'ASC')
+      .getRawMany();
+
+    return rows.map((r) => {
+      const count = parseInt(r.transactionCount, 10) || 0;
+      return {
+        id: r.id,
+        userId: r.userId,
+        name: r.name,
+        type: r.type,
+        icon: r.icon,
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
+        transactionCount: count,
+        hasTransactions: count > 0,
+      };
     });
   }
 
@@ -40,6 +69,7 @@ export class CategoriesRepository {
   async update(id: string, userId: string, dto: UpdateCategoryDto): Promise<CategoryEntity | null> {
     const updates: Partial<CategoryEntity> = { updatedBy: userId };
     if (dto.name !== undefined) updates.name = dto.name.trim();
+    if (dto.type !== undefined) updates.type = dto.type;
     if (dto.icon !== undefined) updates.icon = dto.icon;
 
     await this.repository.update({ id, userId }, updates);

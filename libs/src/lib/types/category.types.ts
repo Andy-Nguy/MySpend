@@ -7,4 +7,6 @@ export interface ICategory extends IBaseEntity {
   name: string;
   type: CategoryTypeEnum;
   icon: string;
+  transactionCount?: number;
+  hasTransactions?: boolean;
 }

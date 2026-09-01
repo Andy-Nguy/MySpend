@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Card, Popconfirm, Segmented, Tag } from 'antd';
+import { Button, Card, Popconfirm, Segmented, Tag, Tooltip } from 'antd';
 import { Plus, Trash2, Edit2, Layers } from 'lucide-react';
 import { CategoryTypeEnum, ICategory } from '@myspend/libs';
 import { Header } from '../components/dashboard/Header';
@@ -41,7 +41,7 @@ export const CategoriesPage: React.FC = () => {
     if (editingCategory) {
       await updateCategoryMutation.mutateAsync({
         id: editingCategory.id,
-        data: { name: values.name, icon: values.icon },
+        data: { name: values.name, type: values.type, icon: values.icon },
       });
     } else {
       await createCategoryMutation.mutateAsync({
@@ -69,7 +69,7 @@ export const CategoriesPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Quản Lý Danh Mục</h1>
-              <p className="text-xs text-gray-500">Tạo, cập nhật hoặc ẩn các danh mục thu chi cá nhân</p>
+              <p className="text-xs text-gray-500">Tạo, cập nhật hoặc quản lý các danh mục thu chi cá nhân</p>
             </div>
           </div>
 
@@ -122,7 +122,14 @@ export const CategoriesPage: React.FC = () => {
                       <CategoryIcon slug={cat.icon} className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-sm">{cat.name}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold text-gray-900 text-sm">{cat.name}</h4>
+                        {cat.transactionCount ? (
+                          <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full font-medium">
+                            {cat.transactionCount} giao dịch
+                          </span>
+                        ) : null}
+                      </div>
                       <Tag
                         color={cat.type === CategoryTypeEnum.INCOME ? 'green' : 'red'}
                         className="!rounded-md text-[10px] uppercase font-bold mt-0.5"
@@ -139,21 +146,35 @@ export const CategoriesPage: React.FC = () => {
                       onClick={() => handleOpenEdit(cat)}
                       className="!p-2 !rounded-lg"
                     />
-                    <Popconfirm
-                      title="Xóa (ẩn) danh mục này?"
-                      description="Các giao dịch cũ đã dùng danh mục này vẫn sẽ giữ nguyên lịch sử (BR-007)."
-                      onConfirm={() => handleDelete(cat.id)}
-                      okText="Xóa"
-                      cancelText="Hủy"
-                      okButtonProps={{ danger: true }}
-                    >
-                      <Button
-                        type="text"
-                        danger
-                        icon={<Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />}
-                        className="!p-2 !rounded-lg"
-                      />
-                    </Popconfirm>
+
+                    {cat.hasTransactions ? (
+                      <Tooltip title="Không thể xóa danh mục đã phát sinh giao dịch">
+                        <span>
+                          <Button
+                            type="text"
+                            disabled
+                            icon={<Trash2 className="w-4 h-4 text-gray-300" />}
+                            className="!p-2 !rounded-lg"
+                          />
+                        </span>
+                      </Tooltip>
+                    ) : (
+                      <Popconfirm
+                        title="Xóa danh mục này?"
+                        description="Danh mục chưa có giao dịch sẽ được xóa khỏi hệ thống."
+                        onConfirm={() => handleDelete(cat.id)}
+                        okText="Xóa"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
+                      >
+                        <Button
+                          type="text"
+                          danger
+                          icon={<Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />}
+                          className="!p-2 !rounded-lg"
+                        />
+                      </Popconfirm>
+                    )}
                   </div>
                 </div>
               ))}

@@ -1,11 +1,15 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CategoryTypeEnum } from '@myspend/libs';
 
+import { TransactionEntity } from '../entities/transaction/transaction.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoriesRepository } from './repository/categories.repository';
@@ -22,7 +26,11 @@ const DEFAULT_SEED_CATEGORIES: Array<{ name: string; type: CategoryTypeEnum; ico
 export class CategoriesService {
   private readonly logger = new Logger(CategoriesService.name);
 
-  constructor(private readonly categoriesRepository: CategoriesRepository) {}
+  constructor(
+    private readonly categoriesRepository: CategoriesRepository,
+    @InjectRepository(TransactionEntity)
+    private readonly transactionRepository: Repository<TransactionEntity>
+  ) {}
 
   async create(userId: string, dto: CreateCategoryDto) {
     try {
@@ -51,32 +59,47 @@ export class CategoriesService {
       throw new NotFoundException('Category not found');
     }
 
-    if (dto.name) {
-      // Check for duplicate name conflict after rename
-      try {
-        const updated = await this.categoriesRepository.update(id, userId, dto);
-        this.logger.log(`✅ [Categories] Updated category "${id}" for user: ${userId}`);
-        return updated;
-      } catch (err: unknown) {
-        const pgErr = err as { code?: string };
-        if (pgErr?.code === '23505') {
-          throw new ConflictException(
-            `A category named "${dto.name}" already exists for this type.`
-          );
-        }
-        throw err;
+    // Check if trying to change category type
+    if (dto.type && dto.type !== existing.type) {
+      const txCount = await this.transactionRepository.count({
+        where: { categoryId: id, userId },
+      });
+      if (txCount > 0) {
+        throw new BadRequestException(
+          'Không thể thay đổi loại danh mục đã phát sinh giao dịch.'
+        );
       }
     }
 
-    const updated = await this.categoriesRepository.update(id, userId, dto);
-    this.logger.log(`✅ [Categories] Updated category "${id}" for user: ${userId}`);
-    return updated;
+    try {
+      const updated = await this.categoriesRepository.update(id, userId, dto);
+      this.logger.log(`✅ [Categories] Updated category "${id}" for user: ${userId}`);
+      return updated;
+    } catch (err: unknown) {
+      const pgErr = err as { code?: string };
+      if (pgErr?.code === '23505') {
+        throw new ConflictException(
+          `A category named "${dto.name || existing.name}" already exists for this type.`
+        );
+      }
+      throw err;
+    }
   }
 
   async remove(userId: string, id: string) {
     const existing = await this.categoriesRepository.findOneActive(id, userId);
     if (!existing) {
       throw new NotFoundException('Category not found');
+    }
+
+    // Check if category is used in active transactions
+    const txCount = await this.transactionRepository.count({
+      where: { categoryId: id, userId },
+    });
+    if (txCount > 0) {
+      throw new BadRequestException(
+        'Không thể xóa danh mục đã được sử dụng trong các giao dịch.'
+      );
     }
 
     await this.categoriesRepository.softDelete(id, userId);

@@ -8,6 +8,7 @@ export function useCategories() {
   return useQuery({
     queryKey: CATEGORIES_QUERY_KEY,
     queryFn: () => categoryService.getAll(),
+    refetchOnMount: 'always',
   });
 }
 
@@ -53,8 +54,9 @@ export function useDeleteCategory() {
       queryClient.invalidateQueries({ queryKey: CATEGORIES_QUERY_KEY });
       message.success('Category deleted');
     },
-    onError: () => {
-      message.error('Failed to delete category');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { message?: string } } };
+      message.error(error?.response?.data?.message || 'Failed to delete category');
     },
   });
 }

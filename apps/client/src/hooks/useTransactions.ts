@@ -28,6 +28,7 @@ export function useCreateTransaction() {
       queryClient.invalidateQueries({ queryKey: TRANSACTIONS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: REPORTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: CATEGORIES_QUERY_KEY });
       message.success('Transaction added!');
     },
     onError: (err: unknown) => {
@@ -48,6 +49,7 @@ export function useUpdateTransaction() {
       queryClient.invalidateQueries({ queryKey: TRANSACTIONS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: REPORTS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: CATEGORIES_QUERY_KEY });
       message.success('Transaction updated!');
     },
     onError: (err: unknown) => {
@@ -67,12 +69,12 @@ export function useDeleteTransaction() {
       queryClient.invalidateQueries({ queryKey: TRANSACTIONS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: REPORTS_QUERY_KEY });
-      // Also refresh categories if the last transaction for a category is deleted
       queryClient.invalidateQueries({ queryKey: CATEGORIES_QUERY_KEY });
       message.success('Transaction deleted');
     },
-    onError: () => {
-      message.error('Failed to delete transaction');
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { message?: string } } };
+      message.error(error?.response?.data?.message || 'Failed to delete transaction');
     },
   });
 }
