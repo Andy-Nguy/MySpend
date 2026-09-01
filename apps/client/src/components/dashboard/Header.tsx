@@ -60,23 +60,23 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
   }).format(new Date());
 
   return (
-    <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200/80 transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+    <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200/80 transition-all w-full">
+      <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-20 gap-2 overflow-hidden">
           {/* Left Brand Identity */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-700 via-emerald-600 to-emerald-500 flex items-center justify-center shadow-md shadow-emerald-700/20 text-white">
-              <Wallet className="w-5 h-5" />
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-emerald-700 via-emerald-600 to-emerald-500 flex items-center justify-center shadow-md shadow-emerald-700/20 text-white flex-shrink-0">
+              <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span
                   onClick={() => navigate(AppRoutes.HOME)}
-                  className="text-xl sm:text-2xl font-black tracking-tight text-gray-900 cursor-pointer"
+                  className="text-lg sm:text-2xl font-black tracking-tight text-gray-900 cursor-pointer whitespace-nowrap"
                 >
                   MySpend
                 </span>
-                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0">
                   Personal
                 </span>
               </div>
@@ -128,21 +128,21 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
           </nav>
 
           {/* Right Action & Profile Area */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             {/* Current Month Badge (Desktop/Tablet) */}
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200/80 text-gray-700 text-xs font-medium">
               <Calendar className="w-3.5 h-3.5 text-emerald-600" />
               <span>{currentDate}</span>
             </div>
 
-            {/* Quick Add Action Button */}
+            {/* Quick Add Action Button – icon-only on very small screens */}
             <button
               type="button"
               onClick={onOpenAddTransaction}
-              className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs sm:text-sm font-semibold shadow-md shadow-emerald-700/25 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs sm:text-sm font-semibold shadow-md shadow-emerald-700/25 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 whitespace-nowrap"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>Add Transaction</span>
+              <span className="hidden xs:inline sm:inline">Add Transaction</span>
             </button>
 
             {/* User Profile Dropdown */}

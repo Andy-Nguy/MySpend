@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: '480px', // Extra small breakpoint for fine-grained mobile control
+      },
       colors: {
         emerald: {
           50: '#ecfdf5',

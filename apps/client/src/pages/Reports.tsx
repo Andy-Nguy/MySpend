@@ -36,10 +36,10 @@ export const ReportsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-gray-900 pb-20 md:pb-16">
+    <div className="min-h-screen bg-slate-50 text-gray-900 pb-24 md:pb-16 overflow-x-hidden">
       <Header onOpenAddTransaction={() => setIsQuickAddOpen(true)} />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
+      <main className="w-full max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8 space-y-6">
         {/* Title Bar */}
         <div className="flex items-center gap-3">
           <div className="p-3 bg-emerald-100 text-emerald-800 rounded-2xl">

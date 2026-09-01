@@ -20,34 +20,36 @@ export const TransactionListItem: React.FC<ITransactionListItemProps> = ({
   const isIncome = transaction.category?.type === CategoryTypeEnum.INCOME;
 
   return (
-    <div className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm transition-all">
-      <div className="flex items-center gap-3.5">
+    <div className="flex items-center justify-between gap-2 p-3.5 bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm transition-all">
+      {/* Left: icon + name/date — can shrink */}
+      <div className="flex items-center gap-3 min-w-0 overflow-hidden flex-1">
         <div
-          className={`p-2.5 rounded-xl ${
+          className={`p-2.5 rounded-xl flex-shrink-0 ${
             isIncome ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'
           }`}
         >
           <CategoryIcon slug={transaction.category?.icon || 'utensils'} className="w-5 h-5" />
         </div>
-        <div>
-          <h4 className="font-semibold text-gray-900 text-sm">
+        <div className="min-w-0 overflow-hidden">
+          <h4 className="font-semibold text-gray-900 text-sm truncate">
             {transaction.category?.name || 'Giao dịch'}
           </h4>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span>{dayjs(transaction.transactionDate).format('DD/MM/YYYY')}</span>
+          <div className="flex items-center gap-1 text-xs text-gray-500 min-w-0 overflow-hidden">
+            <span className="flex-shrink-0">{dayjs(transaction.transactionDate).format('DD/MM/YYYY')}</span>
             {transaction.note && (
               <>
-                <span>•</span>
-                <span className="truncate max-w-[150px] sm:max-w-[240px] italic">{transaction.note}</span>
+                <span className="flex-shrink-0">•</span>
+                <span className="truncate italic">{transaction.note}</span>
               </>
             )}
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      {/* Right: amount + delete — never shrink */}
+      <div className="flex items-center gap-2 flex-shrink-0 ml-2">
         <span
-          className={`font-bold text-sm sm:text-base ${
+          className={`font-bold text-sm whitespace-nowrap ${
             isIncome ? 'text-emerald-600' : 'text-gray-900'
           }`}
         >
@@ -66,7 +68,7 @@ export const TransactionListItem: React.FC<ITransactionListItemProps> = ({
               type="text"
               danger
               icon={<Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500 transition-colors" />}
-              className="!p-1.5 !h-auto !rounded-lg"
+              className="!p-1.5 !h-auto !rounded-lg flex-shrink-0"
             />
           </Popconfirm>
         )}

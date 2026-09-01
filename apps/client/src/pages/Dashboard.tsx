@@ -28,12 +28,12 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-gray-900 pb-20 md:pb-16">
+    <div className="min-h-screen bg-slate-50 text-gray-900 pb-24 md:pb-16 overflow-x-hidden">
       {/* Header */}
       <Header onOpenAddTransaction={() => setIsQuickAddOpen(true)} />
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 space-y-8">
+      <main className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8 space-y-6 sm:space-y-8">
         {/* Welcome & Month Picker Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm">
           <div>
@@ -43,9 +43,9 @@ export const Dashboard: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200">
-              <Calendar className="w-4 h-4 text-emerald-700" />
+          <div className="flex items-center justify-between gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200 min-w-0 flex-shrink">
+              <Calendar className="w-4 h-4 text-emerald-700 flex-shrink-0" />
               <DatePicker
                 picker="month"
                 value={selectedDate}
@@ -60,7 +60,7 @@ export const Dashboard: React.FC = () => {
               type="primary"
               icon={<Plus className="w-4 h-4" />}
               onClick={() => setIsQuickAddOpen(true)}
-              className="!bg-emerald-700 hover:!bg-emerald-800 !h-10 !px-4 !rounded-xl !font-semibold border-none shadow-md shadow-emerald-700/20"
+              className="!bg-emerald-700 hover:!bg-emerald-800 !h-10 !px-4 !rounded-xl !font-semibold border-none shadow-md shadow-emerald-700/20 flex-shrink-0 whitespace-nowrap"
             >
               Thêm Giao Dịch
             </Button>

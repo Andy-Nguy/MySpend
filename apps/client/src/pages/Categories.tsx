@@ -57,10 +57,10 @@ export const CategoriesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-gray-900 pb-20 md:pb-16">
+    <div className="min-h-screen bg-slate-50 text-gray-900 pb-24 md:pb-16 overflow-x-hidden">
       <Header onOpenAddTransaction={() => setIsQuickAddOpen(true)} />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
+      <main className="w-full max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8 space-y-6">
         {/* Top Title Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">

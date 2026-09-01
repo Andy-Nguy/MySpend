@@ -40,21 +40,21 @@ export const SummaryCards: React.FC<ISummaryCardsProps> = ({ income, expense, ba
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full overflow-hidden">
       {cards.map((card) => (
         <div
           key={card.label}
-          className={`rounded-2xl border ${card.borderClass} ${card.bgClass} p-5 flex items-center gap-4 shadow-sm`}
+          className={`rounded-2xl border ${card.borderClass} ${card.bgClass} p-4 sm:p-5 flex items-center gap-3 shadow-sm min-w-0 overflow-hidden`}
         >
-          <div className={`p-2.5 rounded-xl bg-white shadow-sm ${card.colorClass}`}>
+          <div className={`p-2.5 rounded-xl bg-white shadow-sm ${card.colorClass} flex-shrink-0`}>
             {card.icon}
           </div>
-          <div>
+          <div className="min-w-0 overflow-hidden">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{card.label}</p>
             {loading ? (
               <div className="h-6 w-24 bg-gray-200 rounded animate-pulse mt-1" />
             ) : (
-              <p className={`text-lg font-bold ${card.colorClass}`}>{formatVND(card.value)}</p>
+              <p className={`text-base sm:text-lg font-bold ${card.colorClass} truncate`}>{formatVND(card.value)}</p>
             )}
           </div>
         </div>
