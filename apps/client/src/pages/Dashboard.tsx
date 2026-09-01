@@ -1,207 +1,155 @@
-import React, { useEffect, useState } from 'react';
-import { Toast } from 'antd-mobile';
-import { DEFAULT_CATEGORIES } from '../utils/categories';
-import { ICategory, ITransaction, TransactionType } from '../types/transaction.types';
+import React, { useState } from 'react';
+import { Button, DatePicker } from 'antd';
+import { Calendar, Plus, Wallet, Layers, History, PieChart } from 'lucide-react';
+import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../consts/routes';
 import { Header } from '../components/dashboard/Header';
-import { WelcomeBanner } from '../components/dashboard/WelcomeBanner';
-import { MetricCards } from '../components/dashboard/MetricCards';
-import { QuickActions } from '../components/dashboard/QuickActions';
-import { RecentTransactions } from '../components/dashboard/RecentTransactions';
-import { CategoryBreakdown } from '../components/dashboard/CategoryBreakdown';
-import { BudgetProgressCard } from '../components/dashboard/BudgetProgressCard';
-import { FinancialInsights } from '../components/dashboard/FinancialInsights';
-import { AddTransactionModal } from '../components/dashboard/AddTransactionModal';
-import { SetBudgetModal } from '../components/dashboard/SetBudgetModal';
-import { CategoriesModal } from '../components/dashboard/CategoriesModal';
+import { SummaryCards } from '../components/dashboard/SummaryCards';
+import { RecentTransactionsList } from '../components/dashboard/RecentTransactionsList';
+import { QuickAddTransaction } from '../components/transactions/QuickAddTransaction';
 import { MobileBottomNav } from '../components/dashboard/MobileBottomNav';
-
-const STORAGE_KEY_TRANSACTIONS = 'myspend_transactions';
-const STORAGE_KEY_BUDGET = 'myspend_budget';
+import { useDashboard } from '../hooks/useDashboard';
+import { useDeleteTransaction } from '../hooks/useTransactions';
 
 export const Dashboard: React.FC = () => {
-  const [categories] = useState<ICategory[]>(DEFAULT_CATEGORIES);
-  const [transactions, setTransactions] = useState<ITransaction[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_TRANSACTIONS);
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(dayjs());
+  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
 
-  const [totalBudget, setTotalBudget] = useState<number>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_BUDGET);
-      return saved ? parseFloat(saved) : 2500;
-    } catch {
-      return 2500;
-    }
-  });
+  const year = selectedDate.year();
+  const month = selectedDate.month() + 1; // 1-indexed for backend API
 
-  // Modal visibility states
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [addModalType, setAddModalType] = useState<TransactionType>('expense');
-  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
-  const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
+  const { data: summary, isLoading } = useDashboard(year, month);
+  const deleteTxMutation = useDeleteTransaction();
 
-  // Mobile active tab state
-  const [mobileTab, setMobileTab] = useState<'home' | 'transactions' | 'analytics'>('home');
-
-  // Persist to local storage
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_TRANSACTIONS, JSON.stringify(transactions));
-    } catch {
-      // ignore
-    }
-  }, [transactions]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_BUDGET, totalBudget.toString());
-    } catch {
-      // ignore
-    }
-  }, [totalBudget]);
-
-  // Compute metrics
-  const totalIncome = transactions
-    .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalExpense = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  // Handlers
-  const handleOpenAdd = (type: TransactionType = 'expense') => {
-    setAddModalType(type);
-    setIsAddModalOpen(true);
-  };
-
-  const handleAddTransaction = (
-    data: Omit<ITransaction, 'id' | 'createdAt'>
-  ) => {
-    const newTx: ITransaction = {
-      ...data,
-      id: `tx_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-      createdAt: new Date().toISOString(),
-    };
-
-    setTransactions((prev) => [newTx, ...prev]);
-
-    Toast.show({
-      icon: 'success',
-      content: `${data.type === 'expense' ? 'Expense' : 'Income'} added!`,
-      duration: 1500,
-    });
-  };
-
-  const handleDeleteTransaction = (id: string) => {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
-    Toast.show({
-      icon: 'success',
-      content: 'Transaction deleted',
-      duration: 1200,
-    });
-  };
-
-  const handleSaveBudget = (newBudget: number) => {
-    setTotalBudget(newBudget);
-    Toast.show({
-      icon: 'success',
-      content: 'Monthly budget updated!',
-      duration: 1500,
-    });
+  const handleDeleteTx = async (id: string) => {
+    await deleteTxMutation.mutateAsync(id);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-gray-900 pb-20 md:pb-12">
-      {/* Top Header */}
-      <Header onOpenAddTransaction={() => handleOpenAdd('expense')} />
+    <div className="min-h-screen bg-slate-50 text-gray-900 pb-20 md:pb-16">
+      {/* Header */}
+      <Header onOpenAddTransaction={() => setIsQuickAddOpen(true)} />
 
-      {/* Main Content Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
-        {/* Onboarding Welcome Banner for user entering post-login */}
-        <WelcomeBanner
-          onOpenAddTransaction={() => handleOpenAdd('expense')}
-          onOpenSetBudget={() => setIsBudgetModalOpen(true)}
-          hasTransactions={transactions.length > 0}
+      {/* Main Container */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 space-y-8">
+        {/* Welcome & Month Picker Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm">
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Tổng quan Tài chính</h1>
+            <p className="text-xs text-gray-500">
+              Theo dõi tình hình thu chi hàng tháng của bạn
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200">
+              <Calendar className="w-4 h-4 text-emerald-700" />
+              <DatePicker
+                picker="month"
+                value={selectedDate}
+                onChange={(date) => date && setSelectedDate(date)}
+                allowClear={false}
+                format="[Tháng] MM, YYYY"
+                className="!border-none !bg-transparent !p-0 font-semibold text-gray-700 text-sm"
+              />
+            </div>
+
+            <Button
+              type="primary"
+              icon={<Plus className="w-4 h-4" />}
+              onClick={() => setIsQuickAddOpen(true)}
+              className="!bg-emerald-700 hover:!bg-emerald-800 !h-10 !px-4 !rounded-xl !font-semibold border-none shadow-md shadow-emerald-700/20"
+            >
+              Thêm Giao Dịch
+            </Button>
+          </div>
+        </div>
+
+        {/* Income / Expense / Balance Summary Cards */}
+        <SummaryCards
+          income={summary?.income ?? 0}
+          expense={summary?.expense ?? 0}
+          balance={summary?.balance ?? 0}
+          loading={isLoading}
         />
 
-        {/* Financial Metric Cards */}
-        <MetricCards
-          totalIncome={totalIncome}
-          totalExpense={totalExpense}
-          totalBudget={totalBudget}
-        />
-
-        {/* Quick Action Shortcuts */}
-        <QuickActions
-          onOpenAddExpense={() => handleOpenAdd('expense')}
-          onOpenAddIncome={() => handleOpenAdd('income')}
-          onOpenSetBudget={() => setIsBudgetModalOpen(true)}
-          onOpenCategories={() => setIsCategoriesModalOpen(true)}
-        />
-
-        {/* 2-Column Responsive Dashboard Layout */}
+        {/* Main Grid Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column (Primary): Recent Transactions & Category Breakdown */}
-          <div className="lg:col-span-8 space-y-8">
-            <RecentTransactions
-              transactions={transactions}
-              onOpenAddTransaction={handleOpenAdd}
-              onDeleteTransaction={handleDeleteTransaction}
-            />
-
-            <CategoryBreakdown
-              categories={categories}
-              transactions={transactions}
-              totalExpense={totalExpense}
+          {/* Left Column: Recent Transactions */}
+          <div className="lg:col-span-8 space-y-6">
+            <RecentTransactionsList
+              transactions={summary?.recentTransactions ?? []}
+              onDeleteTransaction={handleDeleteTx}
+              loading={isLoading}
             />
           </div>
 
-          {/* Right Column (Secondary): Budget Meter & Financial Insights */}
-          <div className="lg:col-span-4 space-y-6">
-            <BudgetProgressCard
-              totalBudget={totalBudget}
-              totalExpense={totalExpense}
-              onOpenSetBudget={() => setIsBudgetModalOpen(true)}
-            />
+          {/* Right Column: Quick Navigation Shortcuts */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-sm space-y-4">
+              <h3 className="font-bold text-gray-900 text-base">Lối Tắt Nhanh</h3>
 
-            <FinancialInsights />
+              <div className="space-y-2.5">
+                <button
+                  type="button"
+                  onClick={() => navigate(AppRoutes.CATEGORIES)}
+                  className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all text-left group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg group-hover:bg-emerald-100">
+                      <Layers className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm text-gray-800">Quản lý Danh mục</p>
+                      <p className="text-[11px] text-gray-400">Xem và sửa danh mục thu chi</p>
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate(AppRoutes.TRANSACTIONS)}
+                  className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all text-left group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-50 text-blue-700 rounded-lg group-hover:bg-blue-100">
+                      <History className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm text-gray-800">Lịch sử Giao dịch</p>
+                      <p className="text-[11px] text-gray-400">Tra cứu và lọc giao dịch</p>
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate(AppRoutes.REPORTS)}
+                  className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all text-left group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-50 text-purple-700 rounded-lg group-hover:bg-purple-100">
+                      <PieChart className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm text-gray-800">Báo cáo Chi tiêu</p>
+                      <p className="text-[11px] text-gray-400">Biểu đồ cơ cấu chi tiêu</p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </main>
 
-      {/* Interactive Modal Dialogs */}
-      <AddTransactionModal
-        visible={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAddTransaction={handleAddTransaction}
-        categories={categories}
-        defaultType={addModalType}
-      />
+      {/* Quick Add Transaction Drawer */}
+      <QuickAddTransaction open={isQuickAddOpen} onClose={() => setIsQuickAddOpen(false)} />
 
-      <SetBudgetModal
-        visible={isBudgetModalOpen}
-        onClose={() => setIsBudgetModalOpen(false)}
-        currentBudget={totalBudget}
-        onSaveBudget={handleSaveBudget}
-      />
-
-      <CategoriesModal
-        visible={isCategoriesModalOpen}
-        onClose={() => setIsCategoriesModalOpen(false)}
-        categories={categories}
-      />
-
-      {/* Mobile Bottom Navigation Bar (< 768px) */}
-      <MobileBottomNav
-        onOpenAddTransaction={() => handleOpenAdd('expense')}
-        activeTab={mobileTab}
-        setActiveTab={setMobileTab}
-      />
+      {/* Mobile Bottom Nav */}
+      <MobileBottomNav onOpenAddTransaction={() => setIsQuickAddOpen(true)} />
     </div>
   );
 };

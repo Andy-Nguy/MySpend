@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ProfileEntity } from '../entities/profile/profile.entity';
 import { ProfilesRepository } from '../profiles/repository/profiles.repository';
+import { CategoriesModule } from '../categories/categories.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -14,6 +15,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PassportModule,
     JwtModule.register({}),
     TypeOrmModule.forFeature([ProfileEntity]),
+    CategoriesModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, ProfilesRepository],

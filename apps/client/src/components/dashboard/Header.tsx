@@ -1,7 +1,7 @@
 import React from 'react';
 import { Calendar, ChevronDown, LogOut, Plus, User, Wallet } from 'lucide-react';
 import { Dropdown, MenuProps } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AppRoutes } from '../../consts/routes';
 import { useAuth } from '../../context/AuthContext';
 
@@ -12,6 +12,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const displayName =
     user?.displayName ||
@@ -69,18 +70,62 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xl sm:text-2xl font-black tracking-tight text-gray-900">
+                <span
+                  onClick={() => navigate(AppRoutes.HOME)}
+                  className="text-xl sm:text-2xl font-black tracking-tight text-gray-900 cursor-pointer"
+                >
                   MySpend
                 </span>
                 <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Personal
                 </span>
               </div>
-              <p className="hidden sm:block text-xs font-medium text-gray-400">
-                Smart Expense &amp; Budget Tracker
-              </p>
             </div>
           </div>
+
+          {/* Center Navigation Links (Desktop) */}
+          <nav className="hidden md:flex items-center gap-1 bg-gray-100/80 p-1 rounded-xl">
+            <button
+              onClick={() => navigate(AppRoutes.HOME)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                location.pathname === AppRoutes.HOME
+                  ? 'bg-white text-emerald-700 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Trang chủ
+            </button>
+            <button
+              onClick={() => navigate(AppRoutes.CATEGORIES)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                location.pathname === AppRoutes.CATEGORIES
+                  ? 'bg-white text-emerald-700 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Danh mục
+            </button>
+            <button
+              onClick={() => navigate(AppRoutes.TRANSACTIONS)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                location.pathname === AppRoutes.TRANSACTIONS
+                  ? 'bg-white text-emerald-700 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Lịch sử
+            </button>
+            <button
+              onClick={() => navigate(AppRoutes.REPORTS)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                location.pathname === AppRoutes.REPORTS
+                  ? 'bg-white text-emerald-700 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Báo cáo
+            </button>
+          </nav>
 
           {/* Right Action & Profile Area */}
           <div className="flex items-center space-x-2 sm:space-x-4">

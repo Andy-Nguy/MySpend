@@ -1,7 +1,8 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { ProfileEntity } from './entities/profile/profile.entity';
-import { CreateProfiles20260830000000 } from './migrations/20260830000000-create-profiles';
+import { CategoryEntity } from './entities/category/category.entity';
+import { TransactionEntity } from './entities/transaction/transaction.entity';
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ export const AppDataSource = new DataSource({
     process.env.DATABASE_LOGGING !== undefined
       ? process.env.DATABASE_LOGGING === 'true'
       : process.env.NODE_ENV !== 'production',
-  entities: [ProfileEntity],
-  migrations: [CreateProfiles20260830000000],
+  entities: [ProfileEntity, CategoryEntity, TransactionEntity],
+  migrations: [],
   ssl: isSsl ? { rejectUnauthorized: false } : false,
 });
