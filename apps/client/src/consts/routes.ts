@@ -1,7 +1,11 @@
 export enum AppRoutes {
-  HOME = '/',
-  LOGIN = '/login',
-  REGISTER = '/register',
-  PROFILE = '/profile',
+  HOME         = '/',
+  LOGIN        = '/login',
+  REGISTER     = '/register',
+  PROFILE      = '/profile',
+  CATEGORIES   = '/categories',
+  TRANSACTIONS = '/transactions',
+  REPORTS      = '/reports',
 }
+
 

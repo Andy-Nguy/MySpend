@@ -1,25 +1,17 @@
 import React from 'react';
-import {
-  Home,
-  LogOut,
-  PieChart,
-  Plus,
-  Receipt,
-} from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { Home, Layers, PieChart, Plus, Receipt } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../../consts/routes';
 
 interface MobileBottomNavProps {
   onOpenAddTransaction: () => void;
-  activeTab: 'home' | 'transactions' | 'analytics';
-  setActiveTab: (tab: 'home' | 'transactions' | 'analytics') => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onOpenAddTransaction,
-  activeTab,
-  setActiveTab,
 }) => {
-  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200/80 px-4 py-2 shadow-lg">
@@ -27,25 +19,25 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         {/* Home */}
         <button
           type="button"
-          onClick={() => setActiveTab('home')}
+          onClick={() => navigate(AppRoutes.HOME)}
           className={`flex flex-col items-center gap-1 p-1 text-[10px] font-semibold transition-colors ${
-            activeTab === 'home' ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
+            location.pathname === AppRoutes.HOME ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
           }`}
         >
           <Home className="w-5 h-5" />
-          <span>Dashboard</span>
+          <span>Trang chủ</span>
         </button>
 
-        {/* Transactions */}
+        {/* Categories */}
         <button
           type="button"
-          onClick={() => setActiveTab('transactions')}
+          onClick={() => navigate(AppRoutes.CATEGORIES)}
           className={`flex flex-col items-center gap-1 p-1 text-[10px] font-semibold transition-colors ${
-            activeTab === 'transactions' ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
+            location.pathname === AppRoutes.CATEGORIES ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
           }`}
         >
-          <Receipt className="w-5 h-5" />
-          <span>Activity</span>
+          <Layers className="w-5 h-5" />
+          <span>Danh mục</span>
         </button>
 
         {/* Center Quick Add FAB */}
@@ -60,26 +52,28 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           </button>
         </div>
 
-        {/* Analytics */}
+        {/* Transactions */}
         <button
           type="button"
-          onClick={() => setActiveTab('analytics')}
+          onClick={() => navigate(AppRoutes.TRANSACTIONS)}
           className={`flex flex-col items-center gap-1 p-1 text-[10px] font-semibold transition-colors ${
-            activeTab === 'analytics' ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
+            location.pathname === AppRoutes.TRANSACTIONS ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
+          }`}
+        >
+          <Receipt className="w-5 h-5" />
+          <span>Lịch sử</span>
+        </button>
+
+        {/* Reports */}
+        <button
+          type="button"
+          onClick={() => navigate(AppRoutes.REPORTS)}
+          className={`flex flex-col items-center gap-1 p-1 text-[10px] font-semibold transition-colors ${
+            location.pathname === AppRoutes.REPORTS ? 'text-emerald-700' : 'text-gray-400 hover:text-gray-600'
           }`}
         >
           <PieChart className="w-5 h-5" />
-          <span>Analytics</span>
-        </button>
-
-        {/* Logout */}
-        <button
-          type="button"
-          onClick={() => logout()}
-          className="flex flex-col items-center gap-1 p-1 text-[10px] font-semibold text-gray-400 hover:text-rose-600 transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
-          <span>Sign out</span>
+          <span>Báo cáo</span>
         </button>
       </div>
     </div>

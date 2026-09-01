@@ -9,6 +9,9 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
 import { Profile } from './pages/Profile';
+import { CategoriesPage } from './pages/Categories';
+import { TransactionHistoryPage } from './pages/TransactionHistory';
+import { ReportsPage } from './pages/Reports';
 
 export const App: React.FC = () => {
   return (
@@ -29,6 +32,9 @@ export const App: React.FC = () => {
           <Route element={<ProtectedRoute />}>
             <Route path={AppRoutes.HOME} element={<Dashboard />} />
             <Route path={AppRoutes.PROFILE} element={<Profile />} />
+            <Route path={AppRoutes.CATEGORIES} element={<CategoriesPage />} />
+            <Route path={AppRoutes.TRANSACTIONS} element={<TransactionHistoryPage />} />
+            <Route path={AppRoutes.REPORTS} element={<ReportsPage />} />
           </Route>
           <Route path="*" element={<Navigate to={AppRoutes.HOME} replace />} />
         </Routes>
