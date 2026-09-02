@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { createClient } from '@supabase/supabase-js';
 
+import { getPermissionsByRole, UserRoleEnum } from '@myspend/libs';
 import { ProfileEntity } from '../entities/profile/profile.entity';
 import { ProfilesRepository } from '../profiles/repository/profiles.repository';
 import { CategoriesService } from '../categories/categories.service';
@@ -185,13 +186,23 @@ export class AuthService {
       throw new UnauthorizedException('Profile not found');
     }
 
-    return profile;
+    const role = profile.role || UserRoleEnum.USER;
+    const permissions = getPermissionsByRole(role);
+
+    return {
+      ...profile,
+      role,
+      permissions,
+    };
   }
 
   private async createSession(profile: ProfileEntity) {
+    const role = profile.role || UserRoleEnum.USER;
+    const permissions = getPermissionsByRole(role);
+
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
-        { sub: profile.id, email: profile.email },
+        { sub: profile.id, email: profile.email, role, permissions },
         {
           secret: this.config.get<string>('jwt.secret'),
           expiresIn: this.getJwtExpiresIn('jwt.expiresIn'),
@@ -209,7 +220,11 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      user: profile,
+      user: {
+        ...profile,
+        role,
+        permissions,
+      },
     };
   }
 
