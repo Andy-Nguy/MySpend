@@ -160,7 +160,7 @@ export class AnnouncementsService {
       updatedBy: adminId,
     });
     this.logger.log(
-      `🔄 [Admin] Toggled active status for announcement ${id} to ${!existing.isActive} by admin ${adminId}`,
+      ` [Admin] Toggled active status for announcement ${id} to ${!existing.isActive} by admin ${adminId}`,
     );
     return updated || existing;
   }

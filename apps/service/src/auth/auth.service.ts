@@ -191,7 +191,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    this.logger.log(`🔄 [Auth] Token refreshed for: ${profile.email}`);
+    this.logger.log(` [Auth] Token refreshed for: ${profile.email}`);
     return this.createSession(profile);
   }
 
