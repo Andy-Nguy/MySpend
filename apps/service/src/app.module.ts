@@ -10,6 +10,7 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { CategoriesModule } from './categories/categories.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ReportsModule } from './reports/reports.module';
+import { AnnouncementsModule } from './announcements/announcements.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -52,6 +53,7 @@ import { AppService } from './app.service';
     CategoriesModule,
     TransactionsModule,
     ReportsModule,
+    AnnouncementsModule,
   ],
   controllers: [AppController],
   providers: [

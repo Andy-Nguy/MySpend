@@ -1,16 +1,18 @@
 import React from 'react';
-import { Calendar, ChevronDown, LogOut, Plus, User, Wallet } from 'lucide-react';
+import { Calendar, ChevronDown, LogOut, Megaphone, Plus, User, Wallet } from 'lucide-react';
 import { Dropdown, MenuProps } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { PermissionNameEnum } from '@myspend/libs';
 import { AppRoutes } from '../../consts/routes';
 import { useAuth } from '../../context/AuthContext';
+import { AnnouncementBell } from '../announcements/AnnouncementBell';
 
 interface HeaderProps {
   onOpenAddTransaction: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, hasPermission } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,6 +21,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
     (user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : null) ||
     user?.email?.split('@')[0] ||
     'User';
+
+  const canManageAnnouncements = hasPermission(PermissionNameEnum.ANNOUNCEMENT_CREATE);
 
   const userMenuItems: MenuProps['items'] = [
     {
@@ -30,6 +34,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
           <p className="text-sm font-semibold text-gray-900 truncate max-w-[200px]">
             {user?.email}
           </p>
+          {canManageAnnouncements && (
+            <span className="inline-block mt-1 text-[10px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">
+              ADMIN
+            </span>
+          )}
         </div>
       ),
     },
@@ -42,6 +51,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
       label: 'My Profile',
       onClick: () => navigate(AppRoutes.PROFILE),
     },
+    ...(canManageAnnouncements
+      ? [
+          {
+            type: 'divider' as const,
+          },
+          {
+            key: 'admin-announcements',
+            icon: <Megaphone className="w-4 h-4 text-emerald-600" />,
+            label: 'Quản lý thông báo',
+            onClick: () => navigate(AppRoutes.ADMIN_ANNOUNCEMENTS),
+          },
+        ]
+      : []),
     {
       type: 'divider',
     },
@@ -62,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
   return (
     <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200/80 transition-all w-full">
       <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 sm:h-20 gap-2 overflow-hidden">
+        <div className="flex items-center justify-between h-14 sm:h-20 gap-2">
           {/* Left Brand Identity */}
           <div className="flex items-center gap-2 sm:gap-4 shrink-0 min-w-0">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-emerald-700 via-emerald-600 to-emerald-500 flex items-center justify-center shadow-md shadow-emerald-700/20 text-white flex-shrink-0">
@@ -128,12 +150,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
           </nav>
 
           {/* Right Action & Profile Area */}
-          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             {/* Current Month Badge (Desktop/Tablet) */}
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200/80 text-gray-700 text-xs font-medium">
               <Calendar className="w-3.5 h-3.5 text-emerald-600" />
               <span>{currentDate}</span>
             </div>
+
+            {/* Notification Bell */}
+            <AnnouncementBell />
 
             {/* Quick Add Action Button – icon-only on very small screens */}
             <button
@@ -150,7 +175,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
               menu={{ items: userMenuItems }}
               placement="bottomRight"
               trigger={['click']}
-              getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
             >
               <button
                 type="button"
@@ -179,4 +203,3 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
     </header>
   );
 };
-

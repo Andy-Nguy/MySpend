@@ -7,13 +7,15 @@ import React, {
   useState,
 } from 'react';
 
-import { IProfile } from '@myspend/libs';
+import { IProfile, PermissionNameEnum, UserRoleEnum } from '@myspend/libs';
 import { AUTH_UNAUTHORIZED_EVENT, apiClient } from '../services/api.service';
 import { tokenStore } from '../services/tokenStore';
 
 export interface IAuthUser extends IProfile {
   id: string;
   email: string;
+  role: UserRoleEnum;
+  permissions?: PermissionNameEnum[];
   firstName?: string | null;
   lastName?: string | null;
   displayName?: string | null;
@@ -32,6 +34,8 @@ interface IAuthContextValue {
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUserProfile: (updatedUser: Partial<IAuthUser>) => void;
+  fetchMe: () => Promise<IAuthUser | null>;
+  hasPermission: (permission: PermissionNameEnum) => boolean;
 }
 
 interface IAuthResponse {
@@ -54,6 +58,23 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     setUser((prev) => (prev ? { ...prev, ...updatedUser } : null));
   }, []);
 
+  const fetchMe = useCallback(async () => {
+    try {
+      const { data } = await apiClient.get<IAuthUser>('/auth/me');
+      setUser(data);
+      return data;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const hasPermission = useCallback(
+    (permission: PermissionNameEnum) => {
+      return user?.permissions?.includes(permission) ?? false;
+    },
+    [user]
+  );
+
   useEffect(() => {
     const handleUnauthorized = () => {
       tokenStore.clearAccessToken();
@@ -75,6 +96,15 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 
         if (isMounted) {
           applySession(data);
+          // Sync fresh profile & permissions from DB via /auth/me
+          try {
+            const meRes = await apiClient.get<IAuthUser>('/auth/me');
+            if (isMounted) {
+              setUser(meRes.data);
+            }
+          } catch {
+            // keep session from refresh
+          }
         }
       } catch {
         tokenStore.clearAccessToken();
@@ -138,11 +168,11 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
       register,
       logout,
       updateUserProfile,
+      fetchMe,
+      hasPermission,
     }),
-    [loading, login, logout, register, updateUserProfile, user]
+    [loading, login, logout, register, updateUserProfile, fetchMe, hasPermission, user]
   );
-
-
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

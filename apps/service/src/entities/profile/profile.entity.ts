@@ -1,4 +1,4 @@
-import { IProfile } from '@myspend/libs';
+import { IProfile, UserRoleEnum } from '@myspend/libs';
 import {
   Column,
   CreateDateColumn,
@@ -15,6 +15,15 @@ export class ProfileEntity implements IProfile {
 
   @Column({ type: 'text', name: 'email', unique: true })
   email!: string;
+
+  @Column({
+    type: 'enum',
+    enum: UserRoleEnum,
+    enumName: 'user_role_enum',
+    name: 'role',
+    default: UserRoleEnum.USER,
+  })
+  role!: UserRoleEnum;
 
   @Column({ type: 'varchar', length: 100, name: 'first_name', nullable: true })
   firstName?: string | null;
@@ -52,5 +61,3 @@ export class ProfileEntity implements IProfile {
   @Column({ type: 'uuid', name: 'deleted_by', nullable: true })
   deletedBy?: string | null;
 }
-
-
