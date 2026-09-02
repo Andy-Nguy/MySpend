@@ -138,13 +138,15 @@ export const AnnouncementDrawer: React.FC<AnnouncementDrawerProps> = ({
                 <div className="flex items-center justify-between text-[11px] text-gray-400 pt-2 border-t border-gray-100">
                   <span>{formattedDate}</span>
                   {!item.isRead && (
-                    <button
-                      type="button"
+                    <Button
+                      type="link"
+                      size="small"
+                      loading={markReadMutation.isPending && markReadMutation.variables === item.id}
                       onClick={() => markReadMutation.mutate(item.id)}
-                      className="text-emerald-700 hover:text-emerald-800 font-medium hover:underline"
+                      className="!text-emerald-700 hover:!text-emerald-800 font-medium !p-0 !h-auto !text-[11px]"
                     >
                       Đánh dấu đã đọc
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>

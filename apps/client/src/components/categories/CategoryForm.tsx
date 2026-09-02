@@ -53,6 +53,9 @@ export const CategoryFormModal: React.FC<ICategoryFormProps> = ({
       onCancel={onClose}
       onOk={() => form.submit()}
       confirmLoading={loading}
+      cancelButtonProps={{ disabled: loading }}
+      closable={!loading}
+      maskClosable={!loading}
       okText={isEdit ? 'Cập nhật' : 'Tạo mới'}
       cancelText="Hủy"
       destroyOnClose

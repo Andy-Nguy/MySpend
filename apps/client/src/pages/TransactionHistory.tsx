@@ -25,7 +25,7 @@ export const TransactionHistoryPage: React.FC = () => {
   const { data: categories = [] } = useCategories();
   const deleteTxMutation = useDeleteTransaction();
 
-  const { data, isLoading } = useTransactions({
+  const { data, isLoading, isFetching } = useTransactions({
     page,
     limit,
     categoryId: selectedCategory,
@@ -102,7 +102,7 @@ export const TransactionHistoryPage: React.FC = () => {
 
         {/* Transaction List */}
         <Card className="!rounded-2xl shadow-sm border border-gray-200/80">
-          {isLoading ? (
+          {isLoading || isFetching ? (
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="h-16 bg-gray-100 rounded-2xl animate-pulse" />
@@ -115,7 +115,12 @@ export const TransactionHistoryPage: React.FC = () => {
           ) : (
             <div className="space-y-3">
               {transactions.map((tx) => (
-                <TransactionListItem key={tx.id} transaction={tx} onDelete={handleDelete} />
+                <TransactionListItem
+                  key={tx.id}
+                  transaction={tx}
+                  onDelete={handleDelete}
+                  isDeleting={deleteTxMutation.isPending && deleteTxMutation.variables === tx.id}
+                />
               ))}
 
               {/* Server-side Pagination */}

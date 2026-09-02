@@ -14,6 +14,8 @@ interface AdminAnnouncementTableProps {
   onEdit: (item: IAnnouncement) => void;
   onDelete: (id: string) => void;
   onToggleActive: (id: string) => void;
+  deletingId?: string | null;
+  togglingId?: string | null;
 }
 
 export const AdminAnnouncementTable: React.FC<AdminAnnouncementTableProps> = ({
@@ -22,6 +24,8 @@ export const AdminAnnouncementTable: React.FC<AdminAnnouncementTableProps> = ({
   onEdit,
   onDelete,
   onToggleActive,
+  deletingId,
+  togglingId,
 }) => {
   const getTypeTag = (type: AnnouncementTypeEnum) => {
     switch (type) {
@@ -115,6 +119,7 @@ export const AdminAnnouncementTable: React.FC<AdminAnnouncementTableProps> = ({
       render: (isActive: boolean, record: IAnnouncement) => (
         <Switch
           checked={isActive}
+          loading={togglingId === record.id}
           onChange={() => onToggleActive(record.id)}
           checkedChildren="Bật"
           unCheckedChildren="Tắt"
@@ -155,12 +160,13 @@ export const AdminAnnouncementTable: React.FC<AdminAnnouncementTableProps> = ({
             onConfirm={() => onDelete(record.id)}
             okText="Xóa"
             cancelText="Hủy"
-            okButtonProps={{ danger: true }}
+            okButtonProps={{ danger: true, loading: deletingId === record.id }}
           >
             <Button
               type="text"
               size="small"
               danger
+              loading={deletingId === record.id}
               icon={<Trash2 className="w-4 h-4" />}
               aria-label="Xóa thông báo"
             />

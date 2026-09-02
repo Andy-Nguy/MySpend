@@ -11,11 +11,13 @@ const formatVND = (amount: number) =>
 interface ITransactionListItemProps {
   transaction: ITransaction;
   onDelete?: (id: string) => void;
+  isDeleting?: boolean;
 }
 
 export const TransactionListItem: React.FC<ITransactionListItemProps> = ({
   transaction,
   onDelete,
+  isDeleting,
 }) => {
   const isIncome = transaction.category?.type === CategoryTypeEnum.INCOME;
 
@@ -62,11 +64,12 @@ export const TransactionListItem: React.FC<ITransactionListItemProps> = ({
             okText="Xóa"
             cancelText="Hủy"
             onConfirm={() => onDelete(transaction.id)}
-            okButtonProps={{ danger: true }}
+            okButtonProps={{ danger: true, loading: isDeleting }}
           >
             <Button
               type="text"
               danger
+              loading={isDeleting}
               icon={<Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500 transition-colors" />}
               className="!p-1.5 !h-auto !rounded-lg flex-shrink-0"
             />
