@@ -27,7 +27,7 @@ export const ReportsPage: React.FC = () => {
       ? dayjs().endOf('month').format('YYYY-MM-DD')
       : customRange[1];
 
-  const { data: breakdownItems = [], isLoading } = useCategoryBreakdown(fromDate, toDate);
+  const { data: breakdownItems, isLoading, isFetching } = useCategoryBreakdown(fromDate, toDate);
 
   const handleRangeChange = (dates: any) => {
     if (dates && dates[0] && dates[1]) {
@@ -78,7 +78,10 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         {/* Donut Chart & Ranked List */}
-        <CategoryDonutChart items={breakdownItems} loading={isLoading} />
+        <CategoryDonutChart
+          items={breakdownItems || []}
+          loading={isLoading || isFetching || !breakdownItems}
+        />
       </main>
 
       {/* Quick Add Transaction Drawer */}

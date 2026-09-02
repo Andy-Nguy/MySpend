@@ -17,6 +17,8 @@ const COLORS = [
 const formatVND = (amount: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 
+import { LoadingSpinner } from '../common/LoadingSpinner';
+
 interface ICategoryDonutChartProps {
   items: ICategoryBreakdownItem[];
   loading?: boolean;
@@ -25,8 +27,8 @@ interface ICategoryDonutChartProps {
 export const CategoryDonutChart: React.FC<ICategoryDonutChartProps> = ({ items, loading }) => {
   if (loading) {
     return (
-      <div className="h-64 bg-gray-100 rounded-2xl animate-pulse flex items-center justify-center text-gray-400">
-        Đang tải biểu đồ...
+      <div className="h-64 bg-white rounded-2xl border border-gray-200/80 shadow-sm flex items-center justify-center p-6">
+        <LoadingSpinner size="md" tip="Đang tải dữ liệu biểu đồ..." />
       </div>
     );
   }

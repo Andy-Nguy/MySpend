@@ -27,8 +27,8 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
     private readonly profilesRepository: ProfilesRepository,
-    private readonly categoriesService: CategoriesService
-  ) { }
+    private readonly categoriesService: CategoriesService,
+  ) {}
 
   private createAuthClient() {
     const supabaseUrl = this.config.get<string>('supabase.url');
@@ -78,7 +78,9 @@ export class AuthService {
       });
 
       if (error) {
-        this.logger.warn(`❌ [Auth] Registration failed for ${normalizedEmail}: ${error.message}`);
+        this.logger.warn(
+          ` [Auth] Registration failed for ${normalizedEmail}: ${error.message}`,
+        );
         throw new BadRequestException(error.message);
       }
 
@@ -91,7 +93,9 @@ export class AuthService {
       });
 
       if (error) {
-        this.logger.warn(`❌ [Auth] Registration failed for ${normalizedEmail}: ${error.message}`);
+        this.logger.warn(
+          ` [Auth] Registration failed for ${normalizedEmail}: ${error.message}`,
+        );
         throw new BadRequestException(error.message);
       }
 
@@ -103,7 +107,9 @@ export class AuthService {
     }
 
     const profile = await this.profilesRepository.upsertFromSupabaseUser(user);
-    this.logger.log(`✅ [Auth] User registered successfully: ${profile.email} (${profile.id})`);
+    this.logger.log(
+      ` [Auth] User registered successfully: ${profile.email} (${profile.id})`,
+    );
 
     // Seed default categories for new user (BR-006)
     await this.categoriesService.seedDefaultCategories(profile.id);
@@ -124,8 +130,11 @@ export class AuthService {
     if (error && error.message.toLowerCase().includes('email not confirmed')) {
       const adminClient = this.createAdminClient();
       if (adminClient) {
-        this.logger.log(`ℹ️ [Auth] User ${normalizedEmail} is unconfirmed. Auto-confirming via admin client...`);
-        const profile = await this.profilesRepository.findByEmail(normalizedEmail);
+        this.logger.log(
+          `ℹ️ [Auth] User ${normalizedEmail} is unconfirmed. Auto-confirming via admin client...`,
+        );
+        const profile =
+          await this.profilesRepository.findByEmail(normalizedEmail);
         if (profile) {
           await adminClient.auth.admin.updateUserById(profile.id, {
             email_confirm: true,
@@ -141,12 +150,16 @@ export class AuthService {
     }
 
     if (error || !data?.user?.id || !data?.user?.email) {
-      this.logger.warn(`❌ [Auth] Failed login attempt for: ${normalizedEmail}: ${error?.message || 'Invalid credentials'}`);
+      this.logger.warn(
+        ` [Auth] Failed login attempt for: ${normalizedEmail}: ${error?.message || 'Invalid credentials'}`,
+      );
       throw new UnauthorizedException(error?.message || 'Invalid credentials');
     }
 
-    const profile = await this.profilesRepository.upsertFromSupabaseUser(data.user);
-    this.logger.log(`✅ [Auth] User logged in: ${profile.email} (${profile.id})`);
+    const profile = await this.profilesRepository.upsertFromSupabaseUser(
+      data.user,
+    );
+    this.logger.log(` [Auth] User logged in: ${profile.email} (${profile.id})`);
     return this.createSession(profile);
   }
 
@@ -158,9 +171,12 @@ export class AuthService {
     let payload: IRefreshPayload;
 
     try {
-      payload = await this.jwtService.verifyAsync<IRefreshPayload>(refreshToken, {
-        secret: this.config.get<string>('jwt.refreshSecret'),
-      });
+      payload = await this.jwtService.verifyAsync<IRefreshPayload>(
+        refreshToken,
+        {
+          secret: this.config.get<string>('jwt.refreshSecret'),
+        },
+      );
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
@@ -175,7 +191,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    this.logger.log(`🔄 [Auth] Token refreshed for: ${profile.email}`);
+    this.logger.log(` [Auth] Token refreshed for: ${profile.email}`);
     return this.createSession(profile);
   }
 
@@ -206,14 +222,14 @@ export class AuthService {
         {
           secret: this.config.get<string>('jwt.secret'),
           expiresIn: this.getJwtExpiresIn('jwt.expiresIn'),
-        }
+        },
       ),
       this.jwtService.signAsync(
         { sub: profile.id, tokenType: 'refresh' },
         {
           secret: this.config.get<string>('jwt.refreshSecret'),
           expiresIn: this.getJwtExpiresIn('jwt.refreshExpiresIn'),
-        }
+        },
       ),
     ]);
 

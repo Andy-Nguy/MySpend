@@ -4,6 +4,8 @@ import { PermissionNameEnum } from '@myspend/libs';
 import { useAuth } from '../context/AuthContext';
 import { AppRoutes } from '../consts/routes';
 
+import { LoadingSpinner } from './common/LoadingSpinner';
+
 interface PermissionProtectedRouteProps {
   permission: PermissionNameEnum;
   children?: React.ReactNode;
@@ -23,7 +25,7 @@ export const PermissionProtectedRoute: React.FC<PermissionProtectedRouteProps> =
   }, [location.pathname, isAuthenticated, fetchMe]);
 
   if (loading) {
-    return null;
+    return <LoadingSpinner size="lg" fullScreen tip="Đang kiểm tra quyền..." />;
   }
 
   if (!isAuthenticated) {
