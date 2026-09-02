@@ -1,12 +1,5 @@
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
-import {
-  IAnnouncement,
-  IAnnouncementUnreadResponse,
-} from '@myspend/libs';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { IAnnouncement, IAnnouncementUnreadResponse } from '@myspend/libs';
 import { AnnouncementsRepository } from './repository/announcements.repository';
 import { UserAnnouncementReadsRepository } from './repository/user-announcement-reads.repository';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
@@ -19,7 +12,7 @@ export class AnnouncementsService {
 
   constructor(
     private readonly announcementsRepository: AnnouncementsRepository,
-    private readonly userAnnouncementReadsRepository: UserAnnouncementReadsRepository
+    private readonly userAnnouncementReadsRepository: UserAnnouncementReadsRepository,
   ) {}
 
   // ===========================================================================
@@ -31,11 +24,12 @@ export class AnnouncementsService {
   }
 
   async getUnreadSummary(userId: string): Promise<IAnnouncementUnreadResponse> {
-    const [announcements, latestPopupAnnouncement, unreadCount] = await Promise.all([
-      this.announcementsRepository.findActiveForUser(userId),
-      this.announcementsRepository.findLatestUnreadPopup(userId),
-      this.announcementsRepository.getActiveCount(userId),
-    ]);
+    const [announcements, latestPopupAnnouncement, unreadCount] =
+      await Promise.all([
+        this.announcementsRepository.findActiveForUser(userId),
+        this.announcementsRepository.findLatestUnreadPopup(userId),
+        this.announcementsRepository.getActiveCount(userId),
+      ]);
 
     return {
       unreadCount,
@@ -44,23 +38,37 @@ export class AnnouncementsService {
     };
   }
 
-  async markAsRead(userId: string, announcementId: string): Promise<{ success: boolean }> {
-    const announcement = await this.announcementsRepository.findById(announcementId);
+  async markAsRead(
+    userId: string,
+    announcementId: string,
+  ): Promise<{ success: boolean }> {
+    const announcement =
+      await this.announcementsRepository.findById(announcementId);
     if (!announcement || announcement.deletedAt) {
       throw new NotFoundException('Announcement not found');
     }
 
-    await this.userAnnouncementReadsRepository.markAsRead(userId, announcementId);
-    this.logger.log(`Marked announcement ${announcementId} as read by user ${userId}`);
+    await this.userAnnouncementReadsRepository.markAsRead(
+      userId,
+      announcementId,
+    );
+    this.logger.log(
+      `Marked announcement ${announcementId} as read by user ${userId}`,
+    );
     return { success: true };
   }
 
   async markAllAsRead(userId: string): Promise<{ success: boolean }> {
-    const activeAnnouncements = await this.announcementsRepository.findActiveForUser(userId);
-    const unreadIds = activeAnnouncements.filter((a) => !a.isRead).map((a) => a.id);
+    const activeAnnouncements =
+      await this.announcementsRepository.findActiveForUser(userId);
+    const unreadIds = activeAnnouncements
+      .filter((a) => !a.isRead)
+      .map((a) => a.id);
 
     await this.userAnnouncementReadsRepository.markAllAsRead(userId, unreadIds);
-    this.logger.log(`Marked all announcements (${unreadIds.length}) as read by user ${userId}`);
+    this.logger.log(
+      `Marked all announcements (${unreadIds.length}) as read by user ${userId}`,
+    );
     return { success: true };
   }
 
@@ -82,9 +90,11 @@ export class AnnouncementsService {
 
   async createAnnouncement(
     dto: CreateAnnouncementDto,
-    adminId: string
+    adminId: string,
   ): Promise<AnnouncementEntity> {
-    const publishedAt = dto.publishedAt ? new Date(dto.publishedAt) : new Date();
+    const publishedAt = dto.publishedAt
+      ? new Date(dto.publishedAt)
+      : new Date();
 
     const created = await this.announcementsRepository.create({
       title: dto.title.trim(),
@@ -99,7 +109,7 @@ export class AnnouncementsService {
     });
 
     this.logger.log(
-      `✅ [Admin] Created announcement: "${created.title}" (version: ${created.version || 'none'}) by admin ${adminId}`
+      ` [Admin] Created announcement: "${created.title}" (version: ${created.version || 'none'}) by admin ${adminId}`,
     );
     return created;
   }
@@ -107,7 +117,7 @@ export class AnnouncementsService {
   async updateAnnouncement(
     id: string,
     dto: UpdateAnnouncementDto,
-    adminId: string
+    adminId: string,
   ): Promise<AnnouncementEntity> {
     const existing = await this.getAdminAnnouncementById(id);
 
@@ -116,23 +126,30 @@ export class AnnouncementsService {
     };
 
     if (dto.title !== undefined) updates.title = dto.title.trim();
-    if (dto.version !== undefined) updates.version = dto.version?.trim() || null;
+    if (dto.version !== undefined)
+      updates.version = dto.version?.trim() || null;
     if (dto.type !== undefined) updates.type = dto.type;
     if (dto.priority !== undefined) updates.priority = dto.priority;
     if (dto.content !== undefined) updates.content = dto.content;
     if (dto.isActive !== undefined) updates.isActive = dto.isActive;
     if (dto.isPopup !== undefined) updates.isPopup = dto.isPopup;
-    if (dto.publishedAt !== undefined) updates.publishedAt = new Date(dto.publishedAt);
+    if (dto.publishedAt !== undefined)
+      updates.publishedAt = new Date(dto.publishedAt);
 
     const updated = await this.announcementsRepository.update(id, updates);
-    this.logger.log(`✅ [Admin] Updated announcement ${id} by admin ${adminId}`);
+    this.logger.log(` [Admin] Updated announcement ${id} by admin ${adminId}`);
     return updated || existing;
   }
 
-  async deleteAnnouncement(id: string, adminId: string): Promise<{ success: boolean }> {
+  async deleteAnnouncement(
+    id: string,
+    adminId: string,
+  ): Promise<{ success: boolean }> {
     await this.getAdminAnnouncementById(id);
     await this.announcementsRepository.softDelete(id, adminId);
-    this.logger.log(`🗑️ [Admin] Soft deleted announcement ${id} by admin ${adminId}`);
+    this.logger.log(
+      `🗑️ [Admin] Soft deleted announcement ${id} by admin ${adminId}`,
+    );
     return { success: true };
   }
 
@@ -143,7 +160,7 @@ export class AnnouncementsService {
       updatedBy: adminId,
     });
     this.logger.log(
-      `🔄 [Admin] Toggled active status for announcement ${id} to ${!existing.isActive} by admin ${adminId}`
+      `🔄 [Admin] Toggled active status for announcement ${id} to ${!existing.isActive} by admin ${adminId}`,
     );
     return updated || existing;
   }

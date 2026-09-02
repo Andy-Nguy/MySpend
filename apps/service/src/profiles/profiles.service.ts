@@ -19,7 +19,7 @@ export class ProfilesService {
 
   constructor(
     private readonly config: ConfigService,
-    private readonly profilesRepository: ProfilesRepository
+    private readonly profilesRepository: ProfilesRepository,
   ) {}
 
   private createAuthClient() {
@@ -66,7 +66,7 @@ export class ProfilesService {
       updatedBy: userId,
     });
 
-    this.logger.log(`✅ [Profiles] Updated profile for user: ${userId}`);
+    this.logger.log(` [Profiles] Updated profile for user: ${userId}`);
     return updatedProfile;
   }
 
@@ -84,21 +84,23 @@ export class ProfilesService {
     });
 
     if (verifyError) {
-      this.logger.warn(`❌ [Profiles] Password verification failed for user: ${userId}`);
+      this.logger.warn(
+        ` [Profiles] Password verification failed for user: ${userId}`,
+      );
       throw new UnauthorizedException('Current password is incorrect');
     }
 
     // Step 2: Update password via Admin Client or User Client
     const adminClient = this.createAdminClient();
     if (adminClient) {
-      const { error: updateError } = await adminClient.auth.admin.updateUserById(
-        userId,
-        { password: dto.newPassword }
-      );
+      const { error: updateError } =
+        await adminClient.auth.admin.updateUserById(userId, {
+          password: dto.newPassword,
+        });
 
       if (updateError) {
         this.logger.error(
-          `❌ [Profiles] Failed to update password via admin for user: ${userId}: ${updateError.message}`
+          ` [Profiles] Failed to update password via admin for user: ${userId}: ${updateError.message}`,
         );
         throw new BadRequestException(updateError.message);
       }
@@ -111,7 +113,9 @@ export class ProfilesService {
         });
 
       if (sessionError || !sessionData.session?.access_token) {
-        throw new UnauthorizedException('Unable to authenticate password change');
+        throw new UnauthorizedException(
+          'Unable to authenticate password change',
+        );
       }
 
       const authenticatedClient = createClient(
@@ -123,7 +127,7 @@ export class ProfilesService {
               Authorization: `Bearer ${sessionData.session.access_token}`,
             },
           },
-        }
+        },
       );
 
       const { error: updateError } = await authenticatedClient.auth.updateUser({
@@ -132,13 +136,15 @@ export class ProfilesService {
 
       if (updateError) {
         this.logger.error(
-          `❌ [Profiles] Failed to update password for user: ${userId}: ${updateError.message}`
+          ` [Profiles] Failed to update password for user: ${userId}: ${updateError.message}`,
         );
         throw new BadRequestException(updateError.message);
       }
     }
 
-    this.logger.log(`✅ [Profiles] Password changed successfully for user: ${userId}`);
+    this.logger.log(
+      ` [Profiles] Password changed successfully for user: ${userId}`,
+    );
     return { success: true, message: 'Password updated successfully' };
   }
 }

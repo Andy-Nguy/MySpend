@@ -15,7 +15,11 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoriesRepository } from './repository/categories.repository';
 
 // Default categories seeded for every new user (BR-006)
-const DEFAULT_SEED_CATEGORIES: Array<{ name: string; type: CategoryTypeEnum; icon: string }> = [
+const DEFAULT_SEED_CATEGORIES: Array<{
+  name: string;
+  type: CategoryTypeEnum;
+  icon: string;
+}> = [
   { name: 'Ăn uống', type: CategoryTypeEnum.EXPENSE, icon: 'utensils' },
   { name: 'Đi lại', type: CategoryTypeEnum.EXPENSE, icon: 'car' },
   { name: 'Mua sắm', type: CategoryTypeEnum.EXPENSE, icon: 'shopping-bag' },
@@ -29,20 +33,22 @@ export class CategoriesService {
   constructor(
     private readonly categoriesRepository: CategoriesRepository,
     @InjectRepository(TransactionEntity)
-    private readonly transactionRepository: Repository<TransactionEntity>
+    private readonly transactionRepository: Repository<TransactionEntity>,
   ) {}
 
   async create(userId: string, dto: CreateCategoryDto) {
     try {
       const category = await this.categoriesRepository.create(userId, dto);
-      this.logger.log(`✅ [Categories] Created category "${dto.name}" for user: ${userId}`);
+      this.logger.log(
+        ` [Categories] Created category "${dto.name}" for user: ${userId}`,
+      );
       return category;
     } catch (err: unknown) {
       // Postgres unique index violation code: 23505
       const pgErr = err as { code?: string };
       if (pgErr?.code === '23505') {
         throw new ConflictException(
-          `A category named "${dto.name}" already exists for this type.`
+          `A category named "${dto.name}" already exists for this type.`,
         );
       }
       throw err;
@@ -66,20 +72,22 @@ export class CategoriesService {
       });
       if (txCount > 0) {
         throw new BadRequestException(
-          'Không thể thay đổi loại danh mục đã phát sinh giao dịch.'
+          'Không thể thay đổi loại danh mục đã phát sinh giao dịch.',
         );
       }
     }
 
     try {
       const updated = await this.categoriesRepository.update(id, userId, dto);
-      this.logger.log(`✅ [Categories] Updated category "${id}" for user: ${userId}`);
+      this.logger.log(
+        ` [Categories] Updated category "${id}" for user: ${userId}`,
+      );
       return updated;
     } catch (err: unknown) {
       const pgErr = err as { code?: string };
       if (pgErr?.code === '23505') {
         throw new ConflictException(
-          `A category named "${dto.name || existing.name}" already exists for this type.`
+          `A category named "${dto.name || existing.name}" already exists for this type.`,
         );
       }
       throw err;
@@ -98,17 +106,21 @@ export class CategoriesService {
     });
     if (txCount > 0) {
       throw new BadRequestException(
-        'Không thể xóa danh mục đã được sử dụng trong các giao dịch.'
+        'Không thể xóa danh mục đã được sử dụng trong các giao dịch.',
       );
     }
 
     await this.categoriesRepository.softDelete(id, userId);
-    this.logger.log(`✅ [Categories] Soft-deleted category "${id}" for user: ${userId}`);
+    this.logger.log(
+      ` [Categories] Soft-deleted category "${id}" for user: ${userId}`,
+    );
     return { success: true };
   }
 
   async seedDefaultCategories(userId: string): Promise<void> {
-    this.logger.log(`🌱 [Categories] Seeding default categories for user: ${userId}`);
+    this.logger.log(
+      `🌱 [Categories] Seeding default categories for user: ${userId}`,
+    );
     for (const seed of DEFAULT_SEED_CATEGORIES) {
       try {
         await this.categoriesRepository.create(userId, seed);
@@ -116,9 +128,13 @@ export class CategoriesService {
         const pgErr = err as { code?: string };
         // Skip if already seeded (unique constraint violation)
         if (pgErr?.code === '23505') continue;
-        this.logger.warn(`⚠️ [Categories] Seed failed for "${seed.name}": ${String(err)}`);
+        this.logger.warn(
+          `⚠️ [Categories] Seed failed for "${seed.name}": ${String(err)}`,
+        );
       }
     }
-    this.logger.log(`✅ [Categories] Default categories seeded for user: ${userId}`);
+    this.logger.log(
+      ` [Categories] Default categories seeded for user: ${userId}`,
+    );
   }
 }
