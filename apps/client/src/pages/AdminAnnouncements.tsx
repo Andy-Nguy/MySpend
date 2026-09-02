@@ -105,6 +105,8 @@ export const AdminAnnouncementsPage: React.FC = () => {
           onEdit={handleOpenEdit}
           onDelete={handleDelete}
           onToggleActive={handleToggleActive}
+          deletingId={deleteMutation.isPending ? deleteMutation.variables : null}
+          togglingId={toggleActiveMutation.isPending ? toggleActiveMutation.variables : null}
         />
       </main>
 
@@ -122,7 +124,7 @@ export const AdminAnnouncementsPage: React.FC = () => {
 
       {/* Quick Add Transaction Modal */}
       <QuickAddTransaction
-        isOpen={isQuickAddOpen}
+        open={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
       />
     </div>

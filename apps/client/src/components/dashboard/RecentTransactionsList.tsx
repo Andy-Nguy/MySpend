@@ -10,12 +10,14 @@ interface IRecentTransactionsListProps {
   transactions: ITransaction[];
   onDeleteTransaction?: (id: string) => void;
   loading?: boolean;
+  deletingId?: string | null;
 }
 
 export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
   transactions,
   onDeleteTransaction,
   loading,
+  deletingId,
 }) => {
   const navigate = useNavigate();
 
@@ -53,6 +55,7 @@ export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
               key={tx.id}
               transaction={tx}
               onDelete={onDeleteTransaction}
+              isDeleting={deletingId === tx.id}
             />
           ))}
         </div>

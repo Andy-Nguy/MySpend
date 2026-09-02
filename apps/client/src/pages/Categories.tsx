@@ -15,7 +15,7 @@ import {
 } from '../hooks/useCategories';
 
 export const CategoriesPage: React.FC = () => {
-  const { data: categories = [], isLoading } = useCategories();
+  const { data: categories = [], isLoading, isFetching } = useCategories();
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
   const deleteCategoryMutation = useDeleteCategory();
@@ -100,7 +100,7 @@ export const CategoriesPage: React.FC = () => {
 
         {/* Category List Grid */}
         <Card className="!rounded-2xl shadow-sm border border-gray-200/80">
-          {isLoading ? (
+          {isLoading || isFetching ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="h-16 bg-gray-100 rounded-2xl animate-pulse" />
@@ -165,11 +165,15 @@ export const CategoriesPage: React.FC = () => {
                         onConfirm={() => handleDelete(cat.id)}
                         okText="Xóa"
                         cancelText="Hủy"
-                        okButtonProps={{ danger: true }}
+                        okButtonProps={{
+                          danger: true,
+                          loading: deleteCategoryMutation.isPending && deleteCategoryMutation.variables === cat.id,
+                        }}
                       >
                         <Button
                           type="text"
                           danger
+                          loading={deleteCategoryMutation.isPending && deleteCategoryMutation.variables === cat.id}
                           icon={<Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />}
                           className="!p-2 !rounded-lg"
                         />

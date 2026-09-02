@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { DatePicker, Drawer, Form, Input, InputNumber, Radio, message } from 'antd';
+import { Button, DatePicker, Drawer, Form, Input, InputNumber, Radio, message } from 'antd';
 import { CategoryTypeEnum, ICategory } from '@myspend/libs';
 import dayjs from 'dayjs';
 import { useCategories } from '../../hooks/useCategories';
@@ -209,13 +209,15 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
         </Form.Item>
 
         {/* Action Button */}
-        <button
-          type="submit"
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={createTxMutation.isPending}
           disabled={createTxMutation.isPending}
-          className="w-full h-12 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-semibold rounded-xl transition-all shadow-md shadow-emerald-700/20 flex items-center justify-center gap-2 mt-2"
+          className="!w-full !h-12 !bg-emerald-700 hover:!bg-emerald-800 active:!bg-emerald-900 !text-white !font-semibold !rounded-xl !border-none transition-all shadow-md shadow-emerald-700/20 flex items-center justify-center gap-2 mt-2"
         >
-          {createTxMutation.isPending ? 'Đang lưu...' : 'Lưu Giao Dịch'}
-        </button>
+          Lưu Giao Dịch
+        </Button>
       </Form>
     </Drawer>
   );

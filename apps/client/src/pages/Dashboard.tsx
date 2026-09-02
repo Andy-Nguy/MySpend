@@ -20,7 +20,7 @@ export const Dashboard: React.FC = () => {
   const year = selectedDate.year();
   const month = selectedDate.month() + 1; // 1-indexed for backend API
 
-  const { data: summary, isLoading } = useDashboard(year, month);
+  const { data: summary, isLoading, isFetching } = useDashboard(year, month);
   const deleteTxMutation = useDeleteTransaction();
 
   const handleDeleteTx = async (id: string) => {
@@ -69,10 +69,10 @@ export const Dashboard: React.FC = () => {
 
         {/* Income / Expense / Balance Summary Cards */}
         <SummaryCards
-          income={summary?.income ?? 0}
-          expense={summary?.expense ?? 0}
-          balance={summary?.balance ?? 0}
-          loading={isLoading}
+          income={summary?.income}
+          expense={summary?.expense}
+          balance={summary?.balance}
+          loading={isLoading || isFetching || !summary}
         />
 
         {/* Main Grid Section */}
@@ -82,7 +82,8 @@ export const Dashboard: React.FC = () => {
             <RecentTransactionsList
               transactions={summary?.recentTransactions ?? []}
               onDeleteTransaction={handleDeleteTx}
-              loading={isLoading}
+              loading={isLoading || isFetching || !summary}
+              deletingId={deleteTxMutation.isPending ? deleteTxMutation.variables : null}
             />
           </div>
 

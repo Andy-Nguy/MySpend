@@ -4,6 +4,8 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AppRoutes } from '../consts/routes';
 
+import { LoadingSpinner } from './common/LoadingSpinner';
+
 export const ProtectedRoute: React.FC = () => {
   const { isAuthenticated, loading, fetchMe } = useAuth();
   const location = useLocation();
@@ -15,7 +17,7 @@ export const ProtectedRoute: React.FC = () => {
   }, [location.pathname, isAuthenticated, fetchMe]);
 
   if (loading) {
-    return null;
+    return <LoadingSpinner size="lg" fullScreen tip="Đang tải dữ liệu..." />;
   }
 
   if (!isAuthenticated) {
