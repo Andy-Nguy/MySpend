@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { ArrowRight, ReceiptText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
-import { ITransaction } from '@myspend/libs';
+import { ITransaction, CategoryTypeEnum } from '@myspend/libs';
 import { AppRoutes } from '../../consts/routes';
 import { TransactionListItem } from '../transactions/TransactionListItem';
 
@@ -45,7 +45,7 @@ export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
       currency: 'VND',
-    }).format(amount).replace('₫', 'đ');
+    }).format(Math.abs(amount)).replace('₫', 'đ');
   };
 
   return (
@@ -79,7 +79,10 @@ export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
         <div className="space-y-6">
           {sortedDates.map((date) => {
             const dayTxs = groupedTransactions[date];
-            const daySum = dayTxs.reduce((sum, tx) => sum + tx.amount, 0);
+            const daySum = dayTxs.reduce((sum, tx) => {
+              const amount = tx.category?.type === CategoryTypeEnum.INCOME ? tx.amount : -tx.amount;
+              return sum + amount;
+            }, 0);
             const isNegative = daySum < 0;
 
             return (
