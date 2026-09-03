@@ -6,6 +6,7 @@ import { Header } from '../components/dashboard/Header';
 import { TransactionListItem } from '../components/transactions/TransactionListItem';
 import { QuickAddTransaction } from '../components/transactions/QuickAddTransaction';
 import { MobileBottomNav } from '../components/dashboard/MobileBottomNav';
+import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useTransactions, useDeleteTransaction } from '../hooks/useTransactions';
 import { useCategories } from '../hooks/useCategories';
 
@@ -65,77 +66,79 @@ export const TransactionHistoryPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Filter Bar */}
-        <div className="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 w-full sm:w-auto">
-            <Filter className="w-4 h-4 text-emerald-700" />
-            <span>Bộ lọc:</span>
+        {isLoading && !transactions.length ? (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <LoadingSpinner size="lg" tip="Đang tải giao dịch..." />
           </div>
+        ) : (
+          <>
+            {/* Filter Bar */}
+            <div className="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 w-full sm:w-auto">
+                <Filter className="w-4 h-4 text-emerald-700" />
+                <span>Bộ lọc:</span>
+              </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-            {/* Category Filter */}
-            <Select
-              allowClear
-              placeholder="Tất cả danh mục"
-              value={selectedCategory}
-              onChange={(val) => {
-                setSelectedCategory(val);
-                setPage(1);
-              }}
-              className="w-full sm:w-48"
-              size="large"
-              options={categories.map((c) => ({
-                label: `${c.type === 'income' ? '+' : '-'} ${c.name}`,
-                value: c.id,
-              }))}
-            />
-
-            {/* Date Range Filter */}
-            <RangePicker
-              size="large"
-              className="w-full sm:w-64 !rounded-xl"
-              format="DD/MM/YYYY"
-              onChange={handleDateChange}
-            />
-          </div>
-        </div>
-
-        {/* Transaction List */}
-        <Card className="!rounded-2xl shadow-sm border border-gray-200/80">
-          {isLoading || isFetching ? (
-            <div className="space-y-3">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-16 bg-gray-100 rounded-2xl animate-pulse" />
-              ))}
-            </div>
-          ) : transactions.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              Không tìm thấy giao dịch nào phù hợp với bộ lọc.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {transactions.map((tx) => (
-                <TransactionListItem
-                  key={tx.id}
-                  transaction={tx}
-                  onDelete={handleDelete}
-                  isDeleting={deleteTxMutation.isPending && deleteTxMutation.variables === tx.id}
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                {/* Category Filter */}
+                <Select
+                  allowClear
+                  placeholder="Tất cả danh mục"
+                  value={selectedCategory}
+                  onChange={(val) => {
+                    setSelectedCategory(val);
+                    setPage(1);
+                  }}
+                  className="w-full sm:w-48"
+                  size="large"
+                  options={categories.map((c) => ({
+                    label: `${c.type === 'income' ? '+' : '-'} ${c.name}`,
+                    value: c.id,
+                  }))}
                 />
-              ))}
 
-              {/* Server-side Pagination */}
-              <div className="flex justify-center pt-4">
-                <Pagination
-                  current={page}
-                  pageSize={limit}
-                  total={total}
-                  onChange={(p) => setPage(p)}
-                  showSizeChanger={false}
+                {/* Date Range Filter */}
+                <RangePicker
+                  size="large"
+                  className="w-full sm:w-64 !rounded-xl"
+                  format="DD/MM/YYYY"
+                  onChange={handleDateChange}
                 />
               </div>
             </div>
-          )}
-        </Card>
+
+            {/* Transaction List */}
+            <Card className="!rounded-2xl shadow-sm border border-gray-200/80">
+              {transactions.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  Không tìm thấy giao dịch nào phù hợp với bộ lọc.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {transactions.map((tx) => (
+                    <TransactionListItem
+                      key={tx.id}
+                      transaction={tx}
+                      onDelete={handleDelete}
+                      isDeleting={deleteTxMutation.isPending && deleteTxMutation.variables === tx.id}
+                    />
+                  ))}
+
+                  {/* Server-side Pagination */}
+                  <div className="flex justify-center pt-4">
+                    <Pagination
+                      current={page}
+                      pageSize={limit}
+                      total={total}
+                      onChange={(p) => setPage(p)}
+                      showSizeChanger={false}
+                    />
+                  </div>
+                </div>
+              )}
+            </Card>
+          </>
+        )}
       </main>
 
       {/* Quick Add Transaction Drawer */}
