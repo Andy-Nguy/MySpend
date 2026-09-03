@@ -7,6 +7,7 @@ import { CategoryIcon } from '../components/categories/CategoryIconPicker';
 import { CategoryFormModal } from '../components/categories/CategoryForm';
 import { QuickAddTransaction } from '../components/transactions/QuickAddTransaction';
 import { MobileBottomNav } from '../components/dashboard/MobileBottomNav';
+import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import {
   useCategories,
   useCreateCategory,
@@ -83,108 +84,110 @@ export const CategoriesPage: React.FC = () => {
           </Button>
         </div>
 
-        {/* Filter Segmented (Chi tiêu / Thu nhập) */}
-        <div className="bg-white p-2 rounded-2xl border border-gray-200/80 shadow-sm">
-          <Segmented
-            block
-            size="large"
-            value={activeTab}
-            onChange={(val) => setActiveTab(val as CategoryTypeEnum)}
-            options={[
-              { label: 'Chi tiêu (Expense)', value: CategoryTypeEnum.EXPENSE },
-              { label: 'Thu nhập (Income)', value: CategoryTypeEnum.INCOME },
-            ]}
-            className="!bg-gray-100"
-          />
-        </div>
+        {isLoading && !categories.length ? (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <LoadingSpinner size="lg" tip="Đang tải danh mục..." />
+          </div>
+        ) : (
+          <>
+            {/* Filter Segmented (Chi tiêu / Thu nhập) */}
+            <div className="bg-white p-2 rounded-2xl border border-gray-200/80 shadow-sm">
+              <Segmented
+                block
+                size="large"
+                value={activeTab}
+                onChange={(val) => setActiveTab(val as CategoryTypeEnum)}
+                options={[
+                  { label: 'Chi tiêu (Expense)', value: CategoryTypeEnum.EXPENSE },
+                  { label: 'Thu nhập (Income)', value: CategoryTypeEnum.INCOME },
+                ]}
+                className="!bg-gray-100"
+              />
+            </div>
 
-        {/* Category List Grid */}
-        <Card className="!rounded-2xl shadow-sm border border-gray-200/80">
-          {isLoading || isFetching ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-16 bg-gray-100 rounded-2xl animate-pulse" />
-              ))}
-            </div>
-          ) : filteredCategories.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              Chưa có danh mục nào trong mục này. Vui lòng bấm &quot;Thêm Danh Mục&quot; để tạo!
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {filteredCategories.map((cat) => (
-                <div
-                  key={cat.id}
-                  className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/20 transition-all bg-white shadow-xs"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <div className="p-3 bg-gray-100 rounded-xl text-gray-700">
-                      <CategoryIcon slug={cat.icon} className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold text-gray-900 text-sm">{cat.name}</h4>
-                        {cat.transactionCount ? (
-                          <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full font-medium">
-                            {cat.transactionCount} giao dịch
-                          </span>
-                        ) : null}
+            {/* Category List Grid */}
+            <Card className="!rounded-2xl shadow-sm border border-gray-200/80">
+              {filteredCategories.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  Chưa có danh mục nào trong mục này. Vui lòng bấm &quot;Thêm Danh Mục&quot; để tạo!
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {filteredCategories.map((cat) => (
+                    <div
+                      key={cat.id}
+                      className="flex items-center justify-between p-4 rounded-2xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/20 transition-all bg-white shadow-xs"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="p-3 bg-gray-100 rounded-xl text-gray-700">
+                          <CategoryIcon slug={cat.icon} className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-gray-900 text-sm">{cat.name}</h4>
+                            {cat.transactionCount ? (
+                              <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full font-medium">
+                                {cat.transactionCount} giao dịch
+                              </span>
+                            ) : null}
+                          </div>
+                          <Tag
+                            color={cat.type === CategoryTypeEnum.INCOME ? 'green' : 'red'}
+                            className="!rounded-md text-[10px] uppercase font-bold mt-0.5"
+                          >
+                            {cat.type}
+                          </Tag>
+                        </div>
                       </div>
-                      <Tag
-                        color={cat.type === CategoryTypeEnum.INCOME ? 'green' : 'red'}
-                        className="!rounded-md text-[10px] uppercase font-bold mt-0.5"
-                      >
-                        {cat.type}
-                      </Tag>
-                    </div>
-                  </div>
 
-                  <div className="flex items-center gap-1">
-                    <Button
-                      type="text"
-                      icon={<Edit2 className="w-4 h-4 text-gray-500 hover:text-emerald-700" />}
-                      onClick={() => handleOpenEdit(cat)}
-                      className="!p-2 !rounded-lg"
-                    />
-
-                    {cat.hasTransactions ? (
-                      <Tooltip title="Không thể xóa danh mục đã phát sinh giao dịch">
-                        <span>
-                          <Button
-                            type="text"
-                            disabled
-                            icon={<Trash2 className="w-4 h-4 text-gray-300" />}
-                            className="!p-2 !rounded-lg"
-                          />
-                        </span>
-                      </Tooltip>
-                    ) : (
-                      <Popconfirm
-                        title="Xóa danh mục này?"
-                        description="Danh mục chưa có giao dịch sẽ được xóa khỏi hệ thống."
-                        onConfirm={() => handleDelete(cat.id)}
-                        okText="Xóa"
-                        cancelText="Hủy"
-                        okButtonProps={{
-                          danger: true,
-                          loading: deleteCategoryMutation.isPending && deleteCategoryMutation.variables === cat.id,
-                        }}
-                      >
+                      <div className="flex items-center gap-1">
                         <Button
                           type="text"
-                          danger
-                          loading={deleteCategoryMutation.isPending && deleteCategoryMutation.variables === cat.id}
-                          icon={<Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />}
+                          icon={<Edit2 className="w-4 h-4 text-gray-500 hover:text-emerald-700" />}
+                          onClick={() => handleOpenEdit(cat)}
                           className="!p-2 !rounded-lg"
                         />
-                      </Popconfirm>
-                    )}
-                  </div>
+
+                        {cat.hasTransactions ? (
+                          <Tooltip title="Không thể xóa danh mục đã phát sinh giao dịch">
+                            <span>
+                              <Button
+                                type="text"
+                                disabled
+                                icon={<Trash2 className="w-4 h-4 text-gray-300" />}
+                                className="!p-2 !rounded-lg"
+                              />
+                            </span>
+                          </Tooltip>
+                        ) : (
+                          <Popconfirm
+                            title="Xóa danh mục này?"
+                            description="Danh mục chưa có giao dịch sẽ được xóa khỏi hệ thống."
+                            onConfirm={() => handleDelete(cat.id)}
+                            okText="Xóa"
+                            cancelText="Hủy"
+                            okButtonProps={{
+                              danger: true,
+                              loading: deleteCategoryMutation.isPending && deleteCategoryMutation.variables === cat.id,
+                            }}
+                          >
+                            <Button
+                              type="text"
+                              danger
+                              loading={deleteCategoryMutation.isPending && deleteCategoryMutation.variables === cat.id}
+                              icon={<Trash2 className="w-4 h-4 text-gray-400 hover:text-red-500" />}
+                              className="!p-2 !rounded-lg"
+                            />
+                          </Popconfirm>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </Card>
+              )}
+            </Card>
+          </>
+        )}
       </main>
 
       {/* Category Modal */}

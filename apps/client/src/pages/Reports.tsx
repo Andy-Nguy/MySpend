@@ -6,6 +6,7 @@ import { Header } from '../components/dashboard/Header';
 import { CategoryDonutChart } from '../components/reports/CategoryDonutChart';
 import { QuickAddTransaction } from '../components/transactions/QuickAddTransaction';
 import { MobileBottomNav } from '../components/dashboard/MobileBottomNav';
+import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useCategoryBreakdown } from '../hooks/useReports';
 
 const { RangePicker } = DatePicker;
@@ -51,37 +52,45 @@ export const ReportsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Filter Bar */}
-        <div className="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Segmented
-            value={filterMode}
-            onChange={(val) => setFilterMode(val as 'month' | 'custom')}
-            options={[
-              { label: 'Tháng này', value: 'month' },
-              { label: 'Tùy chọn ngày', value: 'custom' },
-            ]}
-            className="!bg-gray-100"
-          />
-
-          {filterMode === 'custom' && (
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-emerald-700" />
-              <RangePicker
-                size="large"
-                className="!rounded-xl"
-                format="DD/MM/YYYY"
-                defaultValue={[dayjs().startOf('month'), dayjs().endOf('month')]}
-                onChange={handleRangeChange}
+        {isLoading && !breakdownItems ? (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <LoadingSpinner size="lg" tip="Đang phân tích dữ liệu..." />
+          </div>
+        ) : (
+          <>
+            {/* Filter Bar */}
+            <div className="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+              <Segmented
+                value={filterMode}
+                onChange={(val) => setFilterMode(val as 'month' | 'custom')}
+                options={[
+                  { label: 'Tháng này', value: 'month' },
+                  { label: 'Tùy chọn ngày', value: 'custom' },
+                ]}
+                className="!bg-gray-100"
               />
-            </div>
-          )}
-        </div>
 
-        {/* Donut Chart & Ranked List */}
-        <CategoryDonutChart
-          items={breakdownItems || []}
-          loading={isLoading || isFetching || !breakdownItems}
-        />
+              {filterMode === 'custom' && (
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-emerald-700" />
+                  <RangePicker
+                    size="large"
+                    className="!rounded-xl"
+                    format="DD/MM/YYYY"
+                    defaultValue={[dayjs().startOf('month'), dayjs().endOf('month')]}
+                    onChange={handleRangeChange}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Donut Chart & Ranked List */}
+            <CategoryDonutChart
+              items={breakdownItems || []}
+              loading={isLoading || !breakdownItems}
+            />
+          </>
+        )}
       </main>
 
       {/* Quick Add Transaction Drawer */}
