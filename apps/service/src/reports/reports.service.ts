@@ -38,8 +38,8 @@ export class ReportsService {
     const income = parseInt(aggregate?.income ?? '0', 10) || 0;
     const expense = parseInt(aggregate?.expense ?? '0', 10) || 0;
 
-    // Fetch top 5 recent transactions for dashboard
-    const recentPage = await this.transactionsService.findAll(userId, { limit: 5, page: 1 });
+    // Fetch top 7 recent transactions for dashboard
+    const recentPage = await this.transactionsService.findAll(userId, { limit: 7, page: 1 });
 
     this.logger.log(`📊 [Reports] Monthly summary for user ${userId}: income=${income}, expense=${expense}`);
 

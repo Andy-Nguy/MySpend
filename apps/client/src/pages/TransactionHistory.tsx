@@ -50,6 +50,32 @@ export const TransactionHistoryPage: React.FC = () => {
     setPage(1);
   };
 
+  const groupedTransactions = transactions.reduce((acc, tx) => {
+    const date = dayjs(tx.transactionDate).format('YYYY-MM-DD');
+    if (!acc[date]) acc[date] = [];
+    acc[date].push(tx);
+    return acc;
+  }, {} as Record<string, any[]>);
+
+  const sortedDates = Object.keys(groupedTransactions).sort(
+    (a, b) => dayjs(b).unix() - dayjs(a).unix()
+  );
+
+  const formatDateHeader = (dateStr: string) => {
+    const date = dayjs(dateStr);
+    const formattedDate = date.format('DD/MM/YYYY');
+    if (date.isSame(dayjs(), 'day')) return `HÔM NAY • ${formattedDate}`;
+    if (date.isSame(dayjs().subtract(1, 'day'), 'day')) return `HÔM QUA • ${formattedDate}`;
+    return date.format('DD MMMM, YYYY').toUpperCase();
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(amount).replace('₫', 'đ');
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-gray-900 pb-24 md:pb-16 overflow-x-hidden">
       <Header onOpenAddTransaction={() => setIsQuickAddOpen(true)} />
@@ -114,15 +140,41 @@ export const TransactionHistoryPage: React.FC = () => {
                   Không tìm thấy giao dịch nào phù hợp với bộ lọc.
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {transactions.map((tx) => (
-                    <TransactionListItem
-                      key={tx.id}
-                      transaction={tx}
-                      onDelete={handleDelete}
-                      isDeleting={deleteTxMutation.isPending && deleteTxMutation.variables === tx.id}
-                    />
-                  ))}
+                <div className="space-y-6">
+                  {sortedDates.map((date) => {
+                    const dayTxs = groupedTransactions[date];
+                    const daySum = dayTxs.reduce((sum, tx) => sum + tx.amount, 0);
+                    const isNegative = daySum < 0;
+
+                    return (
+                      <div key={date} className="space-y-3">
+                        <div className="flex items-center justify-between px-1">
+                          <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            {formatDateHeader(date)}
+                          </div>
+                          <div
+                            className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                              isNegative
+                                ? 'bg-red-50 text-red-600'
+                                : 'bg-emerald-50 text-emerald-600'
+                            }`}
+                          >
+                            {formatCurrency(daySum)}
+                          </div>
+                        </div>
+                        <div className="space-y-2.5">
+                          {dayTxs.map((tx) => (
+                            <TransactionListItem
+                              key={tx.id}
+                              transaction={tx}
+                              onDelete={handleDelete}
+                              isDeleting={deleteTxMutation.isPending && deleteTxMutation.variables === tx.id}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
 
                   {/* Server-side Pagination */}
                   <div className="flex justify-center pt-4">
@@ -142,7 +194,7 @@ export const TransactionHistoryPage: React.FC = () => {
       </main>
 
       {/* Quick Add Transaction Drawer */}
-      <QuickAddTransaction open={isQuickAddOpen} onClose={() => setIsQuickAddOpen(false)} />
+      <QuickAddTransaction open={isQuickAddOpen} onClose={() => setIsQuickAddOpen(true)} />
 
       {/* Mobile Bottom Nav */}
       <MobileBottomNav onOpenAddTransaction={() => setIsQuickAddOpen(true)} />

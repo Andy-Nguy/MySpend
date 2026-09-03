@@ -88,7 +88,7 @@ export const Dashboard: React.FC = () => {
               {/* Left Column: Recent Transactions */}
               <div className="lg:col-span-8 space-y-6">
                 <RecentTransactionsList
-                  transactions={summary?.recentTransactions ?? []}
+                  transactions={(summary?.recentTransactions ?? []).slice(0, 7)}
                   onDeleteTransaction={handleDeleteTx}
                   loading={isLoading || !summary}
                   deletingId={deleteTxMutation.isPending ? deleteTxMutation.variables : null}
