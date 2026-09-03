@@ -9,6 +9,7 @@ import { SummaryCards } from '../components/dashboard/SummaryCards';
 import { RecentTransactionsList } from '../components/dashboard/RecentTransactionsList';
 import { QuickAddTransaction } from '../components/transactions/QuickAddTransaction';
 import { MobileBottomNav } from '../components/dashboard/MobileBottomNav';
+import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useDashboard } from '../hooks/useDashboard';
 import { useDeleteTransaction } from '../hooks/useTransactions';
 
@@ -20,7 +21,7 @@ export const Dashboard: React.FC = () => {
   const year = selectedDate.year();
   const month = selectedDate.month() + 1; // 1-indexed for backend API
 
-  const { data: summary, isLoading, isFetching } = useDashboard(year, month);
+  const { data: summary, isLoading } = useDashboard(year, month);
   const deleteTxMutation = useDeleteTransaction();
 
   const handleDeleteTx = async (id: string) => {
@@ -67,83 +68,92 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Income / Expense / Balance Summary Cards */}
-        <SummaryCards
-          income={summary?.income}
-          expense={summary?.expense}
-          balance={summary?.balance}
-          loading={isLoading || isFetching || !summary}
-        />
-
-        {/* Main Grid Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column: Recent Transactions */}
-          <div className="lg:col-span-8 space-y-6">
-            <RecentTransactionsList
-              transactions={summary?.recentTransactions ?? []}
-              onDeleteTransaction={handleDeleteTx}
-              loading={isLoading || isFetching || !summary}
-              deletingId={deleteTxMutation.isPending ? deleteTxMutation.variables : null}
-            />
+        {/* Main Content Area */}
+        {isLoading && !summary ? (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <LoadingSpinner size="lg" tip="Đang tải dữ liệu tài chính..." />
           </div>
+        ) : (
+          <>
+            {/* Income / Expense / Balance Summary Cards */}
+            <SummaryCards
+              income={summary?.income}
+              expense={summary?.expense}
+              balance={summary?.balance}
+              loading={isLoading || !summary}
+            />
 
-          {/* Right Column: Quick Navigation Shortcuts */}
-          <div className="lg:col-span-4 space-y-4">
-            <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-sm space-y-4">
-              <h3 className="font-bold text-gray-900 text-base">Lối Tắt Nhanh</h3>
+            {/* Main Grid Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Left Column: Recent Transactions */}
+              <div className="lg:col-span-8 space-y-6">
+                <RecentTransactionsList
+                  transactions={summary?.recentTransactions ?? []}
+                  onDeleteTransaction={handleDeleteTx}
+                  loading={isLoading || !summary}
+                  deletingId={deleteTxMutation.isPending ? deleteTxMutation.variables : null}
+                />
+              </div>
 
-              <div className="space-y-2.5">
-                <button
-                  type="button"
-                  onClick={() => navigate(AppRoutes.CATEGORIES)}
-                  className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all text-left group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg group-hover:bg-emerald-100">
-                      <Layers className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-sm text-gray-800">Quản lý Danh mục</p>
-                      <p className="text-[11px] text-gray-400">Xem và sửa danh mục thu chi</p>
-                    </div>
+              {/* Right Column: Quick Navigation Shortcuts */}
+              <div className="lg:col-span-4 space-y-4">
+                <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-sm space-y-4">
+                  <h3 className="font-bold text-gray-900 text-base">Lối Tắt Nhanh</h3>
+
+                  <div className="space-y-2.5">
+                    <button
+                      type="button"
+                      onClick={() => navigate(AppRoutes.CATEGORIES)}
+                      className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all text-left group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg group-hover:bg-emerald-100">
+                          <Layers className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm text-gray-800">Quản lý Danh mục</p>
+                          <p className="text-[11px] text-gray-400">Xem và sửa danh mục thu chi</p>
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => navigate(AppRoutes.TRANSACTIONS)}
+                      className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all text-left group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-50 text-blue-700 rounded-lg group-hover:bg-blue-100">
+                          <History className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm text-gray-800">Lịch sử Giao dịch</p>
+                          <p className="text-[11px] text-gray-400">Tra cứu và lọc giao dịch</p>
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => navigate(AppRoutes.REPORTS)}
+                      className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all text-left group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-purple-50 text-purple-700 rounded-lg group-hover:bg-purple-100">
+                          <PieChart className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm text-gray-800">Báo cáo Chi tiêu</p>
+                          <p className="text-[11px] text-gray-400">Biểu đồ cơ cấu chi tiêu</p>
+                        </div>
+                      </div>
+                    </button>
                   </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => navigate(AppRoutes.TRANSACTIONS)}
-                  className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all text-left group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-50 text-blue-700 rounded-lg group-hover:bg-blue-100">
-                      <History className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-sm text-gray-800">Lịch sử Giao dịch</p>
-                      <p className="text-[11px] text-gray-400">Tra cứu và lọc giao dịch</p>
-                    </div>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => navigate(AppRoutes.REPORTS)}
-                  className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all text-left group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-50 text-purple-700 rounded-lg group-hover:bg-purple-100">
-                      <PieChart className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-sm text-gray-800">Báo cáo Chi tiêu</p>
-                      <p className="text-[11px] text-gray-400">Biểu đồ cơ cấu chi tiêu</p>
-                    </div>
-                  </div>
-                </button>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </main>
 
       {/* Quick Add Transaction Drawer */}
