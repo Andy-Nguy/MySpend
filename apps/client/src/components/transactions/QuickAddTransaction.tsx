@@ -98,7 +98,7 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
     <Drawer
       title="Thêm Giao Dịch Mới"
       placement="bottom"
-      height="90vh"
+      style={{ height: '80vh' }}
       onClose={onClose}
       open={open}
       className="!rounded-t-3xl"
