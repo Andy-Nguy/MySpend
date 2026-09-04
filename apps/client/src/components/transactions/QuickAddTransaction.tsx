@@ -140,6 +140,7 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
           <InputNumber
             className="w-full !rounded-xl !text-xl"
             size="large"
+            inputMode="decimal"
             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
             addonAfter="₫"

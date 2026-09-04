@@ -9,6 +9,7 @@ import { MobileBottomNav } from '../components/dashboard/MobileBottomNav';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useTransactions, useDeleteTransaction } from '../hooks/useTransactions';
 import { useCategories } from '../hooks/useCategories';
+import { CategoryTypeEnum } from '@myspend/libs';
 
 const { RangePicker } = DatePicker;
 
@@ -73,7 +74,7 @@ export const TransactionHistoryPage: React.FC = () => {
     return new Intl.NumberFormat('vi-VN', {
       style: 'currency',
       currency: 'VND',
-    }).format(amount).replace('₫', 'đ');
+    }).format(Math.abs(amount)).replace('₫', 'đ');
   };
 
   return (
@@ -143,7 +144,10 @@ export const TransactionHistoryPage: React.FC = () => {
                 <div className="space-y-6">
                   {sortedDates.map((date) => {
                     const dayTxs = groupedTransactions[date];
-                    const daySum = dayTxs.reduce((sum, tx) => sum + tx.amount, 0);
+                    const daySum = dayTxs.reduce((sum, tx) => {
+                      const amount = tx.category?.type === CategoryTypeEnum.INCOME ? tx.amount : -tx.amount;
+                      return sum + amount;
+                    }, 0);
                     const isNegative = daySum < 0;
 
                     return (
@@ -194,7 +198,7 @@ export const TransactionHistoryPage: React.FC = () => {
       </main>
 
       {/* Quick Add Transaction Drawer */}
-      <QuickAddTransaction open={isQuickAddOpen} onClose={() => setIsQuickAddOpen(true)} />
+      <QuickAddTransaction open={isQuickAddOpen} onClose={() => setIsQuickAddOpen(false)} />
 
       {/* Mobile Bottom Nav */}
       <MobileBottomNav onOpenAddTransaction={() => setIsQuickAddOpen(true)} />
