@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { Button, DatePicker, Drawer, Form, Input, InputNumber, Radio, message } from 'antd';
-import { CategoryTypeEnum, ICategory } from '@myspend/libs';
+import { Button, DatePicker, Drawer, Form, Input, Radio, message } from 'antd';
+import { CategoryTypeEnum } from '@myspend/libs';
 import dayjs from 'dayjs';
 import { useCategories } from '../../hooks/useCategories';
 import { useCreateTransaction } from '../../hooks/useTransactions';
@@ -11,6 +11,29 @@ interface IQuickAddTransactionProps {
   onClose: () => void;
   defaultType?: CategoryTypeEnum;
 }
+
+const FormattedNumberInput = ({ value, onChange }: { value?: number | null; onChange?: (val: number | null) => void }) => {
+  const formattedValue = value ? value.toLocaleString('vi-VN') : '';
+
+  return (
+    <div className="relative flex items-center">
+      <Input
+        inputMode="decimal"
+        className="w-full !rounded-xl !text-xl pr-10"
+        size="large"
+        placeholder="0"
+        value={formattedValue}
+        onChange={(e) => {
+          const rawValue = e.target.value.replace(/\D/g, '');
+          if (onChange) {
+            onChange(rawValue ? parseInt(rawValue, 10) : null);
+          }
+        }}
+      />
+      <span className="absolute right-3 text-gray-500 font-medium">₫</span>
+    </div>
+  );
+};
 
 export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
   open,
@@ -75,10 +98,8 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
     <Drawer
       title="Thêm Giao Dịch Mới"
       placement="bottom"
-      height="auto"
       onClose={onClose}
       open={open}
-      destroyOnClose
       className="!rounded-t-3xl"
       // Fix: force the drawer mask + wrapper to cover exactly the viewport width
       // This prevents the horizontal shift that occurs when the iOS keyboard appears
@@ -137,15 +158,7 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
             { type: 'number', min: 1, message: 'Số tiền phải lớn hơn 0' },
           ]}
         >
-          <InputNumber
-            className="w-full !rounded-xl !text-xl"
-            size="large"
-            inputMode="decimal"
-            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
-            addonAfter="₫"
-            placeholder="0"
-          />
+          <FormattedNumberInput />
         </Form.Item>
 
         {/* Category Icon Grid Selection */}

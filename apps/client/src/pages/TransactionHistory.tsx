@@ -27,7 +27,7 @@ export const TransactionHistoryPage: React.FC = () => {
   const { data: categories = [] } = useCategories();
   const deleteTxMutation = useDeleteTransaction();
 
-  const { data, isLoading, isFetching } = useTransactions({
+  const { data, isLoading } = useTransactions({
     page,
     limit,
     categoryId: selectedCategory,
