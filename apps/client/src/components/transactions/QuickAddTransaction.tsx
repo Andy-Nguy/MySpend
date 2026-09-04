@@ -12,7 +12,13 @@ interface IQuickAddTransactionProps {
   defaultType?: CategoryTypeEnum;
 }
 
-const FormattedNumberInput = ({ value, onChange }: { value?: number | null; onChange?: (val: number | null) => void }) => {
+const FormattedNumberInput = ({
+  value,
+  onChange,
+}: {
+  value?: number | null;
+  onChange?: (val: number | null) => void;
+}) => {
   const formattedValue = value ? value.toLocaleString('vi-VN') : '';
 
   return (
@@ -41,12 +47,15 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
   defaultType = CategoryTypeEnum.EXPENSE,
 }) => {
   const [form] = Form.useForm();
-  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
+  const { data: categories = [], isLoading: isLoadingCategories } =
+    useCategories();
   const createTxMutation = useCreateTransaction();
 
   const selectedType = Form.useWatch('type', form) || defaultType;
 
-  const filteredCategories = categories.filter((cat) => cat.type === selectedType);
+  const filteredCategories = categories.filter(
+    (cat) => cat.type === selectedType,
+  );
 
   useEffect(() => {
     if (open) {
@@ -98,7 +107,7 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
     <Drawer
       title="Thêm Giao Dịch Mới"
       placement="bottom"
-      style={{ height: '80vh' }}
+      height="80vh"
       onClose={onClose}
       open={open}
       className="!rounded-t-3xl"
@@ -141,10 +150,16 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
             onChange={(e) => handleTypeChange(e.target.value)}
             className="w-full grid grid-cols-2 gap-2"
           >
-            <Radio.Button value={CategoryTypeEnum.EXPENSE} className="!text-center !rounded-xl">
+            <Radio.Button
+              value={CategoryTypeEnum.EXPENSE}
+              className="!text-center !rounded-xl"
+            >
               Chi tiêu (Expense)
             </Radio.Button>
-            <Radio.Button value={CategoryTypeEnum.INCOME} className="!text-center !rounded-xl">
+            <Radio.Button
+              value={CategoryTypeEnum.INCOME}
+              className="!text-center !rounded-xl"
+            >
               Thu nhập (Income)
             </Radio.Button>
           </Radio.Group>
@@ -153,7 +168,9 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
         {/* Amount Input */}
         <Form.Item
           name="amount"
-          label={<span className="font-semibold text-gray-700">Số tiền (VND)</span>}
+          label={
+            <span className="font-semibold text-gray-700">Số tiền (VND)</span>
+          }
           rules={[
             { required: true, message: 'Vui lòng nhập số tiền' },
             { type: 'number', min: 1, message: 'Số tiền phải lớn hơn 0' },
@@ -190,8 +207,13 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
                             : 'border-gray-200 bg-white text-gray-700 hover:border-emerald-300'
                         }`}
                       >
-                        <CategoryIcon slug={cat.icon} className="w-6 h-6 mb-1.5" />
-                        <span className="text-xs truncate max-w-full text-center">{cat.name}</span>
+                        <CategoryIcon
+                          slug={cat.icon}
+                          className="w-6 h-6 mb-1.5"
+                        />
+                        <span className="text-xs truncate max-w-full text-center">
+                          {cat.name}
+                        </span>
                       </button>
                     );
                   }}
@@ -204,14 +226,18 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
         {/* Date Field */}
         <Form.Item
           name="transactionDate"
-          label={<span className="font-semibold text-gray-700">Ngày giao dịch</span>}
+          label={
+            <span className="font-semibold text-gray-700">Ngày giao dịch</span>
+          }
           rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
         >
           <DatePicker
             className="w-full !rounded-xl"
             size="large"
             format="DD/MM/YYYY"
-            disabledDate={(current) => current && current > dayjs().endOf('day')}
+            disabledDate={(current) =>
+              current && current > dayjs().endOf('day')
+            }
           />
         </Form.Item>
 
@@ -220,7 +246,12 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
           name="note"
           label={<span className="font-semibold text-gray-700">Ghi chú</span>}
         >
-          <Input placeholder="Ví dụ: Ăn trưa cùng đồng nghiệp..." size="large" className="!rounded-xl" maxLength={200} />
+          <Input
+            placeholder="Ví dụ: Ăn trưa cùng đồng nghiệp..."
+            size="large"
+            className="!rounded-xl"
+            maxLength={200}
+          />
         </Form.Item>
 
         {/* Action Button */}
@@ -237,4 +268,3 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
     </Drawer>
   );
 };
-
