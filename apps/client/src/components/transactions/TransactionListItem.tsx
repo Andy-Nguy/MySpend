@@ -12,17 +12,22 @@ interface ITransactionListItemProps {
   transaction: ITransaction;
   onDelete?: (id: string) => void;
   isDeleting?: boolean;
+  onClick?: () => void;
 }
 
 export const TransactionListItem: React.FC<ITransactionListItemProps> = ({
   transaction,
   onDelete,
   isDeleting,
+  onClick,
 }) => {
   const isIncome = transaction.category?.type === CategoryTypeEnum.INCOME;
 
   return (
-    <div className="flex items-center justify-between gap-2 p-3.5 bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm transition-all">
+    <div
+      onClick={onClick}
+      className={`flex items-center justify-between gap-2 p-3.5 bg-white rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm transition-all ${onClick ? 'cursor-pointer' : ''}`}
+    >
       {/* Left: icon + name/date — can shrink */}
       <div className="flex items-center gap-3 min-w-0 overflow-hidden flex-1">
         <div

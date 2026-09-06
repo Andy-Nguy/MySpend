@@ -10,6 +10,7 @@ import { TransactionListItem } from '../transactions/TransactionListItem';
 interface IRecentTransactionsListProps {
   transactions: ITransaction[];
   onDeleteTransaction?: (id: string) => void;
+  onTransactionClick?: (tx: ITransaction) => void;
   loading?: boolean;
   deletingId?: string | null;
 }
@@ -17,6 +18,7 @@ interface IRecentTransactionsListProps {
 export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
   transactions,
   onDeleteTransaction,
+  onTransactionClick,
   loading,
   deletingId,
 }) => {
@@ -108,6 +110,7 @@ export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
                       transaction={tx}
                       onDelete={onDeleteTransaction}
                       isDeleting={deletingId === tx.id}
+                      onClick={() => onTransactionClick?.(tx)}
                     />
                   ))}
                 </div>
