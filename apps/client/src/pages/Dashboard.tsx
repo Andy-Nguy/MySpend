@@ -12,11 +12,14 @@ import { MobileBottomNav } from '../components/dashboard/MobileBottomNav';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useDashboard } from '../hooks/useDashboard';
 import { useDeleteTransaction } from '../hooks/useTransactions';
+import { ITransaction } from '@myspend/libs';
+import { TransactionsDialog } from '../components/transactions/TransactionsDialog';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(dayjs());
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<ITransaction | null>(null);
 
   const year = selectedDate.year();
   const month = selectedDate.month() + 1; // 1-indexed for backend API
@@ -90,6 +93,7 @@ export const Dashboard: React.FC = () => {
                 <RecentTransactionsList
                   transactions={(summary?.recentTransactions ?? []).slice(0, 7)}
                   onDeleteTransaction={handleDeleteTx}
+                  onTransactionClick={(tx) => setSelectedTransaction(tx)}
                   loading={isLoading || !summary}
                   deletingId={deleteTxMutation.isPending ? deleteTxMutation.variables : null}
                 />
@@ -161,6 +165,13 @@ export const Dashboard: React.FC = () => {
 
       {/* Mobile Bottom Nav */}
       <MobileBottomNav onOpenAddTransaction={() => setIsQuickAddOpen(true)} />
+
+      {/* Transaction Detail Dialog */}
+      <TransactionsDialog
+        open={!!selectedTransaction}
+        transaction={selectedTransaction}
+        onClose={() => setSelectedTransaction(null)}
+      />
     </div>
   );
 };

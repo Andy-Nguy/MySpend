@@ -9,7 +9,8 @@ import { MobileBottomNav } from '../components/dashboard/MobileBottomNav';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useTransactions, useDeleteTransaction } from '../hooks/useTransactions';
 import { useCategories } from '../hooks/useCategories';
-import { CategoryTypeEnum } from '@myspend/libs';
+import { CategoryTypeEnum, ITransaction } from '@myspend/libs';
+import { TransactionsDialog } from '../components/transactions/TransactionsDialog';
 
 const { RangePicker } = DatePicker;
 
@@ -23,6 +24,7 @@ export const TransactionHistoryPage: React.FC = () => {
   ]);
 
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<ITransaction | null>(null);
 
   const { data: categories = [] } = useCategories();
   const deleteTxMutation = useDeleteTransaction();
@@ -173,6 +175,7 @@ export const TransactionHistoryPage: React.FC = () => {
                               transaction={tx}
                               onDelete={handleDelete}
                               isDeleting={deleteTxMutation.isPending && deleteTxMutation.variables === tx.id}
+                              onClick={() => setSelectedTransaction(tx)}
                             />
                           ))}
                         </div>
@@ -202,6 +205,13 @@ export const TransactionHistoryPage: React.FC = () => {
 
       {/* Mobile Bottom Nav */}
       <MobileBottomNav onOpenAddTransaction={() => setIsQuickAddOpen(true)} />
+
+      {/* Transaction Detail Dialog */}
+      <TransactionsDialog
+        open={!!selectedTransaction}
+        transaction={selectedTransaction}
+        onClose={() => setSelectedTransaction(null)}
+      />
     </div>
   );
 };
