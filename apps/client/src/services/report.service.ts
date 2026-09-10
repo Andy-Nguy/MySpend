@@ -1,4 +1,4 @@
-import { ICategoryBreakdownItem, IDashboardSummary } from '@myspend/libs';
+import { ICategoryBreakdownItem, IDashboardSummary, IReportStats } from '@myspend/libs';
 import { apiClient } from './api.service';
 
 export const reportService = {
@@ -9,9 +9,16 @@ export const reportService = {
     return response.data;
   },
 
-  async getCategoryBreakdown(from: string, to: string): Promise<ICategoryBreakdownItem[]> {
+  async getCategoryBreakdown(from: string, to: string, categoryId?: string): Promise<ICategoryBreakdownItem[]> {
     const response = await apiClient.get<ICategoryBreakdownItem[]>('/reports/category-breakdown', {
-      params: { from, to },
+      params: { from, to, categoryId },
+    });
+    return response.data;
+  },
+
+  async getReportStats(from: string, to: string, categoryId?: string): Promise<IReportStats> {
+    const response = await apiClient.get<IReportStats>('/reports/stats', {
+      params: { from, to, categoryId },
     });
     return response.data;
   },

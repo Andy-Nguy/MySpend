@@ -1,7 +1,7 @@
 import { Controller, Get, Query, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDateString, IsInt, Max, Min } from 'class-validator';
+import { IsDateString, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Request } from 'express';
 
 import { ReportsService } from './reports.service';
@@ -21,6 +21,22 @@ class ReportSummaryQueryDto {
 }
 
 class CategoryBreakdownQueryDto {
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
+
+  @IsDateString()
+  from!: string;
+
+  @IsDateString()
+  to!: string;
+}
+
+class ReportStatsQueryDto {
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
+
   @IsDateString()
   from!: string;
 
@@ -29,6 +45,7 @@ class CategoryBreakdownQueryDto {
 }
 
 interface IAuthenticatedRequest extends Request {
+
   user: { userId: string; email: string };
 }
 
@@ -54,6 +71,18 @@ export class ReportsController {
     @Req() req: IAuthenticatedRequest,
     @Query() query: CategoryBreakdownQueryDto
   ) {
-    return this.reportsService.getCategoryBreakdown(req.user.userId, query.from, query.to);
+    return this.reportsService.getCategoryBreakdown(req.user.userId, query.from, query.to, query.categoryId);
+  }
+
+  @Get('stats')
+  @ApiOperation({ summary: 'Overall spending statistics for a date range' })
+  @ApiQuery({ name: 'from', type: String, example: '2026-09-01' })
+  @ApiQuery({ name: 'to', type: String, example: '2026-09-30' })
+  @ApiQuery({ name: 'categoryId', type: String, required: false })
+  getStats(
+    @Req() req: IAuthenticatedRequest,
+    @Query() query: ReportStatsQueryDto
+  ) {
+    return this.reportsService.getStats(req.user.userId, query.from, query.to, query.categoryId);
   }
 }
