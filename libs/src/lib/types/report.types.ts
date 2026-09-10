@@ -5,3 +5,11 @@ export interface ICategoryBreakdownItem {
   total: number;
   percentage: number;
 }
+
+export interface IReportStats {
+  totalSpending: number;
+  previousPeriodSpending: number;
+  averageDailySpending: number;
+  remainingBudget: number;
+  budgetLimit: number;
+}

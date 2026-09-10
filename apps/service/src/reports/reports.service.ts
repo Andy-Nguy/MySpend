@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ICategoryBreakdownItem, IDashboardSummary } from '@myspend/libs';
+import { ICategoryBreakdownItem, IDashboardSummary, IReportStats } from '@myspend/libs';
 
 import { TransactionEntity } from '../entities/transaction/transaction.entity';
 import { TransactionsService } from '../transactions/transactions.service';
@@ -51,10 +51,68 @@ export class ReportsService {
     };
   }
 
+  async getStats(userId: string, from: string, to: string, categoryId?: string): Promise<IReportStats> {
+    const startDate = new Date(from);
+    const endDate = new Date(to);
+
+    // Calculate current period total spending
+    const currentTotal = await this.transactionRepository
+      .createQueryBuilder('t')
+      .leftJoin('t.category', 'c')
+      .select('SUM(t.amount)', 'total')
+      .where('t.user_id = :userId', { userId })
+      .andWhere("c.type = 'expense'")
+      .andWhere('t.deleted_at IS NULL')
+      .andWhere('t.transaction_date BETWEEN :from AND :to', { from, to })
+      .andWhere(categoryId ? 'c.id = :categoryId' : '1=1', { categoryId })
+      .getRawOne<{ total: string }>();
+
+    const totalSpending = parseInt(currentTotal?.total ?? '0', 10) || 0;
+
+    // Calculate previous period spending
+    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+    const prevStartDate = new Date(startDate.getTime() - diffTime);
+    const prevEndDate = new Date(endDate.getTime() - diffTime);
+    const prevFrom = prevStartDate.toISOString().split('T')[0];
+    const prevTo = prevEndDate.toISOString().split('T')[0];
+
+    const prevTotal = await this.transactionRepository
+      .createQueryBuilder('t')
+      .leftJoin('t.category', 'c')
+      .select('SUM(t.amount)', 'total')
+      .where('t.user_id = :userId', { userId })
+      .andWhere("c.type = 'expense'")
+      .andWhere('t.deleted_at IS NULL')
+      .andWhere('t.transaction_date BETWEEN :from AND :to', { from: prevFrom, to: prevTo })
+      .andWhere(categoryId ? 'c.id = :categoryId' : '1=1', { categoryId })
+      .getRawOne<{ total: string }>();
+
+    const previousPeriodSpending = parseInt(prevTotal?.total ?? '0', 10) || 0;
+
+    // Average daily spending
+    const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) || 1;
+    const averageDailySpending = Math.round(totalSpending / days);
+
+    // Budget (mocked for now as requested)
+    const budgetLimit = 10000000;
+    const remainingBudget = budgetLimit - totalSpending;
+
+    this.logger.log(`📊 [Reports] Stats for user ${userId}: total=${totalSpending}, prev=${previousPeriodSpending}`);
+
+    return {
+      totalSpending,
+      previousPeriodSpending,
+      averageDailySpending,
+      remainingBudget,
+      budgetLimit,
+    };
+  }
+
   async getCategoryBreakdown(
     userId: string,
     from: string,
-    to: string
+    to: string,
+    categoryId?: string
   ): Promise<ICategoryBreakdownItem[]> {
     const rows = await this.transactionRepository
       .createQueryBuilder('t')
@@ -69,6 +127,7 @@ export class ReportsService {
       .andWhere('t.deleted_at IS NULL')
       .andWhere("c.type = 'expense'")
       .andWhere('t.transaction_date BETWEEN :from AND :to', { from, to })
+      .andWhere(categoryId ? 'c.id = :categoryId' : '1=1', { categoryId })
       .groupBy('c.id, c.name, c.icon')
       .orderBy('"total"', 'DESC')
       .getRawMany<{ categoryId: string; categoryName: string; icon: string; total: string }>();
