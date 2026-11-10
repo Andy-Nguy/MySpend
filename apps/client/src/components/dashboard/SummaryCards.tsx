@@ -1,5 +1,6 @@
 import React from 'react';
 import { PiggyBank, TrendingDown, TrendingUp, Wallet } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const formatVND = (amount: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
@@ -21,12 +22,13 @@ export const SummaryCards: React.FC<ISummaryCardsProps> = ({
   balance,
   loading,
 }) => {
+  const { t } = useTranslation();
   const currentNetSavings = netSavings ?? balance;
 
   const cards = [
     {
-      label: 'Total Balance',
-      sublabel: 'Số dư thực tế hiện có',
+      label: t('dashboard.totalBalance'),
+      sublabel: t('dashboard.totalBalanceSub'),
       value: totalBalance,
       icon: <Wallet className="w-5 h-5" />,
       colorClass: (totalBalance ?? 0) >= 0 ? 'text-indigo-600' : 'text-red-500',
@@ -34,8 +36,8 @@ export const SummaryCards: React.FC<ISummaryCardsProps> = ({
       borderClass: (totalBalance ?? 0) >= 0 ? 'border-indigo-200' : 'border-red-200',
     },
     {
-      label: 'Monthly Income',
-      sublabel: 'Thu nhập tháng này',
+      label: t('dashboard.monthlyIncome'),
+      sublabel: t('dashboard.monthlyIncomeSub'),
       value: income,
       icon: <TrendingUp className="w-5 h-5" />,
       colorClass: 'text-emerald-600',
@@ -43,8 +45,8 @@ export const SummaryCards: React.FC<ISummaryCardsProps> = ({
       borderClass: 'border-emerald-200',
     },
     {
-      label: 'Monthly Expense',
-      sublabel: 'Chi tiêu tháng này',
+      label: t('dashboard.monthlyExpense'),
+      sublabel: t('dashboard.monthlyExpenseSub'),
       value: expense,
       icon: <TrendingDown className="w-5 h-5" />,
       colorClass: 'text-red-500',
@@ -52,8 +54,8 @@ export const SummaryCards: React.FC<ISummaryCardsProps> = ({
       borderClass: 'border-red-200',
     },
     {
-      label: 'Net Cashflow',
-      sublabel: 'Thu ròng (Thu - Chi)',
+      label: t('dashboard.netCashflow'),
+      sublabel: t('dashboard.netCashflowSub'),
       value: currentNetSavings,
       icon: <PiggyBank className="w-5 h-5" />,
       colorClass: (currentNetSavings ?? 0) >= 0 ? 'text-emerald-700' : 'text-amber-600',

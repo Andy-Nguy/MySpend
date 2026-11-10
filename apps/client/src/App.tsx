@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ConfigProvider } from 'antd';
+import viVN from 'antd/locale/vi_VN';
+import enUS from 'antd/locale/en_US';
+import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { PermissionNameEnum } from '@myspend/libs';
+import './locales/i18n';
 
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { PermissionProtectedRoute } from './components/PermissionProtectedRoute';
@@ -18,8 +22,14 @@ import { ReportsPage } from './pages/Reports';
 import { AdminAnnouncementsPage } from './pages/AdminAnnouncements';
 
 export const App: React.FC = () => {
+  const { i18n } = useTranslation();
+  const antdLocale = useMemo(() => {
+    return i18n.language?.startsWith('en') ? enUS : viVN;
+  }, [i18n.language]);
+
   return (
     <ConfigProvider
+      locale={antdLocale}
       theme={{
         token: {
           colorPrimary: '#047857',

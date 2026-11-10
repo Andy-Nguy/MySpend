@@ -2,16 +2,20 @@ import React from 'react';
 import { Calendar, ChevronDown, LogOut, Megaphone, Plus, User, Wallet } from 'lucide-react';
 import { Dropdown, MenuProps } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import dayjs from 'dayjs';
 import { PermissionNameEnum } from '@myspend/libs';
 import { AppRoutes } from '../../consts/routes';
 import { useAuth } from '../../context/AuthContext';
 import { AnnouncementBell } from '../announcements/AnnouncementBell';
+import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 interface HeaderProps {
   onOpenAddTransaction: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
+  const { t, i18n } = useTranslation();
   const { user, logout, hasPermission } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,7 +34,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
       disabled: true,
       label: (
         <div className="py-1 px-2">
-          <p className="text-xs text-gray-500 font-normal">Signed in as</p>
+          <p className="text-xs text-gray-500 font-normal">
+            {i18n.language.startsWith('vi') ? 'Đăng nhập với tư cách' : 'Signed in as'}
+          </p>
           <p className="text-sm font-semibold text-gray-900 truncate max-w-[200px]">
             {user?.email}
           </p>
@@ -48,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
     {
       key: 'profile',
       icon: <User className="w-4 h-4 text-emerald-600" />,
-      label: 'My Profile',
+      label: t('nav.profile'),
       onClick: () => navigate(AppRoutes.PROFILE),
     },
     ...(canManageAnnouncements
@@ -59,7 +65,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
           {
             key: 'admin-announcements',
             icon: <Megaphone className="w-4 h-4 text-emerald-600" />,
-            label: 'Quản lý thông báo',
+            label: t('nav.adminAnnouncements'),
             onClick: () => navigate(AppRoutes.ADMIN_ANNOUNCEMENTS),
           },
         ]
@@ -71,15 +77,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
       key: 'logout',
       danger: true,
       icon: <LogOut className="w-4 h-4 text-red-500" />,
-      label: 'Sign out',
+      label: t('nav.logout'),
       onClick: () => logout(),
     },
   ];
 
-  const currentDate = new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    year: 'numeric',
-  }).format(new Date());
+  const currentDate = dayjs().format(t('dashboard.monthFormat'));
 
   return (
     <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200/80 transition-all w-full">
@@ -115,7 +118,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Trang chủ
+              {t('nav.dashboard')}
             </button>
             <button
               onClick={() => navigate(AppRoutes.CATEGORIES)}
@@ -125,7 +128,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Danh mục
+              {t('nav.categories')}
             </button>
             <button
               onClick={() => navigate(AppRoutes.TRANSACTIONS)}
@@ -135,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Lịch sử
+              {t('nav.transactions')}
             </button>
             <button
               onClick={() => navigate(AppRoutes.REPORTS)}
@@ -145,17 +148,20 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Báo cáo
+              {t('nav.reports')}
             </button>
           </nav>
 
           {/* Right Action & Profile Area */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             {/* Current Month Badge (Desktop/Tablet) */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200/80 text-gray-700 text-xs font-medium">
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200/80 text-gray-700 text-xs font-medium capitalize">
               <Calendar className="w-3.5 h-3.5 text-emerald-600" />
               <span>{currentDate}</span>
             </div>
+
+            {/* Language Switcher */}
+            <LanguageSwitcher />
 
             {/* Notification Bell */}
             <AnnouncementBell />
@@ -167,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
               className="inline-flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs sm:text-sm font-semibold shadow-md shadow-emerald-700/25 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 whitespace-nowrap"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span className="hidden xs:inline sm:inline">Add Transaction</span>
+              <span className="hidden xs:inline sm:inline">{t('dashboard.addTransaction')}</span>
             </button>
 
             {/* User Profile Dropdown */}

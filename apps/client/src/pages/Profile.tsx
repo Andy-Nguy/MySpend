@@ -23,14 +23,17 @@ import {
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { AppRoutes } from '../consts/routes';
 import { useAuth } from '../context/AuthContext';
 import { IChangePasswordData, IUpdateProfileData, profileService } from '../services/profile.service';
+import { LanguageSwitcher } from '../components/common/LanguageSwitcher';
 
 const { Title, Text } = Typography;
 
 export const Profile: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { user, updateUserProfile } = useAuth();
@@ -88,10 +91,10 @@ export const Profile: React.FC = () => {
       updateUserProfile(updated);
 
       if (isNewUser) {
-        message.success('Profile setup complete! Welcome aboard ');
+        message.success(t('profile.updateSuccess'));
         navigate(AppRoutes.HOME, { replace: true });
       } else {
-        message.success('Profile updated successfully!');
+        message.success(t('profile.updateSuccess'));
       }
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string | string[] } }; message?: string };
@@ -116,7 +119,7 @@ export const Profile: React.FC = () => {
         newPassword: values.newPassword,
       });
 
-      message.success('Password changed successfully!');
+      message.success(t('profile.passwordChangeSuccess'));
       passwordForm.resetFields();
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string | string[] } }; message?: string };
@@ -143,12 +146,13 @@ export const Profile: React.FC = () => {
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-gray-100/80 text-gray-700 text-sm font-semibold transition-colors focus:outline-none"
           >
             <ArrowLeft className="w-4 h-4 text-emerald-700" />
-            <span>{isNewUser ? 'Skip for now' : 'Back to Dashboard'}</span>
+            <span>{isNewUser ? t('common.cancel') : t('nav.dashboard')}</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <span className="text-sm font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-              {isNewUser ? 'Profile Onboarding' : 'Account Settings'}
+              {isNewUser ? t('profile.welcomeNewUser') : t('profile.title')}
             </span>
           </div>
         </div>
@@ -159,8 +163,8 @@ export const Profile: React.FC = () => {
         {/* First Time Registration Welcome Alert Banner */}
         {isNewUser && (
           <Alert
-            message="Welcome to MySpend! 🎉"
-            description="Your account has been created. Please complete your personal profile to personalize your expense tracking experience."
+            message={t('profile.welcomeNewUser')}
+            description={t('profile.welcomeNewUserDesc')}
             type="success"
             showIcon
             icon={<CheckCircle2 className="w-5 h-5 text-emerald-600" />}
@@ -197,7 +201,7 @@ export const Profile: React.FC = () => {
           title={
             <div className="flex items-center gap-2 text-gray-900 font-bold text-base py-1">
               <User className="w-5 h-5 text-emerald-700" />
-              <span>Personal Information</span>
+              <span>{t('profile.personalInfo')}</span>
             </div>
           }
           className="!rounded-2xl shadow-sm border border-gray-200/80"
@@ -211,14 +215,14 @@ export const Profile: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Form.Item
                 name="firstName"
-                label={<span className="text-sm font-semibold text-gray-700">First Name</span>}
+                label={<span className="text-sm font-semibold text-gray-700">{t('profile.firstName')}</span>}
               >
                 <Input placeholder="e.g. John" size="large" className="!rounded-xl" />
               </Form.Item>
 
               <Form.Item
                 name="lastName"
-                label={<span className="text-sm font-semibold text-gray-700">Last Name</span>}
+                label={<span className="text-sm font-semibold text-gray-700">{t('profile.lastName')}</span>}
               >
                 <Input placeholder="e.g. Doe" size="large" className="!rounded-xl" />
               </Form.Item>
@@ -227,14 +231,14 @@ export const Profile: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Form.Item
                 name="displayName"
-                label={<span className="text-sm font-semibold text-gray-700">Display Name</span>}
+                label={<span className="text-sm font-semibold text-gray-700">{t('profile.displayName')}</span>}
               >
                 <Input placeholder="e.g. Johnny" size="large" className="!rounded-xl" />
               </Form.Item>
 
               <Form.Item
                 name="mobileNumber"
-                label={<span className="text-sm font-semibold text-gray-700">Mobile Phone</span>}
+                label={<span className="text-sm font-semibold text-gray-700">{t('profile.mobileNumber')}</span>}
                 rules={[{ pattern: /^\+?[0-9\s-]{8,20}$/, message: 'Please enter a valid phone number' }]}
               >
                 <Input
@@ -249,20 +253,20 @@ export const Profile: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Form.Item
                 name="dateOfBirth"
-                label={<span className="text-sm font-semibold text-gray-700">Date of Birth</span>}
+                label={<span className="text-sm font-semibold text-gray-700">{t('profile.dateOfBirth')}</span>}
               >
                 <DatePicker
                   className="w-full !rounded-xl"
                   size="large"
                   suffixIcon={<Calendar className="w-4 h-4 text-gray-400" />}
-                  placeholder="Select birth date"
+                  placeholder="YYYY-MM-DD"
                   format="YYYY-MM-DD"
                 />
               </Form.Item>
 
               <Form.Item
                 name="avatarUrl"
-                label={<span className="text-sm font-semibold text-gray-700">Avatar Image URL</span>}
+                label={<span className="text-sm font-semibold text-gray-700">{t('profile.avatarUrl')}</span>}
                 rules={[{ type: 'url', message: 'Please enter a valid image URL' }]}
               >
                 <Input placeholder="https://example.com/avatar.jpg" size="large" className="!rounded-xl" />
@@ -271,7 +275,11 @@ export const Profile: React.FC = () => {
 
             <Form.Item
               name="email"
-              label={<span className="text-sm font-semibold text-gray-700">Email Address (Read-only)</span>}
+              label={
+                <span className="text-sm font-semibold text-gray-700">
+                  {t('profile.email')} <span className="text-gray-400 font-normal">{t('profile.emailReadonly')}</span>
+                </span>
+              }
             >
               <Input size="large" disabled className="!rounded-xl !bg-gray-100 !text-gray-500" />
             </Form.Item>
@@ -279,15 +287,15 @@ export const Profile: React.FC = () => {
             <div className="pt-3 pb-1 border-t border-gray-100">
               <div className="flex items-center gap-2 mb-3">
                 <Wallet className="w-4 h-4 text-emerald-700" />
-                <span className="text-sm font-bold text-gray-800">Financial Settings</span>
+                <span className="text-sm font-bold text-gray-800">{t('profile.financialSettings')}</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Form.Item
                   name="initialBalance"
                   label={
                     <div>
-                      <span className="text-sm font-semibold text-gray-700">Starting Balance (VND)</span>
-                      <p className="text-xs text-gray-400 font-normal">Your initial balance when starting to use MySpend</p>
+                      <span className="text-sm font-semibold text-gray-700">{t('profile.startingBalance')}</span>
+                      <p className="text-xs text-gray-400 font-normal">{t('profile.startingBalanceDesc')}</p>
                     </div>
                   }
                 >
@@ -305,8 +313,8 @@ export const Profile: React.FC = () => {
                   name="monthlyBudget"
                   label={
                     <div>
-                      <span className="text-sm font-semibold text-gray-700">Monthly Spending Budget (VND)</span>
-                      <p className="text-xs text-gray-400 font-normal">Target spending limit for monthly reports & alerts</p>
+                      <span className="text-sm font-semibold text-gray-700">{t('profile.monthlyBudget')}</span>
+                      <p className="text-xs text-gray-400 font-normal">{t('profile.monthlyBudgetDesc')}</p>
                     </div>
                   }
                 >
@@ -330,7 +338,7 @@ export const Profile: React.FC = () => {
                 loading={isUpdatingProfile}
                 className="!bg-emerald-700 hover:!bg-emerald-800 !h-11 !px-8 !font-semibold !rounded-xl border-none shadow-md shadow-emerald-700/20"
               >
-                {isNewUser ? 'Save & Continue to Dashboard' : 'Save Changes'}
+                {isNewUser ? t('profile.saveAndContinue') : t('profile.saveChanges')}
               </Button>
             </div>
           </Form>
@@ -342,7 +350,7 @@ export const Profile: React.FC = () => {
             title={
               <div className="flex items-center gap-2 text-gray-900 font-bold text-base py-1">
                 <Lock className="w-5 h-5 text-emerald-700" />
-                <span>Security & Password</span>
+                <span>{t('profile.security')}</span>
               </div>
             }
             className="!rounded-2xl shadow-sm border border-gray-200/80"
@@ -355,7 +363,7 @@ export const Profile: React.FC = () => {
             >
               <Form.Item
                 name="currentPassword"
-                label={<span className="text-sm font-semibold text-gray-700">Current Password</span>}
+                label={<span className="text-sm font-semibold text-gray-700">{t('profile.currentPassword')}</span>}
                 rules={[{ required: true, message: 'Please enter your current password' }]}
               >
                 <Input.Password
@@ -368,7 +376,7 @@ export const Profile: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Form.Item
                   name="newPassword"
-                  label={<span className="text-sm font-semibold text-gray-700">New Password</span>}
+                  label={<span className="text-sm font-semibold text-gray-700">{t('profile.newPassword')}</span>}
                   rules={[
                     { required: true, message: 'Please enter a new password' },
                     { min: 6, message: 'Password must be at least 6 characters' },
@@ -383,7 +391,7 @@ export const Profile: React.FC = () => {
 
                 <Form.Item
                   name="confirmNewPassword"
-                  label={<span className="text-sm font-semibold text-gray-700">Confirm New Password</span>}
+                  label={<span className="text-sm font-semibold text-gray-700">{t('profile.confirmNewPassword')}</span>}
                   dependencies={['newPassword']}
                   rules={[
                     { required: true, message: 'Please confirm your new password' },
@@ -392,7 +400,7 @@ export const Profile: React.FC = () => {
                         if (!value || getFieldValue('newPassword') === value) {
                           return Promise.resolve();
                         }
-                        return Promise.reject(new Error('The two passwords do not match'));
+                        return Promise.reject(new Error(t('profile.passwordMismatch')));
                       },
                     }),
                   ]}
@@ -412,7 +420,7 @@ export const Profile: React.FC = () => {
                   loading={isChangingPassword}
                   className="!bg-emerald-700 hover:!bg-emerald-800 !h-11 !px-8 !font-semibold !rounded-xl border-none shadow-md shadow-emerald-700/20"
                 >
-                  Update Password
+                  {t('profile.saveChanges')}
                 </Button>
               </div>
             </Form>

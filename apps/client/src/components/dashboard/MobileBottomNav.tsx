@@ -1,6 +1,7 @@
 import React from 'react';
 import { Home, Layers, PieChart, Plus, Receipt } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AppRoutes } from '../../consts/routes';
 
 interface MobileBottomNavProps {
@@ -10,6 +11,7 @@ interface MobileBottomNavProps {
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onOpenAddTransaction,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,7 +30,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           }`}
         >
           <Home className="w-5 h-5" />
-          <span>Trang chủ</span>
+          <span>{t('nav.dashboard')}</span>
         </button>
 
         {/* Categories */}
@@ -40,7 +42,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           }`}
         >
           <Layers className="w-5 h-5" />
-          <span>Danh mục</span>
+          <span>{t('nav.categories')}</span>
         </button>
 
         {/* Center Quick Add FAB */}
@@ -64,7 +66,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           }`}
         >
           <Receipt className="w-5 h-5" />
-          <span>Lịch sử</span>
+          <span>{t('nav.transactions')}</span>
         </button>
 
         {/* Reports */}
@@ -76,7 +78,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           }`}
         >
           <PieChart className="w-5 h-5" />
-          <span>Báo cáo</span>
+          <span>{t('nav.reports')}</span>
         </button>
       </div>
     </div>
