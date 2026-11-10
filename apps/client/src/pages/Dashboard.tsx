@@ -3,6 +3,7 @@ import { Button, DatePicker } from 'antd';
 import { Calendar, Plus, Wallet, Layers, History, PieChart } from 'lucide-react';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AppRoutes } from '../consts/routes';
 import { Header } from '../components/dashboard/Header';
 import { SummaryCards } from '../components/dashboard/SummaryCards';
@@ -16,6 +17,7 @@ import { ITransaction } from '@myspend/libs';
 import { TransactionsDialog } from '../components/transactions/TransactionsDialog';
 
 export const Dashboard: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(dayjs());
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
@@ -41,9 +43,9 @@ export const Dashboard: React.FC = () => {
         {/* Welcome & Month Picker Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Tổng quan Tài chính</h1>
+            <h1 className="text-xl font-bold text-gray-900">{t('dashboard.title')}</h1>
             <p className="text-xs text-gray-500">
-              Theo dõi tình hình thu chi hàng tháng của bạn
+              {t('dashboard.subtitle')}
             </p>
           </div>
 
@@ -55,7 +57,7 @@ export const Dashboard: React.FC = () => {
                 value={selectedDate}
                 onChange={(date) => date && setSelectedDate(date)}
                 allowClear={false}
-                format="[Tháng] MM, YYYY"
+                format={t('dashboard.monthFormat')}
                 className="!border-none !bg-transparent !p-0 font-semibold text-gray-700 text-sm"
               />
             </div>
@@ -66,7 +68,7 @@ export const Dashboard: React.FC = () => {
               onClick={() => setIsQuickAddOpen(true)}
               className="!bg-emerald-700 hover:!bg-emerald-800 !h-10 !px-4 !rounded-xl !font-semibold border-none shadow-md shadow-emerald-700/20 flex-shrink-0 whitespace-nowrap"
             >
-              Thêm Giao Dịch
+              {t('dashboard.addTransaction')}
             </Button>
           </div>
         </div>
@@ -74,7 +76,7 @@ export const Dashboard: React.FC = () => {
         {/* Main Content Area */}
         {isLoading && !summary ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
-            <LoadingSpinner size="lg" tip="Đang tải dữ liệu tài chính..." />
+            <LoadingSpinner size="lg" tip={t('dashboard.loadingData')} />
           </div>
         ) : (
           <>
@@ -104,7 +106,7 @@ export const Dashboard: React.FC = () => {
               {/* Right Column: Quick Navigation Shortcuts */}
               <div className="lg:col-span-4 space-y-4">
                 <div className="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-sm space-y-4">
-                  <h3 className="font-bold text-gray-900 text-base">Lối Tắt Nhanh</h3>
+                  <h3 className="font-bold text-gray-900 text-base">{t('dashboard.quickActions')}</h3>
 
                   <div className="space-y-2.5">
                     <button
@@ -117,8 +119,8 @@ export const Dashboard: React.FC = () => {
                           <Layers className="w-4 h-4" />
                         </div>
                         <div>
-                          <p className="font-semibold text-sm text-gray-800">Quản lý Danh mục</p>
-                          <p className="text-[11px] text-gray-400">Xem và sửa danh mục thu chi</p>
+                          <p className="font-semibold text-sm text-gray-800">{t('dashboard.categoryManage')}</p>
+                          <p className="text-[11px] text-gray-400">{t('dashboard.categoryManageSub')}</p>
                         </div>
                       </div>
                     </button>
@@ -133,8 +135,8 @@ export const Dashboard: React.FC = () => {
                           <History className="w-4 h-4" />
                         </div>
                         <div>
-                          <p className="font-semibold text-sm text-gray-800">Lịch sử Giao dịch</p>
-                          <p className="text-[11px] text-gray-400">Tra cứu và lọc giao dịch</p>
+                          <p className="font-semibold text-sm text-gray-800">{t('dashboard.historyManage')}</p>
+                          <p className="text-[11px] text-gray-400">{t('dashboard.historyManageSub')}</p>
                         </div>
                       </div>
                     </button>
@@ -149,8 +151,8 @@ export const Dashboard: React.FC = () => {
                           <PieChart className="w-4 h-4" />
                         </div>
                         <div>
-                          <p className="font-semibold text-sm text-gray-800">Báo cáo Chi tiêu</p>
-                          <p className="text-[11px] text-gray-400">Biểu đồ cơ cấu chi tiêu</p>
+                          <p className="font-semibold text-sm text-gray-800">{t('dashboard.reportsManage')}</p>
+                          <p className="text-[11px] text-gray-400">{t('dashboard.reportsManageSub')}</p>
                         </div>
                       </div>
                     </button>

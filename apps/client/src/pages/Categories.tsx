@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, Popconfirm, Segmented, Tag, Tooltip } from 'antd';
 import { Plus, Trash2, Edit2, Layers } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { CategoryTypeEnum, ICategory } from '@myspend/libs';
 import { Header } from '../components/dashboard/Header';
 import { CategoryIcon } from '../components/categories/CategoryIconPicker';
@@ -16,6 +17,7 @@ import {
 } from '../hooks/useCategories';
 
 export const CategoriesPage: React.FC = () => {
+  const { t } = useTranslation();
   const { data: categories = [], isLoading, isFetching } = useCategories();
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
@@ -69,8 +71,8 @@ export const CategoriesPage: React.FC = () => {
               <Layers className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Quản Lý Danh Mục</h1>
-              <p className="text-xs text-gray-500">Tạo, cập nhật hoặc quản lý các danh mục thu chi cá nhân</p>
+              <h1 className="text-xl font-bold text-gray-900">{t('categories.title')}</h1>
+              <p className="text-xs text-gray-500">{t('categories.subtitle')}</p>
             </div>
           </div>
 
@@ -80,13 +82,13 @@ export const CategoriesPage: React.FC = () => {
             onClick={handleOpenCreate}
             className="!bg-emerald-700 hover:!bg-emerald-800 !h-11 !px-5 !rounded-xl !font-semibold border-none shadow-md shadow-emerald-700/20"
           >
-            Thêm Danh Mục
+            {t('categories.createCategory')}
           </Button>
         </div>
 
         {isLoading && !categories.length ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
-            <LoadingSpinner size="lg" tip="Đang tải danh mục..." />
+            <LoadingSpinner size="lg" tip={t('common.loading')} />
           </div>
         ) : (
           <>
@@ -98,8 +100,8 @@ export const CategoriesPage: React.FC = () => {
                 value={activeTab}
                 onChange={(val) => setActiveTab(val as CategoryTypeEnum)}
                 options={[
-                  { label: 'Chi tiêu (Expense)', value: CategoryTypeEnum.EXPENSE },
-                  { label: 'Thu nhập (Income)', value: CategoryTypeEnum.INCOME },
+                  { label: t('common.expense'), value: CategoryTypeEnum.EXPENSE },
+                  { label: t('common.income'), value: CategoryTypeEnum.INCOME },
                 ]}
                 className="!bg-gray-100"
               />

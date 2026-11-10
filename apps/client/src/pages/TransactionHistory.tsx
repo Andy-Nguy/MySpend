@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, DatePicker, Pagination, Select } from 'antd';
 import { History, Filter } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { Header } from '../components/dashboard/Header';
 import { TransactionListItem } from '../components/transactions/TransactionListItem';
@@ -15,6 +16,8 @@ import { TransactionsDialog } from '../components/transactions/TransactionsDialo
 const { RangePicker } = DatePicker;
 
 export const TransactionHistoryPage: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const isVi = i18n.language.startsWith('vi');
   const [page, setPage] = useState(1);
   const [limit] = useState(15);
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
@@ -67,8 +70,8 @@ export const TransactionHistoryPage: React.FC = () => {
   const formatDateHeader = (dateStr: string) => {
     const date = dayjs(dateStr);
     const formattedDate = date.format('DD/MM/YYYY');
-    if (date.isSame(dayjs(), 'day')) return `HÔM NAY • ${formattedDate}`;
-    if (date.isSame(dayjs().subtract(1, 'day'), 'day')) return `HÔM QUA • ${formattedDate}`;
+    if (date.isSame(dayjs(), 'day')) return `${isVi ? 'HÔM NAY' : 'TODAY'} • ${formattedDate}`;
+    if (date.isSame(dayjs().subtract(1, 'day'), 'day')) return `${isVi ? 'HÔM QUA' : 'YESTERDAY'} • ${formattedDate}`;
     return date.format('DD MMMM, YYYY').toUpperCase();
   };
 
@@ -90,14 +93,14 @@ export const TransactionHistoryPage: React.FC = () => {
             <History className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Lịch Sử Giao Dịch</h1>
-            <p className="text-xs text-gray-500">Xem toàn bộ lịch sử thu chi, lọc theo ngày và danh mục</p>
+            <h1 className="text-xl font-bold text-gray-900">{t('transactions.title')}</h1>
+            <p className="text-xs text-gray-500">{t('transactions.subtitle')}</p>
           </div>
         </div>
 
         {isLoading && !transactions.length ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
-            <LoadingSpinner size="lg" tip="Đang tải giao dịch..." />
+            <LoadingSpinner size="lg" tip={t('common.loading')} />
           </div>
         ) : (
           <>
@@ -105,14 +108,14 @@ export const TransactionHistoryPage: React.FC = () => {
             <div className="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
               <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 w-full sm:w-auto">
                 <Filter className="w-4 h-4 text-emerald-700" />
-                <span>Bộ lọc:</span>
+                <span>{t('common.filter')}:</span>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                 {/* Category Filter */}
                 <Select
                   allowClear
-                  placeholder="Tất cả danh mục"
+                  placeholder={isVi ? 'Tất cả danh mục' : 'All categories'}
                   value={selectedCategory}
                   onChange={(val) => {
                     setSelectedCategory(val);

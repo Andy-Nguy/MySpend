@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle2, Sparkles, TrendingUp, Wallet } from 'lucide-react';
+import { LanguageSwitcher } from '../common/LanguageSwitcher';
 
 interface AuthLayoutProps {
   title: string;
@@ -108,7 +109,12 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
       </div>
 
       {/* Right Side: Form Container (Mobile & Desktop) */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8 md:p-12 lg:p-16 min-h-screen bg-slate-50 md:bg-gray-50/60">
+      <div className="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8 md:p-12 lg:p-16 min-h-screen bg-slate-50 md:bg-gray-50/60 relative">
+        {/* Language Switcher on Top Right of Auth */}
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-8 z-20">
+          <LanguageSwitcher />
+        </div>
+
         <div className="w-full max-w-md">
           {/* Mobile Top Branding (< 768px) */}
           <div className="md:hidden flex items-center justify-center gap-2.5 mb-6">
