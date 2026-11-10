@@ -78,10 +78,12 @@ export const Dashboard: React.FC = () => {
           </div>
         ) : (
           <>
-            {/* Income / Expense / Balance Summary Cards */}
+            {/* Income / Expense / Net Savings / Total Balance Summary Cards */}
             <SummaryCards
               income={summary?.income}
               expense={summary?.expense}
+              netSavings={summary?.netSavings}
+              totalBalance={summary?.totalBalance}
               balance={summary?.balance}
               loading={isLoading || !summary}
             />
