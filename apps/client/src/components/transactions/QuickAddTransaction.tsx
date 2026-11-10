@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Button, DatePicker, Drawer, Form, Input, Radio, message } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { CategoryTypeEnum } from '@myspend/libs';
 import dayjs from 'dayjs';
 import { useCategories } from '../../hooks/useCategories';
@@ -46,6 +47,7 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
   onClose,
   defaultType = CategoryTypeEnum.EXPENSE,
 }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const { data: categories = [], isLoading: isLoadingCategories } =
     useCategories();
@@ -89,7 +91,7 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
     note?: string;
   }) => {
     if (!values.categoryId) {
-      message.error('Vui lòng chọn danh mục');
+      message.error(t('transactions.categoryPlaceholder'));
       return;
     }
 
@@ -105,7 +107,7 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
 
   return (
     <Drawer
-      title="Thêm Giao Dịch Mới"
+      title={t('transactions.createTitle')}
       placement="bottom"
       height="80vh"
       onClose={onClose}
@@ -154,13 +156,13 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
               value={CategoryTypeEnum.EXPENSE}
               className="!text-center !rounded-xl"
             >
-              Chi tiêu (Expense)
+              {t('common.expense')}
             </Radio.Button>
             <Radio.Button
               value={CategoryTypeEnum.INCOME}
               className="!text-center !rounded-xl"
             >
-              Thu nhập (Income)
+              {t('common.income')}
             </Radio.Button>
           </Radio.Group>
         </Form.Item>
@@ -169,11 +171,11 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
         <Form.Item
           name="amount"
           label={
-            <span className="font-semibold text-gray-700">Số tiền (VND)</span>
+            <span className="font-semibold text-gray-700">{t('transactions.amount')} (VND)</span>
           }
           rules={[
-            { required: true, message: 'Vui lòng nhập số tiền' },
-            { type: 'number', min: 1, message: 'Số tiền phải lớn hơn 0' },
+            { required: true, message: t('transactions.amountPlaceholder') },
+            { type: 'number', min: 1, message: 'Invalid amount' },
           ]}
         >
           <FormattedNumberInput />
@@ -182,14 +184,14 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
         {/* Category Icon Grid Selection */}
         <Form.Item
           name="categoryId"
-          label={<span className="font-semibold text-gray-700">Danh mục</span>}
-          rules={[{ required: true, message: 'Vui lòng chọn danh mục' }]}
+          label={<span className="font-semibold text-gray-700">{t('transactions.category')}</span>}
+          rules={[{ required: true, message: t('transactions.categoryPlaceholder') }]}
         >
           {isLoadingCategories ? (
             <div className="h-20 bg-gray-100 rounded-xl animate-pulse" />
           ) : filteredCategories.length === 0 ? (
             <p className="text-sm text-gray-500 py-2">
-              Chưa có danh mục nào thuộc loại này. Hãy tạo danh mục trước!
+              {t('common.noData')}
             </p>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-48 overflow-y-auto p-2 bg-gray-50 rounded-xl border border-gray-200">
@@ -227,9 +229,9 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
         <Form.Item
           name="transactionDate"
           label={
-            <span className="font-semibold text-gray-700">Ngày giao dịch</span>
+            <span className="font-semibold text-gray-700">{t('transactions.date')}</span>
           }
-          rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
+          rules={[{ required: true, message: 'Required' }]}
         >
           <DatePicker
             className="w-full !rounded-xl"
@@ -244,10 +246,10 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
         {/* Note Field */}
         <Form.Item
           name="note"
-          label={<span className="font-semibold text-gray-700">Ghi chú</span>}
+          label={<span className="font-semibold text-gray-700">{t('transactions.note')}</span>}
         >
           <Input
-            placeholder="Ví dụ: Ăn trưa cùng đồng nghiệp..."
+            placeholder={t('transactions.notePlaceholder')}
             size="large"
             className="!rounded-xl"
             maxLength={200}
@@ -262,7 +264,7 @@ export const QuickAddTransaction: React.FC<IQuickAddTransactionProps> = ({
           disabled={createTxMutation.isPending}
           className="!w-full !h-12 !bg-emerald-700 hover:!bg-emerald-800 active:!bg-emerald-900 !text-white !font-semibold !rounded-xl !border-none transition-all shadow-md shadow-emerald-700/20 flex items-center justify-center gap-2 mt-2"
         >
-          Lưu Giao Dịch
+          {t('common.save')}
         </Button>
       </Form>
     </Drawer>

@@ -33,11 +33,7 @@ export class TransactionsService {
     }
 
     // 2. Validate transactionDate is not in the future (BR-004)
-    //    Client sends date in YYYY-MM-DD based on local timezone
-    const today = new Date().toISOString().split('T')[0]; // server UTC date — acceptable since client validates too
-    if (dto.transactionDate > today) {
-      throw new BadRequestException('Transaction date cannot be in the future');
-    }
+    this.assertTransactionDateNotInFuture(dto.transactionDate);
 
     const transaction = await this.transactionsRepository.create(userId, dto);
     this.logger.log(
@@ -71,12 +67,7 @@ export class TransactionsService {
 
     // Validate new date if provided
     if (dto.transactionDate) {
-      const today = new Date().toISOString().split('T')[0];
-      if (dto.transactionDate > today) {
-        throw new BadRequestException(
-          'Transaction date cannot be in the future',
-        );
-      }
+      this.assertTransactionDateNotInFuture(dto.transactionDate);
     }
 
     const updated = await this.transactionsRepository.update(id, userId, dto);
@@ -84,6 +75,18 @@ export class TransactionsService {
       ` [Transactions] Updated transaction ${id} for user: ${userId}`,
     );
     return updated;
+  }
+
+  private assertTransactionDateNotInFuture(transactionDate: string) {
+    // Validate transactionDate is not in the future (BR-004)
+    // To accommodate users across all timezones (e.g. UTC+7 in Vietnam or up to UTC+14 in Pacific),
+    // allow any date that has already begun anywhere on Earth (Date.now() + 14 hours).
+    const maxAllowedDate = new Date(Date.now() + 14 * 60 * 60 * 1000)
+      .toISOString()
+      .split('T')[0];
+    if (transactionDate > maxAllowedDate) {
+      throw new BadRequestException('Transaction date cannot be in the future');
+    }
   }
 
   async remove(userId: string, id: string) {

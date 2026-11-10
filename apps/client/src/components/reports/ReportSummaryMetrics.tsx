@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { IReportStats } from '@myspend/libs';
 import { TrendingUp, TrendingDown, Wallet, CalendarDays, PiggyBank } from 'lucide-react';
 
@@ -10,6 +11,7 @@ interface ReportSummaryMetricsProps {
 }
 
 export const ReportSummaryMetrics: React.FC<ReportSummaryMetricsProps> = ({ stats }) => {
+  const { t } = useTranslation();
   const { totalSpending, previousPeriodSpending, averageDailySpending, remainingBudget, budgetLimit } = stats;
 
   const diff = totalSpending - previousPeriodSpending;
@@ -39,7 +41,7 @@ export const ReportSummaryMetrics: React.FC<ReportSummaryMetricsProps> = ({ stat
           )}
         </div>
         <div>
-          <p className="text-sm text-gray-500 font-medium">Tổng chi tiêu</p>
+          <p className="text-sm text-gray-500 font-medium">{t('reports.totalSpending')}</p>
           <h3 className="text-2xl font-bold text-gray-900">{formatVND(totalSpending)}</h3>
         </div>
       </div>
@@ -52,7 +54,7 @@ export const ReportSummaryMetrics: React.FC<ReportSummaryMetricsProps> = ({ stat
           </div>
         </div>
         <div>
-          <p className="text-sm text-gray-500 font-medium">Trung bình/ngày</p>
+          <p className="text-sm text-gray-500 font-medium">{t('reports.avgDaily')}</p>
           <h3 className="text-2xl font-bold text-gray-900">{formatVND(averageDailySpending)}</h3>
         </div>
       </div>
@@ -63,19 +65,29 @@ export const ReportSummaryMetrics: React.FC<ReportSummaryMetricsProps> = ({ stat
           <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
             <PiggyBank className="w-5 h-5" />
           </div>
-          <span className="text-xs font-bold text-gray-400">{100 - budgetUtilization}% còn lại</span>
+          {budgetLimit > 0 && (
+            <span className="text-xs font-bold text-gray-400">
+              {t('reports.remainingPercent', { percent: 100 - budgetUtilization })}
+            </span>
+          )}
         </div>
         <div>
-          <p className="text-sm text-gray-500 font-medium">Ngân sách còn lại</p>
-          <h3 className="text-2xl font-bold text-gray-900">{formatVND(remainingBudget)}</h3>
-          <div className="mt-3 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-            <div
-              className={`h-full transition-all duration-500 ${
-                budgetUtilization > 90 ? 'bg-rose-500' : budgetUtilization > 70 ? 'bg-amber-500' : 'bg-emerald-500'
-              }`}
-              style={{ width: `${budgetUtilization}%` }}
-            />
-          </div>
+          <p className="text-sm text-gray-500 font-medium">{t('reports.remainingBudget')}</p>
+          {budgetLimit > 0 ? (
+            <>
+              <h3 className="text-2xl font-bold text-gray-900">{formatVND(remainingBudget)}</h3>
+              <div className="mt-3 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-500 ${
+                    budgetUtilization > 90 ? 'bg-rose-500' : budgetUtilization > 70 ? 'bg-amber-500' : 'bg-emerald-500'
+                  }`}
+                  style={{ width: `${budgetUtilization}%` }}
+                />
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-gray-400 italic mt-1">{t('reports.unbudgeted')}</p>
+          )}
         </div>
       </div>
     </div>

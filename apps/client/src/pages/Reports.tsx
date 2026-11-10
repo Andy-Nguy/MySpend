@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DatePicker, Segmented, Select } from 'antd';
 import { PieChart as PieIcon, Calendar } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { Header } from '../components/dashboard/Header';
 import { CategoryDonutChart } from '../components/reports/CategoryDonutChart';
@@ -15,6 +16,7 @@ import { useCategories } from '../hooks/useCategories';
 const { RangePicker } = DatePicker;
 
 export const ReportsPage: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [filterMode, setFilterMode] = useState<'today' | 'week' | 'month' | 'custom'>('today');
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [customRange, setCustomRange] = useState<[string, string]>([
@@ -24,6 +26,7 @@ export const ReportsPage: React.FC = () => {
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
 
   const { data: categories } = useCategories();
+  const isVi = i18n.language.startsWith('vi');
 
   const fromDate =
     filterMode === 'today'
@@ -64,8 +67,8 @@ export const ReportsPage: React.FC = () => {
             <PieIcon className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Báo Cáo Chi Tiêu</h1>
-            <p className="text-xs text-gray-500">Phân tích tỷ trọng chi tiêu theo từng danh mục</p>
+            <h1 className="text-xl font-bold text-gray-900">{t('reports.title')}</h1>
+            <p className="text-xs text-gray-500">{t('reports.subtitle')}</p>
           </div>
         </div>
 
@@ -76,17 +79,17 @@ export const ReportsPage: React.FC = () => {
               value={filterMode}
               onChange={(val) => setFilterMode(val as 'today' | 'week' | 'month' | 'custom')}
               options={[
-                { label: 'Hôm nay', value: 'today' },
-                { label: 'Tuần này', value: 'week' },
-                { label: 'Tháng này', value: 'month' },
-                { label: 'Tùy chọn', value: 'custom' },
+                { label: isVi ? 'Hôm nay' : 'Today', value: 'today' },
+                { label: isVi ? 'Tuần này' : 'This Week', value: 'week' },
+                { label: isVi ? 'Tháng này' : 'This Month', value: 'month' },
+                { label: isVi ? 'Tùy chọn' : 'Custom', value: 'custom' },
               ]}
               className="!bg-gray-100 w-full sm:w-auto"
             />
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <Select
-                placeholder="Tất cả danh mục"
+                placeholder={isVi ? 'Tất cả danh mục' : 'All categories'}
                 className="w-full sm:w-48"
                 allowClear
                 value={selectedCategory}

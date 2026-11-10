@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Descriptions, Tag } from 'antd';
 import { Calendar, FileText, Wallet } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { ITransaction, CategoryTypeEnum } from '@myspend/libs';
 import { CategoryIcon } from '../categories/CategoryIconPicker';
@@ -16,7 +17,10 @@ export const TransactionsDialog: React.FC<ITransactionsDialogProps> = ({
   transaction,
   onClose,
 }) => {
+  const { t, i18n } = useTranslation();
   if (!transaction) return null;
+
+  const isVi = i18n.language.startsWith('vi');
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -27,7 +31,7 @@ export const TransactionsDialog: React.FC<ITransactionsDialogProps> = ({
 
   return (
     <Modal
-      title="Chi tiết giao dịch"
+      title={isVi ? 'Chi tiết giao dịch' : 'Transaction Details'}
       open={open}
       onCancel={onClose}
       footer={null}
@@ -42,32 +46,32 @@ export const TransactionsDialog: React.FC<ITransactionsDialogProps> = ({
         </div>
 
         <Descriptions column={1} bordered size="small" layout="vertical">
-          <Descriptions.Item label="Số tiền">
+          <Descriptions.Item label={t('transactions.amount')}>
             <span className={`text-lg font-bold ${transaction.category?.type === CategoryTypeEnum.INCOME ? 'text-emerald-600' : 'text-gray-900'}`}>
               {transaction.category?.type === CategoryTypeEnum.INCOME ? '+' : '-'}
               {formatCurrency(transaction.amount)}
             </span>
           </Descriptions.Item>
-          <Descriptions.Item label="Danh mục">
+          <Descriptions.Item label={t('transactions.category')}>
             <div className="flex items-center gap-2">
               <Tag color={transaction.category?.type === CategoryTypeEnum.INCOME ? 'green' : 'default'}>
-                {transaction.category?.name || 'Không xác định'}
+                {transaction.category?.name || (isVi ? 'Không xác định' : 'Uncategorized')}
               </Tag>
             </div>
           </Descriptions.Item>
-          <Descriptions.Item label="Ngày giao dịch">
+          <Descriptions.Item label={t('transactions.date')}>
             <div className="flex items-center gap-2 text-gray-600">
               <Calendar className="w-4 h-4" />
               {dayjs(transaction.transactionDate).format('DD/MM/YYYY')}
             </div>
           </Descriptions.Item>
-          <Descriptions.Item label="Ghi chú">
+          <Descriptions.Item label={t('transactions.note')}>
             <div className="flex items-center gap-2 text-gray-600 italic">
               <FileText className="w-4 h-4" />
-              {transaction.note || 'Không có ghi chú'}
+              {transaction.note || (isVi ? 'Không có ghi chú' : 'No note provided')}
             </div>
           </Descriptions.Item>
-          <Descriptions.Item label="Thời gian tạo">
+          <Descriptions.Item label={isVi ? 'Thời gian tạo' : 'Created At'}>
             <div className="flex items-center gap-2 text-gray-400 text-xs">
               <Wallet className="w-3 h-3" />
               {dayjs(transaction.createdAt).format('DD/MM/YYYY HH:mm')}

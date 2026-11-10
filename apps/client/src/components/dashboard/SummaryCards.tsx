@@ -1,5 +1,6 @@
 import React from 'react';
-import { TrendingDown, TrendingUp, Wallet } from 'lucide-react';
+import { PiggyBank, TrendingDown, TrendingUp, Wallet } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const formatVND = (amount: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
@@ -7,59 +8,84 @@ const formatVND = (amount: number) =>
 interface ISummaryCardsProps {
   income?: number;
   expense?: number;
-  balance?: number;
+  netSavings?: number;
+  totalBalance?: number;
+  balance?: number; // Backward-compatibility
   loading?: boolean;
 }
 
-export const SummaryCards: React.FC<ISummaryCardsProps> = ({ income, expense, balance, loading }) => {
+export const SummaryCards: React.FC<ISummaryCardsProps> = ({
+  income,
+  expense,
+  netSavings,
+  totalBalance,
+  balance,
+  loading,
+}) => {
+  const { t } = useTranslation();
+  const currentNetSavings = netSavings ?? balance;
+
   const cards = [
     {
-      label: 'Income',
+      label: t('dashboard.totalBalance'),
+      sublabel: t('dashboard.totalBalanceSub'),
+      value: totalBalance,
+      icon: <Wallet className="w-5 h-5" />,
+      colorClass: (totalBalance ?? 0) >= 0 ? 'text-indigo-600' : 'text-red-500',
+      bgClass: (totalBalance ?? 0) >= 0 ? 'bg-indigo-50/60' : 'bg-red-50',
+      borderClass: (totalBalance ?? 0) >= 0 ? 'border-indigo-200' : 'border-red-200',
+    },
+    {
+      label: t('dashboard.monthlyIncome'),
+      sublabel: t('dashboard.monthlyIncomeSub'),
       value: income,
       icon: <TrendingUp className="w-5 h-5" />,
       colorClass: 'text-emerald-600',
-      bgClass: 'bg-emerald-50',
+      bgClass: 'bg-emerald-50/60',
       borderClass: 'border-emerald-200',
     },
     {
-      label: 'Expense',
+      label: t('dashboard.monthlyExpense'),
+      sublabel: t('dashboard.monthlyExpenseSub'),
       value: expense,
       icon: <TrendingDown className="w-5 h-5" />,
       colorClass: 'text-red-500',
-      bgClass: 'bg-red-50',
+      bgClass: 'bg-red-50/60',
       borderClass: 'border-red-200',
     },
     {
-      label: 'Balance',
-      value: balance,
-      icon: <Wallet className="w-5 h-5" />,
-      colorClass: (balance ?? 0) >= 0 ? 'text-blue-600' : 'text-orange-500',
-      bgClass: (balance ?? 0) >= 0 ? 'bg-blue-50' : 'bg-orange-50',
-      borderClass: (balance ?? 0) >= 0 ? 'border-blue-200' : 'border-orange-200',
+      label: t('dashboard.netCashflow'),
+      sublabel: t('dashboard.netCashflowSub'),
+      value: currentNetSavings,
+      icon: <PiggyBank className="w-5 h-5" />,
+      colorClass: (currentNetSavings ?? 0) >= 0 ? 'text-emerald-700' : 'text-amber-600',
+      bgClass: (currentNetSavings ?? 0) >= 0 ? 'bg-emerald-50/60' : 'bg-amber-50/60',
+      borderClass: (currentNetSavings ?? 0) >= 0 ? 'border-emerald-200' : 'border-amber-200',
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full overflow-hidden">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full overflow-hidden">
       {cards.map((card) => {
         const isCardLoading = loading || card.value === undefined;
         return (
           <div
             key={card.label}
-            className={`rounded-2xl border ${card.borderClass} ${card.bgClass} p-4 sm:p-5 flex items-center gap-3 shadow-sm min-w-0 overflow-hidden`}
+            className={`rounded-2xl border ${card.borderClass} ${card.bgClass} p-4 sm:p-5 flex items-center gap-3 shadow-sm min-w-0 overflow-hidden bg-white/70 backdrop-blur-sm`}
           >
             <div className={`p-2.5 rounded-xl bg-white shadow-sm ${card.colorClass} flex-shrink-0`}>
               {card.icon}
             </div>
             <div className="min-w-0 overflow-hidden flex-1">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{card.label}</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide truncate">{card.label}</p>
               {isCardLoading ? (
                 <div className="h-6 w-28 bg-gray-200/80 rounded-lg animate-pulse mt-1" />
               ) : (
-                <p className={`text-base sm:text-lg font-bold ${card.colorClass} truncate`}>
+                <p className={`text-base sm:text-lg font-bold ${card.colorClass} truncate mt-0.5`}>
                   {formatVND(card.value!)}
                 </p>
               )}
+              <p className="text-[10px] text-gray-400 truncate mt-0.5">{card.sublabel}</p>
             </div>
           </div>
         );

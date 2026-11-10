@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import { ArrowRight, ReceiptText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { ITransaction, CategoryTypeEnum } from '@myspend/libs';
 import { AppRoutes } from '../../consts/routes';
@@ -22,6 +23,7 @@ export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
   loading,
   deletingId,
 }) => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   const groupedTransactions = transactions.reduce((acc, tx) => {
@@ -38,8 +40,9 @@ export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
   const formatDateHeader = (dateStr: string) => {
     const date = dayjs(dateStr);
     const formattedDate = date.format('DD/MM/YYYY');
-    if (date.isSame(dayjs(), 'day')) return `HÔM NAY • ${formattedDate}`;
-    if (date.isSame(dayjs().subtract(1, 'day'), 'day')) return `HÔM QUA • ${formattedDate}`;
+    const isVi = i18n.language.startsWith('vi');
+    if (date.isSame(dayjs(), 'day')) return `${isVi ? 'HÔM NAY' : 'TODAY'} • ${formattedDate}`;
+    if (date.isSame(dayjs().subtract(1, 'day'), 'day')) return `${isVi ? 'HÔM QUA' : 'YESTERDAY'} • ${formattedDate}`;
     return date.format('DD MMMM, YYYY').toUpperCase();
   };
 
@@ -55,14 +58,14 @@ export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ReceiptText className="w-5 h-5 text-emerald-700" />
-          <h3 className="font-bold text-gray-900 text-base">Giao dịch gần đây</h3>
+          <h3 className="font-bold text-gray-900 text-base">{t('dashboard.recentTransactions')}</h3>
         </div>
         <Button
           type="text"
           onClick={() => navigate(AppRoutes.TRANSACTIONS)}
           className="!text-emerald-700 hover:!text-emerald-800 !font-semibold !text-xs !flex !items-center !gap-1"
         >
-          <span>Xem tất cả</span>
+          <span>{t('dashboard.viewAll')}</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Button>
       </div>
@@ -75,7 +78,7 @@ export const RecentTransactionsList: React.FC<IRecentTransactionsListProps> = ({
         </div>
       ) : transactions.length === 0 ? (
         <div className="text-center py-8 text-gray-500 text-sm">
-          Chưa có giao dịch nào gần đây. Hãy tạo giao dịch đầu tiên!
+          {t('dashboard.noRecentTransactions')}
         </div>
       ) : (
         <div className="space-y-6">
