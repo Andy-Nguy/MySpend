@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDateString, IsInt, IsOptional, IsString, IsUrl, MaxLength, Min } from 'class-validator';
 
 export class UpdateProfileDto {
   @ApiPropertyOptional({ example: 'John', description: 'First name' })
@@ -35,4 +36,17 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsUrl()
   avatarUrl?: string;
+
+  @ApiPropertyOptional({ example: 5000000, description: 'Initial / current cash balance in VND' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  initialBalance?: number;
+
+  @ApiPropertyOptional({ example: 10000000, description: 'Target monthly spending budget in VND' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  monthlyBudget?: number;
 }

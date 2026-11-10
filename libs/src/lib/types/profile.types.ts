@@ -13,4 +13,6 @@ export interface IProfile extends IBaseEntity {
   mobileNumber?: string | null;
   dateOfBirth?: Date | string | null;
   avatarUrl?: string | null;
+  initialBalance?: number | null;
+  monthlyBudget?: number | null;
 }

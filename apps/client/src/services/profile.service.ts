@@ -8,6 +8,8 @@ export interface IUpdateProfileData {
   mobileNumber?: string;
   dateOfBirth?: string;
   avatarUrl?: string;
+  initialBalance?: number;
+  monthlyBudget?: number;
 }
 
 export interface IChangePasswordData {

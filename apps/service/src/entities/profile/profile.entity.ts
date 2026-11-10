@@ -43,6 +43,29 @@ export class ProfileEntity implements IProfile {
   @Column({ type: 'text', name: 'avatar_url', nullable: true })
   avatarUrl?: string | null;
 
+  @Column({
+    type: 'bigint',
+    name: 'initial_balance',
+    nullable: true,
+    default: 0,
+    transformer: {
+      from: (v: string | null) => (v !== null && v !== undefined ? parseInt(v, 10) : 0),
+      to: (v: number | null | undefined) => v ?? 0,
+    },
+  })
+  initialBalance?: number | null;
+
+  @Column({
+    type: 'bigint',
+    name: 'monthly_budget',
+    nullable: true,
+    transformer: {
+      from: (v: string | null) => (v !== null && v !== undefined ? parseInt(v, 10) : null),
+      to: (v: number | null | undefined) => v,
+    },
+  })
+  monthlyBudget?: number | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 

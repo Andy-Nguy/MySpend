@@ -7,6 +7,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   message,
   Typography,
 } from 'antd';
@@ -18,6 +19,7 @@ import {
   Phone,
   ShieldCheck,
   User,
+  Wallet,
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -52,6 +54,8 @@ export const Profile: React.FC = () => {
         mobileNumber: user.mobileNumber || '',
         dateOfBirth: user.dateOfBirth ? dayjs(user.dateOfBirth) : null,
         avatarUrl: user.avatarUrl || '',
+        initialBalance: user.initialBalance ?? 0,
+        monthlyBudget: user.monthlyBudget ?? null,
       });
     }
   }, [user, profileForm]);
@@ -63,6 +67,8 @@ export const Profile: React.FC = () => {
     mobileNumber?: string;
     dateOfBirth?: dayjs.Dayjs | null;
     avatarUrl?: string;
+    initialBalance?: number;
+    monthlyBudget?: number;
   }) => {
     setIsUpdatingProfile(true);
 
@@ -74,6 +80,8 @@ export const Profile: React.FC = () => {
         mobileNumber: values.mobileNumber?.trim() || undefined,
         dateOfBirth: values.dateOfBirth ? values.dateOfBirth.format('YYYY-MM-DD') : undefined,
         avatarUrl: values.avatarUrl?.trim() || undefined,
+        initialBalance: values.initialBalance !== undefined ? Number(values.initialBalance) : undefined,
+        monthlyBudget: values.monthlyBudget !== undefined && values.monthlyBudget !== null ? Number(values.monthlyBudget) : undefined,
       };
 
       const updated = await profileService.updateProfile(payload);
@@ -267,6 +275,53 @@ export const Profile: React.FC = () => {
             >
               <Input size="large" disabled className="!rounded-xl !bg-gray-100 !text-gray-500" />
             </Form.Item>
+
+            <div className="pt-3 pb-1 border-t border-gray-100">
+              <div className="flex items-center gap-2 mb-3">
+                <Wallet className="w-4 h-4 text-emerald-700" />
+                <span className="text-sm font-bold text-gray-800">Financial Settings</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Form.Item
+                  name="initialBalance"
+                  label={
+                    <div>
+                      <span className="text-sm font-semibold text-gray-700">Starting Balance (VND)</span>
+                      <p className="text-xs text-gray-400 font-normal">Your initial balance when starting to use MySpend</p>
+                    </div>
+                  }
+                >
+                  <InputNumber
+                    className="w-full !rounded-xl"
+                    size="large"
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    parser={(value) => (value ? Number(value.replace(/\$\s?|(,*)/g, '')) : 0)}
+                    placeholder="e.g. 5,000,000"
+                    addonAfter="₫"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="monthlyBudget"
+                  label={
+                    <div>
+                      <span className="text-sm font-semibold text-gray-700">Monthly Spending Budget (VND)</span>
+                      <p className="text-xs text-gray-400 font-normal">Target spending limit for monthly reports & alerts</p>
+                    </div>
+                  }
+                >
+                  <InputNumber
+                    className="w-full !rounded-xl"
+                    size="large"
+                    min={0}
+                    formatter={(value) => (value ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '')}
+                    parser={(value) => (value ? Number(value.replace(/\$\s?|(,*)/g, '')) : 0)}
+                    placeholder="e.g. 10,000,000"
+                    addonAfter="₫"
+                  />
+                </Form.Item>
+              </div>
+            </div>
 
             <div className="flex justify-end pt-2">
               <Button
