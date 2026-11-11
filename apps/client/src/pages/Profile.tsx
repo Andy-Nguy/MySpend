@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Avatar,
@@ -9,15 +9,22 @@ import {
   Input,
   InputNumber,
   message,
+  Popconfirm,
+  Tag,
+  Tooltip,
   Typography,
 } from 'antd';
 import {
   ArrowLeft,
   Calendar,
   CheckCircle2,
+  Fingerprint,
   Lock,
   Phone,
+  Plus,
   ShieldCheck,
+  Smartphone,
+  Trash2,
   User,
   Wallet,
 } from 'lucide-react';
@@ -28,6 +35,7 @@ import { useTranslation } from 'react-i18next';
 import { AppRoutes } from '../consts/routes';
 import { useAuth } from '../context/AuthContext';
 import { IChangePasswordData, IUpdateProfileData, profileService } from '../services/profile.service';
+import { passkeyService, IUserPasskeyItem } from '../services/passkey.service';
 import { LanguageSwitcher } from '../components/common/LanguageSwitcher';
 
 const { Title, Text } = Typography;
@@ -43,6 +51,61 @@ export const Profile: React.FC = () => {
 
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const [passkeys, setPasskeys] = useState<IUserPasskeyItem[]>([]);
+  const [loadingPasskeys, setLoadingPasskeys] = useState(false);
+  const [isRegisteringPasskey, setIsRegisteringPasskey] = useState(false);
+  const [isPasskeySupported, setIsPasskeySupported] = useState(true);
+
+  useEffect(() => {
+    passkeyService.isSupported().then(setIsPasskeySupported);
+  }, []);
+
+  const loadPasskeys = useCallback(async () => {
+    try {
+      setLoadingPasskeys(true);
+      const data = await passkeyService.listPasskeys();
+      setPasskeys(data);
+    } catch {
+      // silent
+    } finally {
+      setLoadingPasskeys(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      loadPasskeys();
+    }
+  }, [user, loadPasskeys]);
+
+  const handleRegisterPasskey = async () => {
+    try {
+      setIsRegisteringPasskey(true);
+      await passkeyService.registerPasskey();
+      message.success('Đã kích hoạt FaceID / Sinh trắc học thành công trên thiết bị này!');
+      await loadPasskeys();
+    } catch (err: unknown) {
+      const error = err as Error;
+      if (error?.name === 'NotAllowedError') {
+        message.info('Đã hủy thao tác kích hoạt FaceID.');
+      } else {
+        message.error(error?.message || 'Không thể kích hoạt FaceID trên thiết bị này.');
+      }
+    } finally {
+      setIsRegisteringPasskey(false);
+    }
+  };
+
+  const handleDeletePasskey = async (id: string) => {
+    try {
+      await passkeyService.deletePasskey(id);
+      message.success('Đã xóa thiết bị thành công.');
+      await loadPasskeys();
+    } catch {
+      message.error('Không thể xóa thiết bị.');
+    }
+  };
 
   const isNewUser = (location.state as { isNewUser?: boolean })?.isNewUser;
 
@@ -343,6 +406,106 @@ export const Profile: React.FC = () => {
             </div>
           </Form>
         </Card>
+
+        {/* Biometric / FaceID Security Card */}
+        {!isNewUser && (
+          <Card
+            title={
+              <div className="flex items-center gap-2 text-gray-900 font-bold text-base py-1">
+                <Fingerprint className="w-5 h-5 text-emerald-700" />
+                <span>Bảo mật Sinh trắc học (FaceID / TouchID / Passkey)</span>
+              </div>
+            }
+            className="!rounded-2xl shadow-sm border border-gray-200/80"
+          >
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-emerald-50/60 border border-emerald-100">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-gray-900 text-sm">
+                      Xác thực bằng FaceID / TouchID
+                    </span>
+                    {passkeys.length > 0 ? (
+                      <Tag color="success" className="!rounded-full !px-2.5">
+                        Đã kích hoạt ({passkeys.length} thiết bị)
+                      </Tag>
+                    ) : (
+                      <Tag color="default" className="!rounded-full !px-2.5">
+                        Chưa kích hoạt
+                      </Tag>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-600 !mb-0">
+                    Mở khóa app nhanh trong 0.5 giây trên iPhone/Mac/Android mà không cần gõ mật khẩu.
+                  </p>
+                </div>
+
+                {isPasskeySupported ? (
+                  <Button
+                    type="primary"
+                    icon={<Fingerprint className="w-4 h-4" />}
+                    loading={isRegisteringPasskey}
+                    onClick={handleRegisterPasskey}
+                    className="!bg-emerald-700 hover:!bg-emerald-800 !h-10 !px-5 !font-semibold !rounded-xl border-none shadow-sm shadow-emerald-700/20 flex-shrink-0"
+                  >
+                    Kích hoạt trên thiết bị này
+                  </Button>
+                ) : (
+                  <span className="text-xs text-amber-700 font-medium bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
+                    Trình duyệt chưa hỗ trợ WebAuthn
+                  </span>
+                )}
+              </div>
+
+              {/* List of enrolled passkey devices */}
+              {passkeys.length > 0 && (
+                <div className="pt-2">
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                    Thiết bị đã kết nối ({passkeys.length})
+                  </p>
+                  <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden bg-gray-50/50">
+                    {passkeys.map((pk) => (
+                      <div
+                        key={pk.id}
+                        className="flex items-center justify-between p-3 sm:px-4"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                            <Smartphone className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-gray-800 !mb-0">
+                              {pk.deviceName}
+                            </p>
+                            <span className="text-xs text-gray-400">
+                              Kích hoạt ngày {dayjs(pk.createdAt).format('DD/MM/YYYY HH:mm')}
+                            </span>
+                          </div>
+                        </div>
+
+                        <Popconfirm
+                          title="Xóa thiết bị này?"
+                          description="Bạn sẽ không thể dùng FaceID trên thiết bị này cho đến khi kích hoạt lại."
+                          okText="Xóa"
+                          cancelText="Hủy"
+                          okButtonProps={{ danger: true }}
+                          onConfirm={() => handleDeletePasskey(pk.id)}
+                        >
+                          <Button
+                            type="text"
+                            danger
+                            icon={<Trash2 className="w-4 h-4" />}
+                            className="!w-8 !h-8 !p-0 !rounded-lg"
+                          />
+                        </Popconfirm>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+        )}
 
         {/* Form 2: Security & Change Password (Only shown for existing users) */}
         {!isNewUser && (

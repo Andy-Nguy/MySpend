@@ -10,6 +10,7 @@ import React, {
 import { IProfile, PermissionNameEnum, UserRoleEnum } from '@myspend/libs';
 import { AUTH_UNAUTHORIZED_EVENT, apiClient } from '../services/api.service';
 import { tokenStore } from '../services/tokenStore';
+import { passkeyService } from '../services/passkey.service';
 
 export interface IAuthUser extends IProfile {
   id: string;
@@ -31,6 +32,7 @@ interface IAuthContextValue {
   loading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithPasskey: (email?: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUserProfile: (updatedUser: Partial<IAuthUser>) => void;
@@ -52,6 +54,9 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
   const applySession = useCallback((session: IAuthResponse) => {
     tokenStore.setAccessToken(session.accessToken);
     setUser(session.user);
+    if (session.user?.email) {
+      passkeyService.setLastLoggedUser(session.user);
+    }
   }, []);
 
   const updateUserProfile = useCallback((updatedUser: Partial<IAuthUser>) => {
@@ -137,6 +142,14 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     [applySession]
   );
 
+  const loginWithPasskey = useCallback(
+    async (email?: string) => {
+      const session = await passkeyService.loginWithPasskey(email);
+      applySession(session);
+    },
+    [applySession]
+  );
+
   const register = useCallback(
     async (email: string, password: string) => {
       const { data } = await apiClient.post<IAuthResponse>('/auth/register', {
@@ -165,13 +178,14 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
       loading,
       isAuthenticated: Boolean(user),
       login,
+      loginWithPasskey,
       register,
       logout,
       updateUserProfile,
       fetchMe,
       hasPermission,
     }),
-    [loading, login, logout, register, updateUserProfile, fetchMe, hasPermission, user]
+    [loading, login, loginWithPasskey, logout, register, updateUserProfile, fetchMe, hasPermission, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

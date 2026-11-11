@@ -3,6 +3,8 @@ import * as dotenv from 'dotenv';
 import { ProfileEntity } from './entities/profile/profile.entity';
 import { CategoryEntity } from './entities/category/category.entity';
 import { TransactionEntity } from './entities/transaction/transaction.entity';
+import { UserPasskeyEntity } from './entities/passkey/user-passkey.entity';
+import { PasskeyChallengeEntity } from './entities/passkey/passkey-challenge.entity';
 
 dotenv.config();
 
@@ -21,7 +23,13 @@ export const AppDataSource = new DataSource({
     process.env.DATABASE_LOGGING !== undefined
       ? process.env.DATABASE_LOGGING === 'true'
       : process.env.NODE_ENV !== 'production',
-  entities: [ProfileEntity, CategoryEntity, TransactionEntity],
+  entities: [
+    ProfileEntity,
+    CategoryEntity,
+    TransactionEntity,
+    UserPasskeyEntity,
+    PasskeyChallengeEntity,
+  ],
   migrations: [],
   ssl: isSsl ? { rejectUnauthorized: false } : false,
 });
