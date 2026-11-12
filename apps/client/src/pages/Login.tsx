@@ -56,7 +56,11 @@ export const Login: React.FC = () => {
     } catch (err: unknown) {
       const error = err as Error;
       if (error?.name === 'NotAllowedError') {
-        message.info(isVi ? 'Đã hủy thao tác FaceID.' : 'FaceID canceled.');
+        message.warning(
+          isVi
+            ? 'Chưa tìm thấy TouchID/FaceID trên máy này. Hãy đăng nhập bằng mật khẩu trước, rồi vào Hồ sơ để kích hoạt nhé!'
+            : 'No TouchID/FaceID found on this device. Please sign in with password first, then enable it in Profile!'
+        );
       } else {
         const parsedError = formatAuthErrorMessage(err, 'login');
         setErrorInfo(parsedError);

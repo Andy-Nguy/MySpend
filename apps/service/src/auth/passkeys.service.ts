@@ -69,6 +69,7 @@ export class PasskeysService {
         transports: (pk.transports as any) || undefined,
       })),
       authenticatorSelection: {
+        authenticatorAttachment: 'platform',
         residentKey: 'preferred',
         userVerification: 'preferred',
       },
