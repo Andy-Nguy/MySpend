@@ -212,7 +212,7 @@ export class AuthService {
     };
   }
 
-  private async createSession(profile: ProfileEntity) {
+  async createSession(profile: ProfileEntity) {
     const role = profile.role || UserRoleEnum.USER;
     const permissions = getPermissionsByRole(role);
 
