@@ -24,4 +24,9 @@ export default () => ({
     expiresIn: process.env.JWT_EXPIRES_IN || '1h',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
+  passkey: {
+    rpName: process.env.PASSKEY_RP_NAME || 'MySpend',
+    rpId: process.env.PASSKEY_RP_ID || 'localhost',
+    origin: process.env.PASSKEY_ORIGIN || process.env.CORS_ORIGIN || 'http://localhost:4200',
+  },
 });

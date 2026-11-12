@@ -15,6 +15,7 @@ export const CATEGORY_ICON_OPTIONS = [
   { slug: 'gift', label: 'Quà tặng', icon: LucideIcons.Gift },
   { slug: 'wrench', label: 'Sửa chữa', icon: LucideIcons.Wrench },
   { slug: 'circle-dollar-sign', label: 'Đầu tư', icon: LucideIcons.CircleDollarSign },
+  { slug: 'receipt', label: 'Hóa đơn & Tiện ích', icon: LucideIcons.Receipt },
 ];
 
 export interface ICategoryIconProps {
@@ -46,6 +47,10 @@ export const CategoryIcon: React.FC<ICategoryIconProps> = ({ slug, className = '
     case 'housing':
     case 'Home':
       return <LucideIcons.Home className={className} />;
+    case 'bill':
+    case 'receipt':
+    case 'Receipt':
+      return <LucideIcons.Receipt className={className} />;
     default:
       return <HelpCircle className={className} />;
   }

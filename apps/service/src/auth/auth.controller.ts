@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Req,
   Res,
@@ -12,7 +14,13 @@ import { CookieOptions, Request, Response } from 'express';
 
 import { Public } from './decorators/public.decorator';
 import { AuthCredentialsDto } from './dto/auth.dto';
+import {
+  LoginOptionsDto,
+  VerifyAuthenticationDto,
+  VerifyRegistrationDto,
+} from './dto/passkey.dto';
 import { AuthService } from './auth.service';
+import { PasskeysService } from './passkeys.service';
 
 const REFRESH_TOKEN_COOKIE = 'refreshToken';
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
@@ -27,7 +35,10 @@ interface IAuthenticatedRequest extends Request {
 @Controller('auth')
 @UseGuards(ThrottlerGuard)
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly passkeysService: PasskeysService,
+  ) {}
 
   @Public()
   @Post('register')
@@ -86,6 +97,61 @@ export class AuthController {
   @Get('me')
   getMe(@Req() request: IAuthenticatedRequest) {
     return this.authService.getMe(request.user.userId);
+  }
+
+  // ==========================================
+  // WebAuthn Passkeys / FaceID Endpoints
+  // ==========================================
+
+  @Get('passkey/register-options')
+  async getRegisterOptions(@Req() request: IAuthenticatedRequest) {
+    return this.passkeysService.getRegistrationOptions(request.user.userId);
+  }
+
+  @Post('passkey/register-verify')
+  async verifyRegistration(
+    @Req() request: IAuthenticatedRequest,
+    @Body() dto: VerifyRegistrationDto,
+  ) {
+    return this.passkeysService.verifyRegistration(
+      request.user.userId,
+      dto.response as any,
+      dto.deviceName,
+    );
+  }
+
+  @Public()
+  @Post('passkey/login-options')
+  @Throttle({ default: { limit: 30, ttl: 60 * 1000 } })
+  async getLoginOptions(@Body() dto: LoginOptionsDto) {
+    return this.passkeysService.getAuthenticationOptions(dto.email);
+  }
+
+  @Public()
+  @Post('passkey/login-verify')
+  @Throttle({ default: { limit: 30, ttl: 60 * 1000 } })
+  async verifyLogin(
+    @Body() dto: VerifyAuthenticationDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const session = await this.passkeysService.verifyAuthentication(
+      dto.response as any,
+    );
+    this.setRefreshTokenCookie(response, session.refreshToken);
+    return this.toAuthResponse(session);
+  }
+
+  @Get('passkey/list')
+  async listPasskeys(@Req() request: IAuthenticatedRequest) {
+    return this.passkeysService.getUserPasskeys(request.user.userId);
+  }
+
+  @Delete('passkey/:id')
+  async deletePasskey(
+    @Req() request: IAuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
+    return this.passkeysService.deletePasskey(request.user.userId, id);
   }
 
   private setRefreshTokenCookie(response: Response, refreshToken: string) {
