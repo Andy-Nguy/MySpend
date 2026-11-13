@@ -5,6 +5,7 @@ export * from './enums/user-role.enum';
 export * from './enums/permission-name.enum';
 export * from './enums/announcement-type.enum';
 export * from './enums/announcement-priority.enum';
+export * from './enums/passkey-challenge-type.enum';
 
 // Consts
 export * from './consts/permissions.const';

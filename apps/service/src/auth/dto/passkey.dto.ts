@@ -1,17 +1,29 @@
-import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import type {
+  AuthenticationResponseJSON,
+  RegistrationResponseJSON,
+} from '@simplewebauthn/server';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class VerifyRegistrationDto {
   @IsObject()
   @IsNotEmpty()
-  response!: Record<string, unknown>;
+  response!: RegistrationResponseJSON;
 
   @IsString()
   @IsOptional()
+  @MaxLength(150)
   deviceName?: string;
 }
 
 export class LoginOptionsDto {
-  @IsString()
+  @IsEmail()
   @IsOptional()
   email?: string;
 }
@@ -19,5 +31,5 @@ export class LoginOptionsDto {
 export class VerifyAuthenticationDto {
   @IsObject()
   @IsNotEmpty()
-  response!: Record<string, unknown>;
+  response!: AuthenticationResponseJSON;
 }

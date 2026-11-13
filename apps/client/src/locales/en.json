@@ -135,19 +135,58 @@
     "saveChanges": "Save Changes",
     "saveAndContinue": "Save & Continue to Dashboard",
     "updateSuccess": "Profile updated successfully!",
-    "passwordChangeSuccess": "Password changed successfully!"
+    "passwordChangeSuccess": "Password changed successfully!",
+    "passkey": {
+      "title": "Biometric Security (FaceID / TouchID / Passkey)",
+      "subtitleTitle": "FaceID / TouchID Authentication",
+      "activeCount": "Enabled ({{count}} devices)",
+      "inactive": "Not enabled",
+      "description": "Unlock the app in 0.5 seconds on iPhone/Mac/Android without typing your password.",
+      "enableButton": "Enable on this device",
+      "unsupported": "Browser does not support WebAuthn",
+      "connectedDevices": "Connected Devices ({{count}})",
+      "enrolledAt": "Enrolled on {{date}}",
+      "deleteTitle": "Remove this device?",
+      "deleteDesc": "You will not be able to use FaceID on this device until you enable it again.",
+      "registerSuccess": "FaceID / Biometric authentication enabled on this device!",
+      "registerCancelled": "FaceID activation cancelled.",
+      "registerError": "Could not enable FaceID on this device.",
+      "deleteSuccess": "Device removed successfully.",
+      "deleteError": "Could not remove device."
+    }
   },
   "auth": {
-    "loginTitle": "Log In to MySpend",
-    "loginSubtitle": "Welcome back, please sign in",
+    "loginTitle": "Sign in to your account",
+    "loginSubtitle": "Enter your email and password to access your account",
+    "welcomeBackTitle": "Welcome back",
+    "welcomeBackSubtitle": "Quick sign in with FaceID or password",
     "registerTitle": "Create an Account",
     "registerSubtitle": "Start smart personal expense tracking today",
+    "emailLabel": "Email address",
+    "emailRequired": "Please enter your email address",
+    "emailInvalid": "Please enter a valid email address",
     "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordRequired": "Please enter your password",
+    "passwordMin": "Password must be at least 6 characters",
     "passwordPlaceholder": "Enter password",
     "forgotPassword": "Forgot password?",
+    "forgotPasswordSoon": "Password reset feature will be available soon!",
+    "loginButton": "Sign in",
+    "loginSuccess": "Signed in successfully!",
+    "or": "OR",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
     "registerNow": "Register now",
-    "loginNow": "Log in now"
+    "loginNow": "Log in now",
+    "passkey": {
+      "signInFaceId": "Sign in with FaceID / TouchID",
+      "signInQuickFaceId": "Sign in with FaceID / Passkey",
+      "signInPassword": "Sign in with Password",
+      "switchAccount": "Switch to another account",
+      "loginSuccess": "Signed in with FaceID successfully!",
+      "cancelledOrNotFound": "Authentication cancelled or no matching Passkey found on this device. You can try again or sign in with password.",
+      "notFoundPrompt": "No TouchID/FaceID found on this device. Please sign in with password first, then enable it in Profile!"
+    }
   }
 }
