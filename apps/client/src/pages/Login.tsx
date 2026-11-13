@@ -12,7 +12,7 @@ import { formatAuthErrorMessage, IAuthErrorInfo } from '../utils/auth-error.util
 import { ILastLoggedUser, passkeyService } from '../services/passkey.service';
 
 export const Login: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,15 +24,16 @@ export const Login: React.FC = () => {
 
   const [lastUser, setLastUser] = useState<ILastLoggedUser | null>(null);
   const [usePasswordMode, setUsePasswordMode] = useState(false);
-  const [isPasskeySupported, setIsPasskeySupported] = useState(true);
-
-  const isVi = i18n.language?.startsWith('vi');
+  const [isPasskeySupported, setIsPasskeySupported] = useState(false);
 
   useEffect(() => {
     const saved = passkeyService.getLastLoggedUser();
     setLastUser(saved);
+    if (saved?.email) {
+      form.setFieldsValue({ email: saved.email });
+    }
     passkeyService.isSupported().then(setIsPasskeySupported);
-  }, []);
+  }, [form]);
 
   if (isAuthenticated) {
     return <Navigate to={AppRoutes.HOME} replace />;
@@ -51,15 +52,15 @@ export const Login: React.FC = () => {
 
     try {
       await loginWithPasskey(email);
-      message.success(isVi ? 'Đăng nhập FaceID thành công!' : 'Signed in with FaceID successfully!');
+      message.success(t('auth.passkey.loginSuccess'));
       navigateToDestination();
     } catch (err: unknown) {
       const error = err as Error;
       if (error?.name === 'NotAllowedError') {
-        message.warning(
-          isVi
-            ? 'Chưa tìm thấy TouchID/FaceID trên máy này. Hãy đăng nhập bằng mật khẩu trước, rồi vào Hồ sơ để kích hoạt nhé!'
-            : 'No TouchID/FaceID found on this device. Please sign in with password first, then enable it in Profile!'
+        message.info(
+          lastUser?.hasPasskey
+            ? t('auth.passkey.cancelledOrNotFound')
+            : t('auth.passkey.notFoundPrompt'),
         );
       } else {
         const parsedError = formatAuthErrorMessage(err, 'login');
@@ -81,7 +82,7 @@ export const Login: React.FC = () => {
 
       await login(email, password);
 
-      message.success(isVi ? 'Đăng nhập thành công!' : 'Signed in successfully!');
+      message.success(t('auth.loginSuccess'));
       navigateToDestination();
     } catch (err: unknown) {
       const parsedError = formatAuthErrorMessage(err, 'login');
@@ -99,20 +100,22 @@ export const Login: React.FC = () => {
     form.resetFields();
   };
 
-  // If user has a remembered account and hasn't toggled to password mode, show Quick FaceID Login
-  const showQuickLogin = Boolean(lastUser && !usePasswordMode);
+  // Only show Quick FaceID Login when user has enrolled a passkey and device supports WebAuthn
+  const showQuickLogin = Boolean(
+    lastUser && lastUser.hasPasskey && isPasskeySupported && !usePasswordMode,
+  );
 
   return (
     <AuthLayout
       title={
         showQuickLogin
-          ? (isVi ? 'Chào mừng trở lại' : 'Welcome back')
-          : (isVi ? 'Đăng nhập tài khoản' : 'Sign in to your account')
+          ? t('auth.welcomeBackTitle')
+          : t('auth.loginTitle')
       }
       subtitle={
         showQuickLogin
-          ? (isVi ? 'Đăng nhập nhanh bằng FaceID hoặc mật khẩu' : 'Quick sign in with FaceID or password')
-          : (isVi ? 'Nhập email và mật khẩu để truy cập ví MySpend' : 'Enter your email and password to access your account')
+          ? t('auth.welcomeBackSubtitle')
+          : t('auth.loginSubtitle')
       }
     >
       {/* Error Alert Banner */}
@@ -156,7 +159,7 @@ export const Login: React.FC = () => {
               block
               className="!w-full !h-13 !bg-emerald-700 hover:!bg-emerald-800 active:!bg-emerald-900 !text-white !font-bold !text-base !rounded-xl !border-none shadow-lg shadow-emerald-700/25 hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2"
             >
-              {isVi ? 'Đăng nhập bằng FaceID / TouchID' : 'Sign in with FaceID'}
+              {t('auth.passkey.signInFaceId')}
             </Button>
 
             <Button
@@ -170,7 +173,7 @@ export const Login: React.FC = () => {
               block
               className="!w-full !h-12 !font-semibold !text-gray-700 !rounded-xl !border-gray-200 hover:!border-emerald-600 hover:!text-emerald-700 transition-colors"
             >
-              {isVi ? 'Đăng nhập bằng Mật khẩu' : 'Sign in with Password'}
+              {t('auth.passkey.signInPassword')}
             </Button>
           </div>
 
@@ -180,7 +183,7 @@ export const Login: React.FC = () => {
               onClick={handleSwitchAccount}
               className="text-xs font-semibold text-gray-500 hover:text-emerald-700 transition-colors focus:outline-none"
             >
-              {isVi ? 'Đăng nhập tài khoản khác' : 'Switch to another account'}
+              {t('auth.passkey.switchAccount')}
             </button>
           </div>
         </div>
@@ -196,14 +199,14 @@ export const Login: React.FC = () => {
         >
           <Form.Item
             name="email"
-            label={<span className="text-sm font-semibold text-gray-700">{isVi ? 'Địa chỉ email' : 'Email address'}</span>}
+            label={<span className="text-sm font-semibold text-gray-700">{t('auth.emailLabel')}</span>}
             rules={[
-              { required: true, message: isVi ? 'Vui lòng nhập địa chỉ email' : 'Please enter your email address' },
-              { type: 'email', message: isVi ? 'Email không hợp lệ' : 'Please enter a valid email address' },
+              { required: true, message: t('auth.emailRequired') },
+              { type: 'email', message: t('auth.emailInvalid') },
             ]}
           >
             <AuthTextInput
-              placeholder="you@example.com"
+              placeholder={t('auth.emailPlaceholder')}
               type="email"
               autoComplete="email"
               status={errorInfo ? 'error' : undefined}
@@ -213,21 +216,21 @@ export const Login: React.FC = () => {
           {/* Password field with Forgot Password row */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-sm font-semibold text-gray-700">{isVi ? 'Mật khẩu' : 'Password'}</span>
+              <span className="text-sm font-semibold text-gray-700">{t('auth.passwordLabel')}</span>
               <button
                 type="button"
-                onClick={() => message.info(isVi ? 'Tính năng đặt lại mật khẩu sẽ sớm ra mắt!' : 'Password reset feature will be available soon!')}
+                onClick={() => message.info(t('auth.forgotPasswordSoon'))}
                 className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 hover:underline transition-colors focus:outline-none"
               >
-                {isVi ? 'Quên mật khẩu?' : 'Forgot password?'}
+                {t('auth.forgotPassword')}
               </button>
             </div>
             <Form.Item
               name="password"
               noStyle
               rules={[
-                { required: true, message: isVi ? 'Vui lòng nhập mật khẩu' : 'Please enter your password' },
-                { min: 6, message: isVi ? 'Mật khẩu phải từ 6 ký tự trở lên' : 'Password must be at least 6 characters' },
+                { required: true, message: t('auth.passwordRequired') },
+                { min: 6, message: t('auth.passwordMin') },
               ]}
             >
               <AuthPasswordInput
@@ -246,14 +249,14 @@ export const Login: React.FC = () => {
               block
               className="!w-full !h-12 !bg-emerald-700 hover:!bg-emerald-800 active:!bg-emerald-900 !text-white !font-semibold !text-base !rounded-xl !border-none shadow-md shadow-emerald-700/20 hover:shadow-lg transition-all duration-200"
             >
-              {isVi ? 'Đăng nhập' : 'Sign in'}
+              {t('auth.loginButton')}
             </Button>
 
             {/* Direct FaceID button option if browser supports it */}
             {isPasskeySupported && (
               <>
                 <Divider plain className="!my-2 !text-xs !text-gray-400">
-                  {isVi ? 'HOẶC' : 'OR'}
+                  {t('auth.or')}
                 </Divider>
 
                 <Button
@@ -264,7 +267,7 @@ export const Login: React.FC = () => {
                   block
                   className="!w-full !h-11 !font-semibold !text-gray-700 !rounded-xl !border-gray-200 hover:!border-emerald-600 hover:!text-emerald-700 transition-colors flex items-center justify-center gap-2"
                 >
-                  {isVi ? 'Đăng nhập nhanh bằng FaceID / TouchID' : 'Sign in with FaceID / Passkey'}
+                  {t('auth.passkey.signInQuickFaceId')}
                 </Button>
               </>
             )}
@@ -275,12 +278,12 @@ export const Login: React.FC = () => {
       {/* Footer Navigation */}
       <div className="mt-8 pt-6 border-t border-gray-100 text-center">
         <p className="text-sm text-gray-600">
-          {isVi ? 'Chưa có tài khoản?' : "Don't have an account?"}{' '}
+          {t('auth.noAccount')}{' '}
           <Link
             to={AppRoutes.REGISTER}
             className="font-semibold text-emerald-700 hover:text-emerald-800 hover:underline transition-colors"
           >
-            {isVi ? 'Đăng ký ngay' : 'Sign up'}
+            {t('auth.registerNow')}
           </Link>
         </p>
       </div>

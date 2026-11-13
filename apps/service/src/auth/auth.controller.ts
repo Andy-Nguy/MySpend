@@ -105,7 +105,10 @@ export class AuthController {
 
   @Get('passkey/register-options')
   async getRegisterOptions(@Req() request: IAuthenticatedRequest) {
-    return this.passkeysService.getRegistrationOptions(request.user.userId);
+    return this.passkeysService.getRegistrationOptions(
+      request.user.userId,
+      request.headers.origin,
+    );
   }
 
   @Post('passkey/register-verify')
@@ -115,27 +118,33 @@ export class AuthController {
   ) {
     return this.passkeysService.verifyRegistration(
       request.user.userId,
-      dto.response as any,
+      dto.response,
       dto.deviceName,
+      request.headers.origin,
     );
   }
 
   @Public()
   @Post('passkey/login-options')
   @Throttle({ default: { limit: 30, ttl: 60 * 1000 } })
-  async getLoginOptions(@Body() dto: LoginOptionsDto) {
-    return this.passkeysService.getAuthenticationOptions(dto.email);
+  async getLoginOptions(@Req() request: Request, @Body() dto: LoginOptionsDto) {
+    return this.passkeysService.getAuthenticationOptions(
+      dto.email,
+      request.headers.origin,
+    );
   }
 
   @Public()
   @Post('passkey/login-verify')
   @Throttle({ default: { limit: 30, ttl: 60 * 1000 } })
   async verifyLogin(
+    @Req() request: Request,
     @Body() dto: VerifyAuthenticationDto,
     @Res({ passthrough: true }) response: Response,
   ) {
     const session = await this.passkeysService.verifyAuthentication(
-      dto.response as any,
+      dto.response,
+      request.headers.origin,
     );
     this.setRefreshTokenCookie(response, session.refreshToken);
     return this.toAuthResponse(session);

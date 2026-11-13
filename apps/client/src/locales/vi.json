@@ -135,19 +135,58 @@
     "saveChanges": "Lưu Thay Đổi",
     "saveAndContinue": "Lưu & Đi đến Trang chủ",
     "updateSuccess": "Cập nhật hồ sơ thành công!",
-    "passwordChangeSuccess": "Đổi mật khẩu thành công!"
+    "passwordChangeSuccess": "Đổi mật khẩu thành công!",
+    "passkey": {
+      "title": "Bảo mật Sinh trắc học (FaceID / TouchID / Passkey)",
+      "subtitleTitle": "Xác thực bằng FaceID / TouchID",
+      "activeCount": "Đã kích hoạt ({{count}} thiết bị)",
+      "inactive": "Chưa kích hoạt",
+      "description": "Mở khóa app nhanh trong 0.5 giây trên iPhone/Mac/Android mà không cần gõ mật khẩu.",
+      "enableButton": "Kích hoạt trên thiết bị này",
+      "unsupported": "Trình duyệt chưa hỗ trợ WebAuthn",
+      "connectedDevices": "Thiết bị đã kết nối ({{count}})",
+      "enrolledAt": "Kích hoạt ngày {{date}}",
+      "deleteTitle": "Xóa thiết bị này?",
+      "deleteDesc": "Bạn sẽ không thể dùng FaceID trên thiết bị này cho đến khi kích hoạt lại.",
+      "registerSuccess": "Đã kích hoạt FaceID / Sinh trắc học thành công trên thiết bị này!",
+      "registerCancelled": "Đã hủy thao tác kích hoạt FaceID.",
+      "registerError": "Không thể kích hoạt FaceID trên thiết bị này.",
+      "deleteSuccess": "Đã xóa thiết bị thành công.",
+      "deleteError": "Không thể xóa thiết bị."
+    }
   },
   "auth": {
-    "loginTitle": "Đăng nhập MySpend",
-    "loginSubtitle": "Chào mừng bạn quay trở lại",
+    "loginTitle": "Đăng nhập tài khoản",
+    "loginSubtitle": "Nhập email và mật khẩu để truy cập ví MySpend",
+    "welcomeBackTitle": "Chào mừng trở lại",
+    "welcomeBackSubtitle": "Đăng nhập nhanh bằng FaceID hoặc mật khẩu",
     "registerTitle": "Tạo tài khoản mới",
     "registerSubtitle": "Bắt đầu quản lý tài chính cá nhân thông minh",
+    "emailLabel": "Địa chỉ email",
+    "emailRequired": "Vui lòng nhập địa chỉ email",
+    "emailInvalid": "Email không hợp lệ",
     "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Mật khẩu",
+    "passwordRequired": "Vui lòng nhập mật khẩu",
+    "passwordMin": "Mật khẩu phải từ 6 ký tự trở lên",
     "passwordPlaceholder": "Nhập mật khẩu",
     "forgotPassword": "Quên mật khẩu?",
+    "forgotPasswordSoon": "Tính năng đặt lại mật khẩu sẽ sớm ra mắt!",
+    "loginButton": "Đăng nhập",
+    "loginSuccess": "Đăng nhập thành công!",
+    "or": "HOẶC",
     "noAccount": "Chưa có tài khoản?",
     "hasAccount": "Đã có tài khoản?",
     "registerNow": "Đăng ký ngay",
-    "loginNow": "Đăng nhập ngay"
+    "loginNow": "Đăng nhập ngay",
+    "passkey": {
+      "signInFaceId": "Đăng nhập bằng FaceID / TouchID",
+      "signInQuickFaceId": "Đăng nhập nhanh bằng FaceID / TouchID",
+      "signInPassword": "Đăng nhập bằng Mật khẩu",
+      "switchAccount": "Đăng nhập tài khoản khác",
+      "loginSuccess": "Đăng nhập FaceID thành công!",
+      "cancelledOrNotFound": "Đã hủy xác thực hoặc không tìm thấy Passkey trên thiết bị này. Bạn có thể thử lại hoặc đăng nhập bằng mật khẩu.",
+      "notFoundPrompt": "Chưa tìm thấy TouchID/FaceID trên máy này. Hãy đăng nhập bằng mật khẩu trước, rồi vào Hồ sơ để kích hoạt nhé!"
+    }
   }
 }

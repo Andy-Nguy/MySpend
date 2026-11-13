@@ -40,9 +40,9 @@ export const passkeyService = {
     if (/iPhone/i.test(ua)) return 'iPhone (FaceID / Passcode)';
     if (/iPad/i.test(ua)) return 'iPad (TouchID / FaceID)';
     if (/Macintosh/i.test(ua)) return 'MacBook (TouchID / Passcode)';
-    if (/Android/i.test(ua)) return 'Android (Vân tay / Sinh trắc học)';
+    if (/Android/i.test(ua)) return 'Android (Biometrics)';
     if (/Windows/i.test(ua)) return 'Windows PC (Windows Hello)';
-    return 'Thiết bị Sinh trắc học';
+    return 'Biometric Passkey Device';
   },
 
   getLastLoggedUser(): ILastLoggedUser | null {

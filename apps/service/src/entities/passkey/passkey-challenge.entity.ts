@@ -1,3 +1,4 @@
+import { IPasskeyChallenge, PasskeyChallengeTypeEnum } from '@myspend/libs';
 import {
   Column,
   CreateDateColumn,
@@ -6,7 +7,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'passkey_challenges' })
-export class PasskeyChallengeEntity {
+export class PasskeyChallengeEntity implements IPasskeyChallenge {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id!: string;
 
@@ -17,7 +18,7 @@ export class PasskeyChallengeEntity {
   challenge!: string;
 
   @Column({ type: 'varchar', length: 20, name: 'type' })
-  type!: 'registration' | 'authentication';
+  type!: PasskeyChallengeTypeEnum;
 
   @Column({ type: 'timestamptz', name: 'expires_at' })
   expiresAt!: Date;

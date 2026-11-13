@@ -27,6 +27,9 @@ export default () => ({
   passkey: {
     rpName: process.env.PASSKEY_RP_NAME || 'MySpend',
     rpId: process.env.PASSKEY_RP_ID || 'localhost',
-    origin: process.env.PASSKEY_ORIGIN || process.env.CORS_ORIGIN || 'http://localhost:4200',
+    origin:
+      process.env.PASSKEY_ORIGIN ||
+      process.env.CORS_ORIGIN ||
+      'http://localhost:4200',
   },
 });
