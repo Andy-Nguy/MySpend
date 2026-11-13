@@ -101,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
                 >
                   MySpend
                 </span>
-                <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0">
+                <span className="hidden xl:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0">
                   Personal
                 </span>
               </div>
@@ -109,10 +109,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
           </div>
 
           {/* Center Navigation Links (Desktop) */}
-          <nav className="hidden md:flex items-center gap-1 bg-gray-100/80 p-1 rounded-xl">
+          <nav className="hidden lg:flex items-center gap-1 bg-gray-100/80 p-1 rounded-xl shrink-0">
             <button
               onClick={() => navigate(AppRoutes.HOME)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                 location.pathname === AppRoutes.HOME
                   ? 'bg-white text-emerald-700 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
@@ -122,7 +122,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
             </button>
             <button
               onClick={() => navigate(AppRoutes.CATEGORIES)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                 location.pathname === AppRoutes.CATEGORIES
                   ? 'bg-white text-emerald-700 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
@@ -132,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
             </button>
             <button
               onClick={() => navigate(AppRoutes.TRANSACTIONS)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                 location.pathname === AppRoutes.TRANSACTIONS
                   ? 'bg-white text-emerald-700 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
@@ -142,7 +142,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
             </button>
             <button
               onClick={() => navigate(AppRoutes.REPORTS)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                 location.pathname === AppRoutes.REPORTS
                   ? 'bg-white text-emerald-700 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
@@ -154,8 +154,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
 
           {/* Right Action & Profile Area */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            {/* Current Month Badge (Desktop/Tablet) */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200/80 text-gray-700 text-xs font-medium capitalize">
+            {/* Current Month Badge (Large Desktop) */}
+            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200/80 text-gray-700 text-xs font-medium capitalize whitespace-nowrap">
               <Calendar className="w-3.5 h-3.5 text-emerald-600" />
               <span>{currentDate}</span>
             </div>

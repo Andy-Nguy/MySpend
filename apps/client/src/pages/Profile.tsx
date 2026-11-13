@@ -55,7 +55,7 @@ export const Profile: React.FC = () => {
   const [passkeys, setPasskeys] = useState<IUserPasskeyItem[]>([]);
   const [loadingPasskeys, setLoadingPasskeys] = useState(false);
   const [isRegisteringPasskey, setIsRegisteringPasskey] = useState(false);
-  const [isPasskeySupported, setIsPasskeySupported] = useState(true);
+  const [isPasskeySupported, setIsPasskeySupported] = useState(false);
 
   useEffect(() => {
     passkeyService.isSupported().then(setIsPasskeySupported);
@@ -66,12 +66,18 @@ export const Profile: React.FC = () => {
       setLoadingPasskeys(true);
       const data = await passkeyService.listPasskeys();
       setPasskeys(data);
+      if (user?.email) {
+        passkeyService.setLastLoggedUser({
+          ...user,
+          hasPasskey: data.length > 0,
+        });
+      }
     } catch {
       // silent
     } finally {
       setLoadingPasskeys(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -83,14 +89,14 @@ export const Profile: React.FC = () => {
     try {
       setIsRegisteringPasskey(true);
       await passkeyService.registerPasskey();
-      message.success('Đã kích hoạt FaceID / Sinh trắc học thành công trên thiết bị này!');
+      message.success(t('profile.passkey.registerSuccess'));
       await loadPasskeys();
     } catch (err: unknown) {
       const error = err as Error;
       if (error?.name === 'NotAllowedError') {
-        message.info('Đã hủy thao tác kích hoạt FaceID.');
+        message.info(t('profile.passkey.registerCancelled'));
       } else {
-        message.error(error?.message || 'Không thể kích hoạt FaceID trên thiết bị này.');
+        message.error(error?.message || t('profile.passkey.registerError'));
       }
     } finally {
       setIsRegisteringPasskey(false);
@@ -100,10 +106,10 @@ export const Profile: React.FC = () => {
   const handleDeletePasskey = async (id: string) => {
     try {
       await passkeyService.deletePasskey(id);
-      message.success('Đã xóa thiết bị thành công.');
+      message.success(t('profile.passkey.deleteSuccess'));
       await loadPasskeys();
     } catch {
-      message.error('Không thể xóa thiết bị.');
+      message.error(t('profile.passkey.deleteError'));
     }
   };
 
@@ -413,7 +419,7 @@ export const Profile: React.FC = () => {
             title={
               <div className="flex items-center gap-2 text-gray-900 font-bold text-base py-1">
                 <Fingerprint className="w-5 h-5 text-emerald-700" />
-                <span>Bảo mật Sinh trắc học (FaceID / TouchID / Passkey)</span>
+                <span>{t('profile.passkey.title')}</span>
               </div>
             }
             className="!rounded-2xl shadow-sm border border-gray-200/80"
@@ -423,20 +429,20 @@ export const Profile: React.FC = () => {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-gray-900 text-sm">
-                      Xác thực bằng FaceID / TouchID
+                      {t('profile.passkey.subtitleTitle')}
                     </span>
                     {passkeys.length > 0 ? (
                       <Tag color="success" className="!rounded-full !px-2.5">
-                        Đã kích hoạt ({passkeys.length} thiết bị)
+                        {t('profile.passkey.activeCount', { count: passkeys.length })}
                       </Tag>
                     ) : (
                       <Tag color="default" className="!rounded-full !px-2.5">
-                        Chưa kích hoạt
+                        {t('profile.passkey.inactive')}
                       </Tag>
                     )}
                   </div>
                   <p className="text-xs text-gray-600 !mb-0">
-                    Mở khóa app nhanh trong 0.5 giây trên iPhone/Mac/Android mà không cần gõ mật khẩu.
+                    {t('profile.passkey.description')}
                   </p>
                 </div>
 
@@ -448,11 +454,11 @@ export const Profile: React.FC = () => {
                     onClick={handleRegisterPasskey}
                     className="!bg-emerald-700 hover:!bg-emerald-800 !h-10 !px-5 !font-semibold !rounded-xl border-none shadow-sm shadow-emerald-700/20 flex-shrink-0"
                   >
-                    Kích hoạt trên thiết bị này
+                    {t('profile.passkey.enableButton')}
                   </Button>
                 ) : (
                   <span className="text-xs text-amber-700 font-medium bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
-                    Trình duyệt chưa hỗ trợ WebAuthn
+                    {t('profile.passkey.unsupported')}
                   </span>
                 )}
               </div>
@@ -461,7 +467,7 @@ export const Profile: React.FC = () => {
               {passkeys.length > 0 && (
                 <div className="pt-2">
                   <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                    Thiết bị đã kết nối ({passkeys.length})
+                    {t('profile.passkey.connectedDevices', { count: passkeys.length })}
                   </p>
                   <div className="divide-y divide-gray-100 rounded-xl border border-gray-100 overflow-hidden bg-gray-50/50">
                     {passkeys.map((pk) => (
@@ -478,16 +484,18 @@ export const Profile: React.FC = () => {
                               {pk.deviceName}
                             </p>
                             <span className="text-xs text-gray-400">
-                              Kích hoạt ngày {dayjs(pk.createdAt).format('DD/MM/YYYY HH:mm')}
+                              {t('profile.passkey.enrolledAt', {
+                                date: dayjs(pk.createdAt).format('DD/MM/YYYY HH:mm'),
+                              })}
                             </span>
                           </div>
                         </div>
 
                         <Popconfirm
-                          title="Xóa thiết bị này?"
-                          description="Bạn sẽ không thể dùng FaceID trên thiết bị này cho đến khi kích hoạt lại."
-                          okText="Xóa"
-                          cancelText="Hủy"
+                          title={t('profile.passkey.deleteTitle')}
+                          description={t('profile.passkey.deleteDesc')}
+                          okText={t('common.delete')}
+                          cancelText={t('common.cancel')}
                           okButtonProps={{ danger: true }}
                           onConfirm={() => handleDeletePasskey(pk.id)}
                         >

@@ -6,13 +6,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PasskeyChallengeTypeEnum } from '@myspend/libs';
 import {
+  AuthenticationResponseJSON,
+  AuthenticatorTransport,
+  PublicKeyCredentialDescriptorJSON,
+  RegistrationResponseJSON,
   generateAuthenticationOptions,
   generateRegistrationOptions,
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
-  RegistrationResponseJSON,
-  AuthenticationResponseJSON,
 } from '@simplewebauthn/server';
 
 import { PasskeysRepository } from './repository/passkeys.repository';
@@ -30,29 +33,79 @@ export class PasskeysService {
     private readonly authService: AuthService,
   ) {}
 
-  private getRpConfig() {
+  private getRpConfig(requestOrigin?: string) {
     const rpName = this.config.get<string>('passkey.rpName') || 'MySpend';
-    const rpId = this.config.get<string>('passkey.rpId') || 'localhost';
-    const primaryOrigin =
+    const rawOrigins =
       this.config.get<string>('passkey.origin') ||
       this.config.get<string>('corsOrigin') ||
       'http://localhost:4200';
 
+    const parsedOrigins = rawOrigins
+      .split(',')
+      .map((origin) => origin.trim().replace(/\/+$/, ''))
+      .filter(Boolean);
+
     const origins = Array.from(
-      new Set([primaryOrigin, 'http://localhost:4200', 'http://127.0.0.1:4200']),
+      new Set([
+        ...parsedOrigins,
+        'http://localhost:4200',
+        'http://127.0.0.1:4200',
+      ]),
     );
+
+    const normalizedRequestOrigin = requestOrigin?.trim().replace(/\/+$/, '');
+    const activeOrigin =
+      normalizedRequestOrigin && origins.includes(normalizedRequestOrigin)
+        ? normalizedRequestOrigin
+        : parsedOrigins[0] || 'http://localhost:4200';
+
+    let rpId = this.config.get<string>('passkey.rpId');
+    if (!rpId) {
+      try {
+        rpId = new URL(activeOrigin).hostname;
+      } catch {
+        rpId = 'localhost';
+      }
+    }
 
     return { rpName, rpId, origins };
   }
 
-  async getRegistrationOptions(userId: string) {
+  private extractChallenge(clientDataJSON: string): string {
+    let clientChallenge: string | undefined;
+    try {
+      const clientData = JSON.parse(
+        Buffer.from(clientDataJSON, 'base64url').toString('utf8'),
+      );
+      clientChallenge = clientData?.challenge;
+    } catch {
+      throw new BadRequestException('Malformed clientDataJSON');
+    }
+
+    if (!clientChallenge) {
+      throw new BadRequestException('Missing challenge in clientDataJSON');
+    }
+
+    return clientChallenge;
+  }
+
+  private toTransports(
+    transports?: string[] | null,
+  ): AuthenticatorTransport[] | undefined {
+    if (!transports || transports.length === 0) {
+      return undefined;
+    }
+    return transports as AuthenticatorTransport[];
+  }
+
+  async getRegistrationOptions(userId: string, requestOrigin?: string) {
     const profile = await this.profilesRepository.findById(userId);
     if (!profile) {
       throw new NotFoundException('User profile not found');
     }
 
     const userPasskeys = await this.passkeysRepository.findUserPasskeys(userId);
-    const { rpName, rpId } = this.getRpConfig();
+    const { rpName, rpId } = this.getRpConfig(requestOrigin);
 
     const options = await generateRegistrationOptions({
       rpName,
@@ -66,12 +119,12 @@ export class PasskeysService {
       attestationType: 'none',
       excludeCredentials: userPasskeys.map((pk) => ({
         id: pk.credentialId,
-        transports: (pk.transports as any) || undefined,
+        transports: this.toTransports(pk.transports),
       })),
       authenticatorSelection: {
         authenticatorAttachment: 'platform',
         residentKey: 'preferred',
-        userVerification: 'preferred',
+        userVerification: 'required',
       },
     });
 
@@ -79,7 +132,7 @@ export class PasskeysService {
     await this.passkeysRepository.saveChallenge({
       userId,
       challenge: options.challenge,
-      type: 'registration',
+      type: PasskeyChallengeTypeEnum.REGISTRATION,
       expiresAt,
     });
 
@@ -90,31 +143,24 @@ export class PasskeysService {
     userId: string,
     response: RegistrationResponseJSON,
     deviceName?: string,
+    requestOrigin?: string,
   ) {
-    let clientChallenge: string | undefined;
-    try {
-      const clientData = JSON.parse(
-        Buffer.from(response.response.clientDataJSON, 'base64url').toString('utf8'),
-      );
-      clientChallenge = clientData?.challenge;
-    } catch {
-      throw new BadRequestException('Malformed clientDataJSON');
-    }
+    const clientChallenge = this.extractChallenge(
+      response.response.clientDataJSON,
+    );
 
-    if (!clientChallenge) {
-      throw new BadRequestException('Missing challenge in clientDataJSON');
-    }
-
-    const challengeRecord = await this.passkeysRepository.findValidChallenge(
+    const challengeRecord = await this.passkeysRepository.consumeValidChallenge(
       clientChallenge,
-      'registration',
+      PasskeyChallengeTypeEnum.REGISTRATION,
     );
 
     if (!challengeRecord || challengeRecord.userId !== userId) {
-      throw new UnauthorizedException('Registration challenge expired or invalid');
+      throw new UnauthorizedException(
+        'Registration challenge expired or invalid',
+      );
     }
 
-    const { rpId, origins } = this.getRpConfig();
+    const { rpId, origins } = this.getRpConfig(requestOrigin);
 
     let verification;
     try {
@@ -123,9 +169,11 @@ export class PasskeysService {
         expectedChallenge: challengeRecord.challenge,
         expectedOrigin: origins,
         expectedRPID: rpId,
+        requireUserVerification: true,
       });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Registration verification failed';
+      const msg =
+        err instanceof Error ? err.message : 'Registration verification failed';
       this.logger.error(`[Passkeys] Registration verification error: ${msg}`);
       throw new BadRequestException(msg);
     }
@@ -144,11 +192,9 @@ export class PasskeysService {
       counter: credential.counter,
       deviceType: credentialDeviceType,
       backedUp: credentialBackedUp,
-      transports: (credential.transports as any) || undefined,
+      transports: credential.transports ?? null,
       deviceName: deviceName || 'FaceID / Passkey Device',
     });
-
-    await this.passkeysRepository.deleteChallenge(challengeRecord.id);
 
     this.logger.log(
       `[Passkeys] Registered passkey ${saved.id} for user ${userId} (${saved.deviceName})`,
@@ -157,68 +203,84 @@ export class PasskeysService {
     return { verified: true, passkeyId: saved.id };
   }
 
-  async getAuthenticationOptions(email?: string) {
-    const { rpId } = this.getRpConfig();
-    let allowCredentials: any[] | undefined = undefined;
+  async getAuthenticationOptions(email?: string, requestOrigin?: string) {
+    const { rpId } = this.getRpConfig(requestOrigin);
+    let allowCredentials: PublicKeyCredentialDescriptorJSON[] | undefined =
+      undefined;
+    let targetUserId: string | null = null;
+    let shouldPersistChallenge = true;
 
     if (email) {
-      const profile = await this.profilesRepository.findByEmail(email);
+      const normalizedEmail = email.trim().toLowerCase();
+      const profile =
+        await this.profilesRepository.findByEmail(normalizedEmail);
       if (profile) {
-        const userPasskeys = await this.passkeysRepository.findUserPasskeys(profile.id);
+        targetUserId = profile.id;
+        const userPasskeys = await this.passkeysRepository.findUserPasskeys(
+          profile.id,
+        );
         if (userPasskeys.length > 0) {
           allowCredentials = userPasskeys.map((pk) => ({
             id: pk.credentialId,
-            transports: pk.transports || undefined,
+            type: 'public-key',
+            transports: this.toTransports(pk.transports),
           }));
         }
+      } else {
+        // Prevent user enumeration and cross-account authentication if email does not exist
+        shouldPersistChallenge = false;
       }
     }
 
     const options = await generateAuthenticationOptions({
       rpID: rpId,
       allowCredentials,
-      userVerification: 'preferred',
+      userVerification: 'required',
     });
 
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-    await this.passkeysRepository.saveChallenge({
-      challenge: options.challenge,
-      type: 'authentication',
-      expiresAt,
-    });
+    if (shouldPersistChallenge) {
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+      await this.passkeysRepository.saveChallenge({
+        userId: targetUserId,
+        challenge: options.challenge,
+        type: PasskeyChallengeTypeEnum.AUTHENTICATION,
+        expiresAt,
+      });
+    }
 
     return options;
   }
 
-  async verifyAuthentication(response: AuthenticationResponseJSON) {
-    let clientChallenge: string | undefined;
-    try {
-      const clientData = JSON.parse(
-        Buffer.from(response.response.clientDataJSON, 'base64url').toString('utf8'),
-      );
-      clientChallenge = clientData?.challenge;
-    } catch {
-      throw new BadRequestException('Malformed clientDataJSON');
-    }
+  async verifyAuthentication(
+    response: AuthenticationResponseJSON,
+    requestOrigin?: string,
+  ) {
+    const clientChallenge = this.extractChallenge(
+      response.response.clientDataJSON,
+    );
 
-    if (!clientChallenge) {
-      throw new UnauthorizedException('Missing client challenge');
-    }
-
-    const challengeRecord = await this.passkeysRepository.findValidChallenge(
+    const challengeRecord = await this.passkeysRepository.consumeValidChallenge(
       clientChallenge,
-      'authentication',
+      PasskeyChallengeTypeEnum.AUTHENTICATION,
     );
     if (!challengeRecord) {
-      throw new UnauthorizedException('Authentication challenge expired or invalid');
+      throw new UnauthorizedException(
+        'Authentication challenge expired or invalid',
+      );
     }
 
-    const passkey = await this.passkeysRepository.findByCredentialId(response.id);
+    const passkey = await this.passkeysRepository.findByCredentialId(
+      response.id,
+    );
     if (!passkey || !passkey.user) {
       throw new UnauthorizedException('Passkey credential not recognized');
     }
 
-    const { rpId, origins } = this.getRpConfig();
+    if (challengeRecord.userId && challengeRecord.userId !== passkey.userId) {
+      throw new UnauthorizedException('Challenge does not match passkey owner');
+    }
+
+    const { rpId, origins } = this.getRpConfig(requestOrigin);
 
     let verification;
     try {
@@ -227,15 +289,21 @@ export class PasskeysService {
         expectedChallenge: challengeRecord.challenge,
         expectedOrigin: origins,
         expectedRPID: rpId,
+        requireUserVerification: true,
         credential: {
           id: passkey.credentialId,
-          publicKey: new Uint8Array(Buffer.from(passkey.publicKey, 'base64url')),
+          publicKey: new Uint8Array(
+            Buffer.from(passkey.publicKey, 'base64url'),
+          ),
           counter: Number(passkey.counter),
-          transports: (passkey.transports as any) || undefined,
+          transports: this.toTransports(passkey.transports),
         },
       });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Authentication verification failed';
+      const msg =
+        err instanceof Error
+          ? err.message
+          : 'Authentication verification failed';
       this.logger.error(`[Passkeys] Authentication verification error: ${msg}`);
       throw new UnauthorizedException(msg);
     }
@@ -248,7 +316,6 @@ export class PasskeysService {
       passkey.id,
       verification.authenticationInfo.newCounter,
     );
-    await this.passkeysRepository.deleteChallenge(challengeRecord.id);
 
     this.logger.log(
       `[Passkeys] Successfully authenticated user: ${passkey.user.email} via Passkey`,
