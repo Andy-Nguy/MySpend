@@ -46,7 +46,11 @@ export class PasskeysService {
       .filter(Boolean);
 
     const origins = Array.from(
-      new Set([...parsedOrigins, 'http://localhost:4200', 'http://127.0.0.1:4200']),
+      new Set([
+        ...parsedOrigins,
+        'http://localhost:4200',
+        'http://127.0.0.1:4200',
+      ]),
     );
 
     const normalizedRequestOrigin = requestOrigin?.trim().replace(/\/+$/, '');
@@ -151,7 +155,9 @@ export class PasskeysService {
     );
 
     if (!challengeRecord || challengeRecord.userId !== userId) {
-      throw new UnauthorizedException('Registration challenge expired or invalid');
+      throw new UnauthorizedException(
+        'Registration challenge expired or invalid',
+      );
     }
 
     const { rpId, origins } = this.getRpConfig(requestOrigin);
@@ -206,7 +212,8 @@ export class PasskeysService {
 
     if (email) {
       const normalizedEmail = email.trim().toLowerCase();
-      const profile = await this.profilesRepository.findByEmail(normalizedEmail);
+      const profile =
+        await this.profilesRepository.findByEmail(normalizedEmail);
       if (profile) {
         targetUserId = profile.id;
         const userPasskeys = await this.passkeysRepository.findUserPasskeys(
@@ -262,7 +269,9 @@ export class PasskeysService {
       );
     }
 
-    const passkey = await this.passkeysRepository.findByCredentialId(response.id);
+    const passkey = await this.passkeysRepository.findByCredentialId(
+      response.id,
+    );
     if (!passkey || !passkey.user) {
       throw new UnauthorizedException('Passkey credential not recognized');
     }
@@ -283,14 +292,18 @@ export class PasskeysService {
         requireUserVerification: true,
         credential: {
           id: passkey.credentialId,
-          publicKey: new Uint8Array(Buffer.from(passkey.publicKey, 'base64url')),
+          publicKey: new Uint8Array(
+            Buffer.from(passkey.publicKey, 'base64url'),
+          ),
           counter: Number(passkey.counter),
           transports: this.toTransports(passkey.transports),
         },
       });
     } catch (err: unknown) {
       const msg =
-        err instanceof Error ? err.message : 'Authentication verification failed';
+        err instanceof Error
+          ? err.message
+          : 'Authentication verification failed';
       this.logger.error(`[Passkeys] Authentication verification error: ${msg}`);
       throw new UnauthorizedException(msg);
     }

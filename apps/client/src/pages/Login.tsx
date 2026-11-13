@@ -8,7 +8,10 @@ import { AppRoutes } from '../consts/routes';
 import { useAuth } from '../context/AuthContext';
 import { AuthLayout } from '../components/auth/AuthLayout';
 import { AuthPasswordInput, AuthTextInput } from '../components/auth/AuthInput';
-import { formatAuthErrorMessage, IAuthErrorInfo } from '../utils/auth-error.utils';
+import {
+  formatAuthErrorMessage,
+  IAuthErrorInfo,
+} from '../utils/auth-error.utils';
 import { ILastLoggedUser, passkeyService } from '../services/passkey.service';
 
 export const Login: React.FC = () => {
@@ -32,7 +35,10 @@ export const Login: React.FC = () => {
     if (saved?.email) {
       form.setFieldsValue({ email: saved.email });
     }
-    passkeyService.isSupported().then(setIsPasskeySupported);
+    passkeyService
+      .isSupported()
+      .then(setIsPasskeySupported)
+      .catch(() => setIsPasskeySupported(false));
   }, [form]);
 
   if (isAuthenticated) {
@@ -72,7 +78,10 @@ export const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (values: { email?: string; password?: string }) => {
+  const handleSubmit = async (values: {
+    email?: string;
+    password?: string;
+  }) => {
     setErrorInfo(null);
     setIsSubmitting(true);
 
@@ -107,26 +116,25 @@ export const Login: React.FC = () => {
 
   return (
     <AuthLayout
-      title={
-        showQuickLogin
-          ? t('auth.welcomeBackTitle')
-          : t('auth.loginTitle')
-      }
+      title={showQuickLogin ? t('auth.welcomeBackTitle') : t('auth.loginTitle')}
       subtitle={
-        showQuickLogin
-          ? t('auth.welcomeBackSubtitle')
-          : t('auth.loginSubtitle')
+        showQuickLogin ? t('auth.welcomeBackSubtitle') : t('auth.loginSubtitle')
       }
     >
       {/* Error Alert Banner */}
       {errorInfo && (
         <Alert
-          message={<span className="font-bold text-red-900">{errorInfo.title}</span>}
-          description={<span className="text-sm text-red-700/90">{errorInfo.description}</span>}
+          title={
+            <span className="font-bold text-red-900">{errorInfo.title}</span>
+          }
+          description={
+            <span className="text-sm text-red-700/90">
+              {errorInfo.description}
+            </span>
+          }
           type="error"
           showIcon
-          closable
-          onClose={() => setErrorInfo(null)}
+          closable={{ onClose: () => setErrorInfo(null) }}
           className="mb-5 !rounded-xl border-red-200/80 bg-red-50/90 shadow-sm"
         />
       )}
@@ -145,7 +153,9 @@ export const Login: React.FC = () => {
             <h3 className="text-lg font-bold text-gray-900 !mb-0.5">
               {lastUser?.displayName || lastUser?.email}
             </h3>
-            <p className="text-xs text-gray-500 !mb-0 font-medium">{lastUser?.email}</p>
+            <p className="text-xs text-gray-500 !mb-0 font-medium">
+              {lastUser?.email}
+            </p>
           </div>
 
           {/* Primary FaceID / Biometric Action */}
@@ -199,7 +209,11 @@ export const Login: React.FC = () => {
         >
           <Form.Item
             name="email"
-            label={<span className="text-sm font-semibold text-gray-700">{t('auth.emailLabel')}</span>}
+            label={
+              <span className="text-sm font-semibold text-gray-700">
+                {t('auth.emailLabel')}
+              </span>
+            }
             rules={[
               { required: true, message: t('auth.emailRequired') },
               { type: 'email', message: t('auth.emailInvalid') },
@@ -216,7 +230,9 @@ export const Login: React.FC = () => {
           {/* Password field with Forgot Password row */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-sm font-semibold text-gray-700">{t('auth.passwordLabel')}</span>
+              <span className="text-sm font-semibold text-gray-700">
+                {t('auth.passwordLabel')}
+              </span>
               <button
                 type="button"
                 onClick={() => message.info(t('auth.forgotPasswordSoon'))}
