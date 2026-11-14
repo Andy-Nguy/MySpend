@@ -85,23 +85,26 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
   const currentDate = dayjs().format(t('dashboard.monthFormat'));
 
   return (
-    <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200/80 transition-all w-full">
-      <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 sm:h-20 gap-2">
+    <header className="sticky top-0 z-30 bg-[#f4fbf4]/85 backdrop-blur-xl border-b border-[#bbcabf]/40 shadow-[0_1px_8px_rgba(0,0,0,0.03)] transition-all w-full">
+      <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-[72px] gap-2">
           {/* Left Brand Identity */}
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0 min-w-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-emerald-700 via-emerald-600 to-emerald-500 flex items-center justify-center shadow-md shadow-emerald-700/20 text-white flex-shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 min-w-0">
+            <div
+              onClick={() => navigate(AppRoutes.HOME)}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#006c49] flex items-center justify-center shadow-[0_4px_16px_rgba(0,108,73,0.22)] text-white flex-shrink-0 cursor-pointer"
+            >
               <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span
                   onClick={() => navigate(AppRoutes.HOME)}
-                  className="text-lg sm:text-2xl font-black tracking-tight text-gray-900 cursor-pointer whitespace-nowrap"
+                  className="text-lg sm:text-xl font-bold tracking-tight text-[#161d19] cursor-pointer whitespace-nowrap"
                 >
                   MySpend
                 </span>
-                <span className="hidden xl:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex-shrink-0">
+                <span className="hidden xl:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#e8f0e9] text-[#006c49] flex-shrink-0">
                   Personal
                 </span>
               </div>
@@ -109,43 +112,43 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
           </div>
 
           {/* Center Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-1 bg-gray-100/80 p-1 rounded-xl shrink-0">
+          <nav className="hidden lg:flex items-center gap-1 bg-[#eef6ee] p-1 rounded-2xl shrink-0">
             <button
               onClick={() => navigate(AppRoutes.HOME)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                 location.pathname === AppRoutes.HOME
-                  ? 'bg-white text-emerald-700 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-[#e3eae3] text-[#161d19] shadow-sm'
+                  : 'text-[#3c4a42] hover:text-[#161d19] hover:bg-[#e3eae3]/60'
               }`}
             >
               {t('nav.dashboard')}
             </button>
             <button
               onClick={() => navigate(AppRoutes.CATEGORIES)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                 location.pathname === AppRoutes.CATEGORIES
-                  ? 'bg-white text-emerald-700 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-[#e3eae3] text-[#161d19] shadow-sm'
+                  : 'text-[#3c4a42] hover:text-[#161d19] hover:bg-[#e3eae3]/60'
               }`}
             >
               {t('nav.categories')}
             </button>
             <button
               onClick={() => navigate(AppRoutes.TRANSACTIONS)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                 location.pathname === AppRoutes.TRANSACTIONS
-                  ? 'bg-white text-emerald-700 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-[#e3eae3] text-[#161d19] shadow-sm'
+                  : 'text-[#3c4a42] hover:text-[#161d19] hover:bg-[#e3eae3]/60'
               }`}
             >
               {t('nav.transactions')}
             </button>
             <button
               onClick={() => navigate(AppRoutes.REPORTS)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                 location.pathname === AppRoutes.REPORTS
-                  ? 'bg-white text-emerald-700 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-[#e3eae3] text-[#161d19] shadow-sm'
+                  : 'text-[#3c4a42] hover:text-[#161d19] hover:bg-[#e3eae3]/60'
               }`}
             >
               {t('nav.reports')}
@@ -153,10 +156,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
           </nav>
 
           {/* Right Action & Profile Area */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
             {/* Current Month Badge (Large Desktop) */}
-            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200/80 text-gray-700 text-xs font-medium capitalize whitespace-nowrap">
-              <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.03)] text-[#161d19] text-xs font-medium capitalize whitespace-nowrap">
+              <Calendar className="w-3.5 h-3.5 text-[#006c49]" />
               <span>{currentDate}</span>
             </div>
 
@@ -170,10 +173,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAddTransaction }) => {
             <button
               type="button"
               onClick={onOpenAddTransaction}
-              className="inline-flex items-center gap-1.5 px-2.5 sm:px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-xs sm:text-sm font-semibold shadow-md shadow-emerald-700/25 hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 whitespace-nowrap"
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#10b981] hover:bg-[#006c49] text-[#00422b] hover:text-white text-xs sm:text-sm font-semibold shadow-[0_4px_16px_rgba(16,185,129,0.25)] transition-all duration-200 focus:outline-none whitespace-nowrap"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span className="hidden xs:inline sm:inline">{t('dashboard.addTransaction')}</span>
+              <span>{t('dashboard.addTransaction')}</span>
             </button>
 
             {/* User Profile Dropdown */}
